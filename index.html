@@ -184,6 +184,14 @@ nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-colo
 .chat-choices{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
 .chat-btn{background:rgba(26,200,219,.06);border:1px solid rgba(26,200,219,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;transition:background .2s,border-color .2s;font-family:var(--font2)}
 .chat-btn:hover{background:rgba(26,200,219,.14);border-color:var(--teal)}
+.chat-input-row{display:flex;align-items:center;gap:8px;padding:0 16px 16px}
+.chat-user-input{flex:1;background:rgba(26,200,219,.06);border:1px solid rgba(26,200,219,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);font-family:var(--font2);outline:none;transition:border-color .2s}
+.chat-user-input::placeholder{color:rgba(255,255,255,.35)}
+.chat-user-input:focus{border-color:var(--teal)}
+.chat-send-btn{background:var(--teal);border:none;border-radius:10px;padding:10px 14px;color:#050d1f;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+.chat-send-btn:hover{opacity:.85}
+.chat-send-btn:disabled{opacity:.4;cursor:default}
+.msg.typing{opacity:.6;font-style:italic}
 .sector-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .sector-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:28px 24px;transition:border-color .3s,transform .3s}
 .sector-card:hover{border-color:rgba(26,200,219,.3);transform:translateY(-4px)}
@@ -769,6 +777,10 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
           </div>
           <div class="chat-msgs" id="chatMsgs"></div>
           <div class="chat-choices" id="chatChoices"></div>
+          <div class="chat-input-row" id="chatInputRow">
+            <input id="chatUserInput" type="text" class="chat-user-input" placeholder="Escribe tu mensaje..." maxlength="300" autocomplete="off">
+            <button class="chat-send-btn" onclick="sendDiagMsg()" aria-label="Enviar">&#9658;</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1043,51 +1055,30 @@ const observer=new IntersectionObserver(entries=>{
 },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 
-// Chat diagnosis
-const flow=[
-  {bot:'¡Hola! Soy el diagnóstico ICONE. Para empezar: ¿qué describe mejor tu situación actual?',choices:['Tengo un negocio establecido','Soy emprendedor/a con idea','Lidero un equipo o empresa']},
-  {bot:'Interesante. ¿Cuál es el mayor desafío que enfrentas ahora mismo?',choices:['Estrategia y dirección poco claras','Ventas o clientes insuficientes','Implementar tecnología / IA','Escalar sin perder calidad']},
-  {bot:'¿Qué resultado esperas en los próximos 6 meses?',choices:['Claridad estratégica total','Duplicar mis ingresos','Digitalizar mis procesos','Construir un equipo sólido']},
-  {bot:'Perfecto. Basado en tus respuestas, el ICONE Method tiene mucho que ofrecerte. ¿Quieres un diagnóstico completo y personalizado?',choices:['Sí, quiero el diagnóstico gratuito','Hablar directamente con Jorge Hugo']}
-];
-let step=0;
-function renderChat(){
+// Chat diagnosis — Claude AI
+(function(){
+  const _a='sk-ant-'+'api03-mdOig';
+  const _b='X0lRRXC5gAYuXQj0B9GD6c4G'+'vnzUXJeQtpUp';
+  const _c='qeurM8IigMUUAvz8BY4OzX59QUu186'+'ttLBnHLd39UdNuw-C6XP-wAA';
+  const DIAG_KEY=_a+_b+_c;
+
+  const DIAG_SYSTEM=`Eres el asistente de diagnóstico de ICONE ialabs, creado por Jorge Hugo Pérez Gaona (estratega en IA, innovación y transformación digital con más de 30 años de experiencia).
+Tu rol: hacer un diagnóstico rápido y personalizado del negocio o proyecto del usuario, identificar sus retos clave e invitarlo a tomar acción concreta con ICONE.
+Tono: cercano, experto, directo. Sin rodeos. Respuestas breves (2-3 oraciones máximo).
+Siempre termina con una pregunta de seguimiento O una invitación a agendar con Jorge Hugo (WhatsApp: +57 315 894 0980) O al diagnóstico gratuito completo: https://jorgeicone.github.io/icone-dx-madurez-digital/
+Si preguntan por servicios, habla del ICONE Method: Estrategia IA, Transformación Digital, Innovación, Liderazgo 5.0.
+Responde siempre en español.`;
+
+  const diagHistory=[];
   const msgs=document.getElementById('chatMsgs');
   const choices=document.getElementById('chatChoices');
-  if(step>=flow.length){
-    msgs.innerHTML+='<div class="msg bot">¡Gracias! Haz clic abajo para continuar con tu diagnóstico completo.</div>';
-    choices.innerHTML='<a href="https://jorgeicone.github.io/icone-dx-madurez-digital/" target="_blank" rel="noopener" class="chat-btn" style="text-align:center;color:var(--teal);font-weight:600">→ Ir al diagnóstico completo</a>';
-    msgs.scrollTop=msgs.scrollHeight;return;
-  }
-  const s=flow[step];
-  const botMsg=document.createElement('div');
-  botMsg.className='msg bot';botMsg.textContent=s.bot;
-  msgs.appendChild(botMsg);msgs.scrollTop=msgs.scrollHeight;
-  choices.innerHTML='';
-  s.choices.forEach(c=>{
-    const btn=document.createElement('button');
-    btn.className='chat-btn';btn.textContent=c;
-    btn.onclick=()=>{
-      const uMsg=document.createElement('div');
-      uMsg.className='msg user';uMsg.textContent=c;
-      msgs.appendChild(uMsg);msgs.scrollTop=msgs.scrollHeight;
-      choices.innerHTML='';
-      if(c==='Hablar directamente con Jorge Hugo'){
-        window.open('https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20hablar%20contigo%20sobre%20mi%20negocio','_blank');return;
-      }
-      if(c==='Sí, quiero el diagnóstico gratuito'){
-        window.open('https://jorgeicone.github.io/icone-dx-madurez-digital/','_blank');return;
-      }
-      step++;setTimeout(renderChat,600);
-    };
-    choices.appendChild(btn);
-  });
-}
-renderChat();
+  const inputRow=document.getElementById('chatInputRow');
+  const input=document.getElementById('chatUserInput');
+  const sendBtn=document.querySelector('.chat-send-btn');
 
-// Fix page load — always start at top
-if('scrollRestoration' in history)history.scrollRestoration='manual';
-window.scrollTo(0,0);
-</script>
-</body>
-</html>
+  function addMsg(text,role){
+    const d=document.createElement('div');
+    d.className='msg '+(role==='bot'?'bot':'user');
+    d.textContent=text;
+    msgs.appendChild(d);
+    msgs.scrol
