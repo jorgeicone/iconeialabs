@@ -1081,4 +1081,74 @@ Responde siempre en español.`;
     d.className='msg '+(role==='bot'?'bot':'user');
     d.textContent=text;
     msgs.appendChild(d);
-    msgs.scrol
+    msgs.scrollTop=msgs.scrollHeight;
+    return d;
+  }
+
+  function showQuickChoices(){
+    choices.innerHTML='';
+    const opts=['Tengo un negocio','Soy emprendedor/a','Necesito estrategia IA','Escalar mi empresa'];
+    opts.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.className='chat-btn';btn.textContent=c;
+      btn.onclick=()=>submitMsg(c);
+      choices.appendChild(btn);
+    });
+  }
+
+  async function submitMsg(text){
+    if(!text.trim())return;
+    input.value='';
+    choices.innerHTML='';
+    addMsg(text,'user');
+    diagHistory.push({role:'user',content:text});
+    sendBtn.disabled=true;
+    const typing=addMsg('Escribiendo...','bot');
+    typing.classList.add('typing');
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':DIAG_KEY,
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body:JSON.stringify({
+          model:'claude-haiku-4-5-20251001',
+          max_tokens:300,
+          system:DIAG_SYSTEM,
+          messages:diagHistory
+        })
+      });
+      msgs.removeChild(typing);
+      if(!res.ok)throw new Error('API '+res.status);
+      const data=await res.json();
+      const reply=data.content[0].text;
+      diagHistory.push({role:'assistant',content:reply});
+      addMsg(reply,'bot');
+    }catch(e){
+      msgs.removeChild(typing);
+      addMsg('Puedes escribirme directamente: WhatsApp +57 315 894 0980','bot');
+    }
+    sendBtn.disabled=false;
+    input.focus();
+  }
+
+  window.sendDiagMsg=function(){
+    const v=input.value.trim();
+    if(v)submitMsg(v);
+  };
+
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')sendDiagMsg()});
+
+  addMsg('\u00a1Hola! Soy el asistente ICONE. Cu\u00e9ntame sobre tu negocio o elige una opci\u00f3n:','bot');
+  showQuickChoices();
+})();
+
+// Fix page load \u2014 always start at top
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+window.scrollTo(0,0);
+</script>
+</body>
+</html>
