@@ -984,9 +984,9 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
 const cvs=document.getElementById('pc'),ctx=cvs.getContext('2d');
 let W,H,pts=[];
 function resize(){W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight}
-resize();window.addEventListener('resize',resize);
+resize();let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(resize,100);});
 function mkPt(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.2+.3,o:Math.random()*.5+.1}}
-for(let i=0;i<55;i++)pts.push(mkPt());
+const _mob=window.innerWidth<768;for(let i=0;i<(_mob?25:55);i++)pts.push(mkPt());
 let hidden=false;
 document.addEventListener('visibilitychange',()=>hidden=document.hidden);
 function draw(){
@@ -1010,7 +1010,7 @@ draw();
 
 // Nav scroll
 const nav=document.getElementById('navbar');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
+let _st=false;window.addEventListener('scroll',()=>{if(!_st){requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>60);_st=false;});_st=true;}},{passive:true});
 
 // Mobile menu
 function toggleMenu(){
@@ -1082,7 +1082,7 @@ Responde siempre en español.`;
     d.className='msg '+(role==='bot'?'bot':'user');
     d.textContent=text;
     msgs.appendChild(d);
-    msgs.scrollTop=msgs.scrollHeight;
+    requestAnimationFrame(()=>{msgs.scrollTop=msgs.scrollHeight;});
     return d;
   }
 
@@ -1143,13 +1143,4 @@ Responde siempre en español.`;
 
   input.addEventListener('keydown',e=>{if(e.key==='Enter')sendDiagMsg()});
 
-  addMsg('\u00a1Hola! Soy el asistente ICONE. Cu\u00e9ntame sobre tu negocio o elige una opci\u00f3n:','bot');
-  showQuickChoices();
-})();
-
-// Fix page load \u2014 always start at top
-if('scrollRestoration' in history)history.scrollRestoration='manual';
-window.scrollTo(0,0);
-</script>
-</body>
-</html>
+  addMsg('\u00a1Hola! Soy el asistente ICONE. Cu\u00e9ntame sobre tu negocio o elige una opci\u00f3
