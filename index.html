@@ -1032,4 +1032,13 @@ Responde siempre en español.`;
 
   input.addEventListener('keydown',e=>{if(e.key==='Enter')sendDiagMsg()});
 
-  addMsg('\u00a1Hola! Soy el asistente ICONE. Cu\u00e9ntame sobre tu negocio o elige una opci\u00f3
+  addMsg('\u00a1Hola! Soy el asistente ICONE. Cu\u00e9ntame sobre tu negocio o elige una opci\u00f3n:','bot');
+  showQuickChoices();
+})();
+
+// Fix page load \u2014 always start at top
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+window.scrollTo(0,0);
+</script>
+</body>
+</html>
