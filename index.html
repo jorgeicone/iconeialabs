@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
+<link rel="preload" as="image" href="images/mentoria-grupal-icone.webp" type="image/webp" fetchpriority="high">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ICONE ialabs | Identifica, Conecta, Ejecuta</title>
 <meta name="description" content="El ICONE Method — sistema de acompañamiento empresarial en 3 pasos. 25 años transformando negocios en Latinoamérica."/>
@@ -25,7 +26,6 @@ section{position:relative;z-index:1;padding:100px 40px}
 .tag{display:block;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}.tag::before{content:"";display:block;width:48px;height:2px;background:linear-gradient(90deg,var(--teal),var(--deep));border-radius:2px;margin-bottom:14px}[style*="text-align:center"] .tag::before,[style*="text-align: center"] .tag::before{margin-left:auto;margin-right:auto}
 .section-title{font-size:clamp(26px,3.8vw,44px);font-weight:700;color:#fff;line-height:1.15;letter-spacing:-.5px;margin-bottom:12px}
 .section-sub{font-size:16px;color:var(--muted);line-height:1.8;max-width:640px;margin-bottom:48px;font-family:var(--font2)}
-.divider{width:48px;height:2px;background:linear-gradient(90deg,var(--teal),var(--deep));border-radius:2px;margin-bottom:16px}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--dark);padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(249,201,17,.25)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,201,17,.4)}
 .btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--teal);padding:13px 26px;border-radius:50px;font-weight:600;font-size:15px;border:1.5px solid rgba(26,200,219,.4);transition:background .2s,border-color .2s}
@@ -85,7 +85,6 @@ nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-colo
 .acomp-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;overflow:hidden;transition:border-color .3s}
 .acomp-item.featured{border-color:rgba(26,200,219,.32);box-shadow:0 0 32px rgba(26,200,219,.07)}
 .acomp-header{display:flex;align-items:center;justify-content:space-between;padding:24px 28px;cursor:pointer;gap:20px}
-.acomp-header-left{display:flex;align-items:center;gap:20px;flex:1}
 .acomp-num{font-size:13px;font-weight:700;color:var(--teal);background:rgba(26,200,219,.1);border:1px solid rgba(26,200,219,.2);border-radius:10px;padding:6px 12px;flex-shrink:0}
 .acomp-titulo{font-size:18px;font-weight:700;color:#fff;transition:color .2s;margin:0}
 .acomp-header:hover .acomp-titulo{color:var(--teal);margin:0}
@@ -99,7 +98,6 @@ nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-colo
 .acomp-details{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
 .acomp-detail{background:rgba(26,200,219,.04);border:1px solid rgba(26,200,219,.1);border-radius:12px;padding:14px 16px;margin:0}
 .acomp-detail-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:5px}
-.acomp-detail-val{font-size:13px;color:var(--text);font-family:var(--font2);line-height:1.5}
 .rec-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);background:rgba(249,201,17,.1);border:1px solid rgba(249,201,17,.25);border-radius:50px;padding:4px 10px}
 .jorge-inner{display:grid;grid-template-columns:1fr 1.55fr;gap:60px;align-items:start}
 .jorge-photo-wrap{position:sticky;top:100px}
@@ -107,13 +105,11 @@ nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-colo
 .jorge-photo img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top}
 .jorge-photo2{border-radius:14px;overflow:hidden;border:1px solid rgba(26,200,219,.12);margin-top:12px}
 .jorge-photo2 img{width:100%;height:175px;object-fit:cover}
-.jorge-tag{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
 .jorge-bio{font-size:15px;color:var(--muted);line-height:1.85;font-family:var(--font2);margin-bottom:20px}
 .jorge-bio strong{color:var(--text);font-weight:600}
 .current-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
 .current-roles{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
 .role-badge{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:rgba(26,200,219,.05);border:1px solid rgba(26,200,219,.14);border-radius:12px}.role-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;box-shadow:0 0 6px rgba(26,200,219,.5)}
-.role-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;box-shadow:0 0 6px rgba(26,200,219,.5)}
 .role-title{font-size:13px;font-weight:700;color:#fff;margin:0}
 .role-org{font-size:12px;color:var(--teal);margin-top:1px;font-family:var(--font2);display:block}
 .timeline{display:flex;flex-direction:column;gap:0;margin-bottom:28px;border-left:2px solid rgba(26,200,219,.15);padding-left:24px}
@@ -127,9 +123,7 @@ small.tl-company{display:block;font-size:13px;color:var(--muted);font-family:var
 .cred-tab.active{background:rgba(26,200,219,.12);border-color:var(--teal);color:#fff}
 .cred-panel{display:none}
 .cred-panel.active{display:block}
-.cred-list{display:flex;flex-direction:column;gap:10px}
 .cred-item{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:rgba(26,200,219,.04);border:1px solid rgba(26,200,219,.1);border-radius:12px}.cred-item::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px}
-.cred-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px}
 .cred-name{font-size:14px;font-weight:600;color:#fff;line-height:1.4;margin:0}
 .cred-inst{font-size:12px;color:var(--muted);font-family:var(--font2);margin-top:2px;display:block}
 .ave-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
@@ -141,14 +135,12 @@ small.tl-company{display:block;font-size:13px;color:var(--muted);font-family:var
 .rec-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;overflow:hidden;transition:transform .3s,border-color .3s}
 .rec-card:hover{transform:translateY(-5px);border-color:rgba(26,200,219,.35)}
 .rec-img{width:100%;height:180px;object-fit:cover;object-position:center top}
-.rec-body{padding:18px}
 .rec-title{font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:4px}
 .rec-org{font-size:12px;color:var(--muted);font-family:var(--font2);display:block}
 .empresas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .emp-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s}
 .emp-card:hover{transform:translateY(-4px);border-color:rgba(26,200,219,.3)}
 .emp-img{width:100%;height:150px;object-fit:cover}
-.emp-body{padding:14px 16px}
 .emp-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
 .emp-desc{font-size:12px;color:var(--muted);font-family:var(--font2);display:block}
 .info-featured{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:28px}
@@ -169,7 +161,6 @@ small.tl-company{display:block;font-size:13px;color:var(--muted);font-family:var
 .info-acc-body.open{max-height:600px}
 .info-acc-list{padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
 .info-acc-name{display:block;position:relative;padding:12px 14px 12px 30px;background:rgba(26,200,219,.03);border:1px solid rgba(26,200,219,.08);border-radius:10px;font-size:13px;font-weight:600;color:#fff;margin:0}.info-acc-name::before{content:"";position:absolute;left:14px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--teal)}
-.info-acc-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:7px}
 
 .info-acc-sub{font-size:12px;color:var(--muted);font-family:var(--font2);margin-top:2px;display:block}
 .diag-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
@@ -203,7 +194,6 @@ small.tl-company{display:block;font-size:13px;color:var(--muted);font-family:var
 .sector-note strong{color:var(--teal)}
 .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .test-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:28px 24px}.test-card::before{content:"★★★★★";color:var(--gold);font-size:14px;display:block;margin-bottom:14px}
-.test-stars{color:var(--gold);font-size:14px;margin-bottom:14px}
 .test-text{font-size:14px;color:var(--text);line-height:1.7;font-family:var(--font2);margin-bottom:18px;font-style:italic}
 .test-author{font-size:14px;font-weight:600;color:#fff;margin:0}
 .test-role{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--font2)}
@@ -227,9 +217,6 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
 .soc-btn{width:38px;height:38px;border-radius:10px;background:rgba(26,200,219,.08);border:1px solid rgba(26,200,219,.2);display:flex;align-items:center;justify-content:center;color:var(--teal);transition:background .2s,border-color .2s}
 .soc-btn:hover{background:rgba(26,200,219,.18);border-color:var(--teal)}
 .footer-col h4{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
-.footer-col-links,.footer-links{display:flex;flex-direction:column;gap:10px}
-.footer-links a{font-size:14px;color:var(--muted);transition:color .2s;font-family:var(--font2)}
-.footer-links a:hover{color:var(--teal)}
 .footer-bottom{max-width:1160px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .footer-copy{font-size:13px;color:var(--muted);font-family:var(--font2)}
 @media(max-width:1024px){.hero-inner,.jorge-inner,.diag-inner{grid-template-columns:1fr}.method-grid,.transform-grid,.rec-grid,.empresas-grid,.sector-grid{grid-template-columns:repeat(2,1fr)}.info-featured{grid-template-columns:1fr 1fr}.footer-inner{grid-template-columns:1fr 1fr}section{padding:80px 24px}.jorge-photo-wrap{position:relative;top:auto}.jorge-photo img{aspect-ratio:4/3}.jorge-photo2{display:none}}
@@ -388,7 +375,10 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
           <div class="acomp-toggle" id="tog-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-0">
-                      <img src="images/icone-method-esencial.jpg" alt="Infoproducto ICONE Method Esencial" class="acomp-img" width="600" height="337"/>
+                      <picture>
+  <source srcset="images/icone-method-esencial.webp" type="image/webp">
+  <img loading="lazy" src="images/icone-method-esencial.jpg" alt="Infoproducto ICONE Method Esencial" class="acomp-img" width="600" height="337"/>
+</picture>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Infoproducto digital — acceso inmediato, autodirigido</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Emprendedores que quieren implementar el método por su cuenta con estructura</p>
@@ -406,7 +396,10 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
           <div class="acomp-toggle" id="tog-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-1">
-                      <img src="images/mentoria-grupal-icone.jpg" alt="Mentoría grupal ICONE" class="acomp-img" width="800" height="1000"/>
+                      <picture>
+  <source srcset="images/mentoria-grupal-icone.webp" type="image/webp">
+  <img loading="eager" fetchpriority="high" src="images/mentoria-grupal-icone.jpg" alt="Mentoría grupal ICONE" class="acomp-img" width="800" height="1000"/>
+</picture>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Mentoría grupal — cohortes programadas</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Emprendedores que quieren estructura, comunidad y acompañamiento grupal</p>
@@ -428,7 +421,10 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
           <div class="acomp-toggle" id="tog-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-2">
-                      <img src="images/consultoria-premium-icone.jpg" alt="Consultoría premium ICONE" class="acomp-img" width="800" height="1000"/>
+                      <picture>
+  <source srcset="images/consultoria-premium-icone.webp" type="image/webp">
+  <img loading="lazy" src="images/consultoria-premium-icone.jpg" alt="Consultoría premium ICONE" class="acomp-img" width="800" height="1000"/>
+</picture>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Consultoría 1:1 personalizada</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Empresas que quieren resultados con acompañamiento experto directo</p>
@@ -448,13 +444,22 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
     <div class="jorge-inner">
       <div class="jorge-photo-wrap reveal">
         <div class="jorge-photo">
-          <img src="images/jorge-hugo-perez.png" alt="Jorge Hugo Pérez Gaona" width="356" height="401"/>
+          <picture>
+  <source srcset="images/jorge-hugo-perez.webp" type="image/webp">
+  <img loading="lazy" src="images/jorge-hugo-perez.png" alt="Jorge Hugo Pérez Gaona" width="356" height="401"/>
+</picture>
         </div>
         <div class="jorge-photo2">
-          <img src="images/jorge-speaker-internacional.jpg" alt="Jorge Hugo como speaker internacional" width="800" height="619"/>
+          <picture>
+  <source srcset="images/jorge-speaker-internacional.webp" type="image/webp">
+  <img loading="lazy" src="images/jorge-speaker-internacional.jpg" alt="Jorge Hugo como speaker internacional" width="800" height="619"/>
+</picture>
         </div>
         <div class="jorge-photo2" style="margin-top:10px">
-          <img src="images/jorge-entrenamientos-empresarial.jpg" alt="Jorge Hugo en entrenamientos empresariales" width="800" height="600"/>
+          <picture>
+  <source srcset="images/jorge-entrenamientos-empresarial.webp" type="image/webp">
+  <img loading="lazy" src="images/jorge-entrenamientos-empresarial.jpg" alt="Jorge Hugo en entrenamientos empresariales" width="800" height="600"/>
+</picture>
         </div>
       </div>
       <div class="reveal">
@@ -537,32 +542,50 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
     </div>
     <div class="rec-grid">
       <div class="rec-card reveal">
-        <img src="images/recono-exma.jpg" alt="EXMA — Marketing Festival" class="rec-img" width="800" height="450"/>
+        <picture>
+  <source srcset="images/recono-exma.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-exma.jpg" alt="EXMA — Marketing Festival" class="rec-img" width="800" height="450"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">Speaker Internacional</div>
           <p class="rec-title">EXMA — Marketing Festival<small class="rec-org">Congreso de Marketing más importante de LATAM</small></p>
       </div>
       <div class="rec-card reveal">
-        <img src="images/recono-gofest.jpg" alt="GoFest — Congreso de Emprendimiento" class="rec-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/recono-gofest.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-gofest.jpg" alt="GoFest — Congreso de Emprendimiento" class="rec-img" width="800" height="800"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">Conferencista &amp; Mentor</div>
           <p class="rec-title">GoFest — Congreso de Emprendimiento<small class="rec-org">Escenario de innovación y negocios en Colombia</small></p>
       </div>
       <div class="rec-card reveal">
-        <img src="images/recono-mentor-ean.jpg" alt="Mentor Emprendimiento EAN" class="rec-img" width="800" height="621"/>
+        <picture>
+  <source srcset="images/recono-mentor-ean.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-mentor-ean.jpg" alt="Mentor Emprendimiento EAN" class="rec-img" width="800" height="621"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">Mentor Universitario</div>
           <p class="rec-title">Mentor de Emprendimiento<small class="rec-org">Universidad EAN — Ecosistema de innovación</small></p>
       </div>
       <div class="rec-card reveal">
-        <img src="images/recono-speaker.jpg" alt="Speaker Internacional" class="rec-img" width="800" height="533"/>
+        <picture>
+  <source srcset="images/recono-speaker.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-speaker.jpg" alt="Speaker Internacional" class="rec-img" width="800" height="533"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">Speaker</div>
           <p class="rec-title">Speaker Internacional<small class="rec-org">Congresos y eventos empresariales en LATAM</small></p>
       </div>
       <div class="rec-card reveal">
-        <img src="images/recono-innpulsa.jpg" alt="iNNpulsa Colombia" class="rec-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/recono-innpulsa.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-innpulsa.jpg" alt="iNNpulsa Colombia" class="rec-img" width="800" height="800"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">Facilitador Nacional</div>
           <p class="rec-title">iNNpulsa Colombia<small class="rec-org">Entidad del Gobierno para el emprendimiento</small></p>
       </div>
       <div class="rec-card reveal">
-        <img src="images/recono-proposito-impacto.jpg" alt="Propósito e impacto" class="rec-img" width="768" height="1024"/>
+        <picture>
+  <source srcset="images/recono-proposito-impacto.webp" type="image/webp">
+  <img loading="lazy" src="images/recono-proposito-impacto.jpg" alt="Propósito e impacto" class="rec-img" width="768" height="1024"/>
+</picture>
                   <div class="rec-badge" style="margin-bottom:8px">+1.200 empresas</div>
           <p class="rec-title">Impacto real en negocios latinoamericanos<small class="rec-org">Colombia, México, Perú, Ecuador, España</small></p>
       </div>
@@ -580,35 +603,59 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
     </div>
     <div class="empresas-grid">
       <div class="emp-card reveal">
-        <img src="images/emp-amazon.jpg" alt="Amazon" class="emp-img" width="800" height="1000"/>
+        <picture>
+  <source srcset="images/emp-amazon.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-amazon.jpg" alt="Amazon" class="emp-img" width="800" height="1000"/>
+</picture>
         <p class="emp-name">Amazon Web Services<small class="emp-desc">Ecosistema cloud &amp; transformación digital</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-camara-comercio.jpg" alt="Cámara de Comercio de Bogotá" class="emp-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/emp-camara-comercio.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-camara-comercio.jpg" alt="Cámara de Comercio de Bogotá" class="emp-img" width="800" height="800"/>
+</picture>
         <p class="emp-name">Cámara de Comercio de Bogotá<small class="emp-desc">Programas de mentoría y emprendimiento</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-ean.jpg" alt="Universidad EAN" class="emp-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/emp-ean.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-ean.jpg" alt="Universidad EAN" class="emp-img" width="800" height="800"/>
+</picture>
         <p class="emp-name">Universidad EAN<small class="emp-desc">Talleres MBA &amp; Posgrados</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-poli.jpg" alt="Politécnico Grancolombiano" class="emp-img" width="800" height="991"/>
+        <picture>
+  <source srcset="images/emp-poli.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-poli.jpg" alt="Politécnico Grancolombiano" class="emp-img" width="800" height="991"/>
+</picture>
         <p class="emp-name">Politécnico Grancolombiano<small class="emp-desc">Diplomado Experiencia del Consumidor</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-javeriana.jpg" alt="Pontificia Universidad Javeriana" class="emp-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/emp-javeriana.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-javeriana.jpg" alt="Pontificia Universidad Javeriana" class="emp-img" width="800" height="800"/>
+</picture>
         <p class="emp-name">Pontificia Universidad Javeriana<small class="emp-desc">Programas de formación empresarial</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-mompreneurs.jpg" alt="Mompreneurs" class="emp-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/emp-mompreneurs.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-mompreneurs.jpg" alt="Mompreneurs" class="emp-img" width="800" height="800"/>
+</picture>
         <p class="emp-name">Mompreneurs<small class="emp-desc">Mentoring emprendimiento femenino</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-mincomercio.jpg" alt="Ministerio de Comercio" class="emp-img" width="601" height="901"/>
+        <picture>
+  <source srcset="images/emp-mincomercio.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-mincomercio.jpg" alt="Ministerio de Comercio" class="emp-img" width="601" height="901"/>
+</picture>
         <p class="emp-name">Ministerio de Comercio<small class="emp-desc">Programas nacionales de emprendimiento</small></p>
       </div>
       <div class="emp-card reveal">
-        <img src="images/emp-satena.jpg" alt="Satena" class="emp-img" width="800" height="800"/>
+        <picture>
+  <source srcset="images/emp-satena.webp" type="image/webp">
+  <img loading="lazy" src="images/emp-satena.jpg" alt="Satena" class="emp-img" width="800" height="800"/>
+</picture>
         <p class="emp-name">Satena<small class="emp-desc">Formación y desarrollo organizacional</small></p>
       </div>
       <div class="emp-card reveal">
@@ -873,7 +920,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
 const cvs=document.getElementById('pc'),ctx=cvs.getContext('2d');
 let W,H,pts=[];
 function resize(){W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight}
-resize();let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(resize,100);});
+requestAnimationFrame(resize);let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(resize,100);});
 function mkPt(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.2+.3,o:Math.random()*.5+.1}}
 const _mob=window.innerWidth<768;for(let i=0;i<(_mob?25:55);i++)pts.push(mkPt());
 let hidden=false;
