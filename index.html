@@ -331,15 +331,15 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
         <div class="hero-card-tag">El ICONE Method en 3 pasos</div>
         <div class="hms">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <p class="hms-name"><span style="color:var(--icone-identificar);font-weight:800;font-size:1.15em;letter-spacing:-.5px">I</span>dentifica<small class="hms-desc">Diagnóstico real de tu negocio</small></p>
+          <p class="hms-name"><span style="color:var(--icone-identificar);font-weight:900;font-size:1.3em;letter-spacing:-.5px">I</span>dentifica: <small class="hms-desc">Diagnóstico real de tu negocio</small></p>
         </div>
         <div class="hms">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <p class="hms-name"><span style="color:var(--icone-conectar);font-weight:800;font-size:1.15em;letter-spacing:-.5px">CON</span>ecta<small class="hms-desc">Estrategia + IA como herramienta real</small></p>
+          <p class="hms-name"><span style="color:var(--icone-conectar);font-weight:900;font-size:1.3em;letter-spacing:-.5px">Con</span>ecta: <small class="hms-desc">Estrategia + IA como herramienta real</small></p>
         </div>
         <div class="hms" style="margin-bottom:0">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <p class="hms-name"><span style="color:var(--icone-ejecutar);font-weight:800;font-size:1.15em;letter-spacing:-.5px">E</span>jecuta<small class="hms-desc">Implementación con método y métricas</small></p>
+          <p class="hms-name"><span style="color:var(--icone-ejecutar);font-weight:900;font-size:1.3em;letter-spacing:-.5px">E</span>jecuta: <small class="hms-desc">Implementación con método y métricas</small></p>
         </div>
     </div>
   </div>
@@ -1106,7 +1106,8 @@ function buildParticles() {
   for (let i = 0; i < count; i++) {
     pts.push({
       x: Math.random()*W, y: Math.random()*H,
-      vx: (Math.random()-.5)*.018, vy: (Math.random()-.5)*.018,
+      vx: (Math.random()-.5)*.28, vy: (Math.random()-.5)*.28,
+      ox: Math.random()*W, oy: Math.random()*H,
       r: Math.random()*.3+.15,
       o: Math.random()*.07+.02,
       ci: Math.floor(Math.random()*3)
@@ -1117,8 +1118,8 @@ function buildParticles() {
 function drawParticles() {
   pts.forEach(p => {
     p.x += p.vx; p.y += p.vy;
-    if (p.x < 0 || p.x > W) p.vx *= -1;
-    if (p.y < 0 || p.y > H) p.vy *= -1;
+    if (Math.abs(p.x - p.ox) > 90) p.vx *= -1;
+    if (Math.abs(p.y - p.oy) > 90) p.vy *= -1;
     const [r,g,b] = ICE_ARR[p.ci];
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
