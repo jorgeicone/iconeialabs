@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="images/mentoria-grupal-icone.webp" type="image/webp" fetchpriority="high">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ICONE ialabs | Identifica, Conecta, Ejecuta</title>
@@ -14,7 +15,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-:root{--teal:#1ac8db;--teal2:#147e93;--deep:#0292b7;--navy:#05445e;--mint:#75e6da;--dark:#071e2b;--gold:#f9c911;--green:#359830;--card-bg:rgba(255,255,255,0.04);--card-border:rgba(26,200,219,0.18);--text:#e2f0f4;--muted:#7a9baa;--font:'Space Grotesk',sans-serif;--font2:'DM Sans',sans-serif}
+:root{--teal:#1ac8db;--teal2:#147e93;--deep:#0292b7;--navy:#05445e;--mint:#75e6da;--dark:#071e2b;--gold:#f9c911;--green:#359830;--card-bg:rgba(255,255,255,0.04);--card-border:rgba(26,200,219,0.18);--text:#e2f0f4;--muted:#7a9baa;--font:'Space Grotesk',sans-serif;--font2:'DM Sans',sans-serif;--icone-identificar:#1ac8db;--icone-conectar:#7a3cff;--icone-ejecutar:#ff8a3c;--icone-teal:#1ac8db;--icone-mint:#75e6da;--icone-deep:#0292b7;--icone-navy:#05445e;--icone-bg:#071e2b;--icone-bg-deep:#03080c;--icone-surface:#0a1620;--icone-border:rgba(26,200,219,.15);--icone-text:#ffffff;--icone-text-sub:rgba(255,255,255,.60);--icone-font-display:'Space Grotesk',system-ui,sans-serif;--icone-font-body:'DM Sans',system-ui,sans-serif;--icone-font-mono:'DM Mono',ui-monospace,monospace;--icone-shadow-glow:0 0 24px rgba(26,200,219,.18);--icone-shadow-glow-c:0 0 24px rgba(122,60,255,.20);--icone-shadow-glow-e:0 0 24px rgba(255,138,60,.20);--icone-ease:cubic-bezier(.2,.7,.2,1);--icone-fast:.18s var(--icone-ease);--icone-medium:.32s var(--icone-ease)}
 body{font-family:var(--font);background:var(--dark);color:var(--text);overflow-x:hidden;line-height:1.6}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;display:block}
@@ -26,17 +27,21 @@ section{position:relative;z-index:1;padding:100px 40px}
 .tag{display:block;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}.tag::before{content:"";display:block;width:48px;height:2px;background:linear-gradient(90deg,var(--teal),var(--deep));border-radius:2px;margin-bottom:14px}[style*="text-align:center"] .tag::before,[style*="text-align: center"] .tag::before{margin-left:auto;margin-right:auto}
 .section-title{font-size:clamp(26px,3.8vw,44px);font-weight:700;color:#fff;line-height:1.15;letter-spacing:-.5px;margin-bottom:12px}
 .section-sub{font-size:16px;color:var(--muted);line-height:1.8;max-width:640px;margin-bottom:48px;font-family:var(--font2)}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--dark);padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(249,201,17,.25)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(249,201,17,.4)}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--icone-teal);color:var(--dark);padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(26,200,219,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(26,200,219,.35)}
 .btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--teal);padding:13px 26px;border-radius:50px;font-weight:600;font-size:15px;border:1.5px solid rgba(26,200,219,.4);transition:background .2s,border-color .2s}
 .btn-outline:hover{background:rgba(26,200,219,.08);border-color:var(--teal)}
+.btn-ejecutar{display:inline-flex;align-items:center;gap:8px;background:var(--icone-ejecutar);color:#071e2b;padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn-ejecutar:hover{transform:translateY(-2px);background:#ffb07c;box-shadow:0 0 24px rgba(255,138,60,.35)}
+.btn-conectar{display:inline-flex;align-items:center;gap:8px;background:var(--icone-conectar);color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn-conectar:hover{transform:translateY(-2px);background:#9d6fff;box-shadow:0 0 24px rgba(122,60,255,.35)}
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,30,43,0);backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:background .3s,backdrop-filter .3s,border-color .3s}
 nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-color:rgba(26,200,219,.1)}
 .nav-links{display:flex;gap:28px;list-style:none}
 .nav-links a{font-size:14px;font-weight:500;color:var(--muted);transition:color .2s}
 .nav-links a:hover{color:var(--teal)}
-.nav-cta{background:var(--gold);color:var(--dark)!important;padding:10px 22px;border-radius:50px;font-weight:700!important;font-size:14px;transition:box-shadow .2s,transform .2s}
-.nav-cta:hover{box-shadow:0 4px 20px rgba(249,201,17,.35);transform:translateY(-1px)}
+.nav-cta{background:var(--icone-conectar);color:#fff!important;padding:10px 22px;border-radius:50px;font-weight:700!important;font-size:14px;transition:box-shadow .2s,transform .2s}
+.nav-cta:hover{box-shadow:0 4px 20px rgba(122,60,255,.35);transform:translateY(-1px)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
 .hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block}
 .mobile-menu{display:none;position:fixed;top:70px;left:0;right:0;background:rgba(7,30,43,.97);backdrop-filter:blur(16px);z-index:999;padding:24px 40px 32px;border-bottom:1px solid rgba(26,200,219,.1);flex-direction:column;gap:18px}
@@ -66,9 +71,9 @@ nav.scrolled{background:rgba(7,30,43,.92);backdrop-filter:blur(16px);border-colo
 .method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .method-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:22px;padding:36px 28px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s,box-shadow .3s}
 .method-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.method-card.a::before{background:linear-gradient(90deg,var(--teal),var(--mint))}
-.method-card.b::before{background:linear-gradient(90deg,var(--deep),var(--teal))}
-.method-card.c::before{background:linear-gradient(90deg,var(--navy),var(--deep))}
+.method-card.a::before{background:linear-gradient(90deg,var(--icone-identificar),var(--icone-mint))}
+.method-card.b::before{background:linear-gradient(90deg,var(--icone-conectar),#9d6fff)}
+.method-card.c::before{background:linear-gradient(90deg,var(--icone-ejecutar),#ffb07c)}
 .method-card:hover{border-color:rgba(26,200,219,.35);transform:translateY(-6px);box-shadow:0 12px 36px rgba(26,200,219,.1)}
 .method-icon{display:block;padding:14px;box-sizing:content-box;width:24px;height:24px;border-radius:14px;background:rgba(26,200,219,.08);border:1px solid rgba(26,200,219,.18);margin-bottom:20px}
 .method-step{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
@@ -249,16 +254,66 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
   <a href="#reconocimientos" onclick="toggleMenu()">Reconocimientos</a>
   <a href="#infoproductos" onclick="toggleMenu()">Recursos</a>
   <a href="#diagnostico" onclick="toggleMenu()">Diagnóstico</a>
-  <a href="#cta" onclick="toggleMenu()" style="color:var(--gold);font-weight:700">Hablemos →</a>
+  <a href="#cta" onclick="toggleMenu()" style="color:var(--icone-conectar);font-weight:700">Hablemos →</a>
 </div>
 
 <!-- HERO (diseño original) -->
 <section id="hero">
+<svg class="hero-neural" viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.45">
+  <defs>
+    <radialGradient id="ng1" cx="30%" cy="50%" r="50%"><stop offset="0%" stop-color="#1ac8db" stop-opacity="0.7"/><stop offset="100%" stop-color="#1ac8db" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ng2" cx="70%" cy="50%" r="50%"><stop offset="0%" stop-color="#7a3cff" stop-opacity="0.5"/><stop offset="100%" stop-color="#7a3cff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ng3" cx="50%" cy="80%" r="40%"><stop offset="0%" stop-color="#ff8a3c" stop-opacity="0.4"/><stop offset="100%" stop-color="#ff8a3c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="edge1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1ac8db" stop-opacity="0.4"/><stop offset="100%" stop-color="#7a3cff" stop-opacity="0.4"/></linearGradient>
+  </defs>
+  <ellipse cx="280" cy="350" rx="320" ry="280" fill="url(#ng1)" opacity="0.5"/>
+  <ellipse cx="1100" cy="350" rx="300" ry="260" fill="url(#ng2)" opacity="0.4"/>
+  <ellipse cx="700" cy="580" rx="280" ry="200" fill="url(#ng3)" opacity="0.3"/>
+  <line x1="120" y1="200" x2="320" y2="150" stroke="url(#edge1)" stroke-width="1" opacity="0.5"/>
+  <line x1="320" y1="150" x2="520" y2="280" stroke="#1ac8db" stroke-width="1" opacity="0.35"/>
+  <line x1="520" y1="280" x2="700" y2="200" stroke="#7a3cff" stroke-width="1" opacity="0.35"/>
+  <line x1="700" y1="200" x2="900" y2="310" stroke="#1ac8db" stroke-width="1" opacity="0.35"/>
+  <line x1="900" y1="310" x2="1100" y2="250" stroke="#7a3cff" stroke-width="1" opacity="0.35"/>
+  <line x1="1100" y1="250" x2="1280" y2="380" stroke="url(#edge1)" stroke-width="1" opacity="0.4"/>
+  <line x1="320" y1="150" x2="420" y2="400" stroke="#1ac8db" stroke-width="1" opacity="0.25"/>
+  <line x1="420" y1="400" x2="620" y2="500" stroke="#ff8a3c" stroke-width="1" opacity="0.3"/>
+  <line x1="620" y1="500" x2="820" y2="430" stroke="#7a3cff" stroke-width="1" opacity="0.3"/>
+  <line x1="820" y1="430" x2="1050" y2="520" stroke="#ff8a3c" stroke-width="1" opacity="0.3"/>
+  <line x1="1050" y1="520" x2="1250" y2="460" stroke="#1ac8db" stroke-width="1" opacity="0.25"/>
+  <line x1="520" y1="280" x2="420" y2="400" stroke="#1ac8db" stroke-width="1" opacity="0.2"/>
+  <line x1="700" y1="200" x2="620" y2="500" stroke="#7a3cff" stroke-width="1" opacity="0.2"/>
+  <line x1="900" y1="310" x2="820" y2="430" stroke="#ff8a3c" stroke-width="1" opacity="0.2"/>
+  <line x1="160" y1="480" x2="320" y2="150" stroke="#1ac8db" stroke-width="1" opacity="0.2"/>
+  <line x1="160" y1="480" x2="420" y2="400" stroke="#1ac8db" stroke-width="1" opacity="0.2"/>
+  <line x1="700" y1="80" x2="700" y2="200" stroke="#7a3cff" stroke-width="1" opacity="0.3"/>
+  <line x1="700" y1="80" x2="520" y2="280" stroke="#1ac8db" stroke-width="1" opacity="0.2"/>
+  <line x1="700" y1="80" x2="900" y2="310" stroke="#7a3cff" stroke-width="1" opacity="0.2"/>
+  <circle cx="120" cy="200" r="3" fill="#1ac8db" opacity="0.7"/>
+  <circle cx="320" cy="150" r="5" fill="#1ac8db" opacity="0.8"/>
+  <circle cx="520" cy="280" r="4" fill="#1ac8db" opacity="0.7"/>
+  <circle cx="700" cy="80"  r="3" fill="#7a3cff" opacity="0.6"/>
+  <circle cx="700" cy="200" r="6" fill="#7a3cff" opacity="0.85"/>
+  <circle cx="900" cy="310" r="4" fill="#7a3cff" opacity="0.7"/>
+  <circle cx="1100" cy="250" r="5" fill="#1ac8db" opacity="0.75"/>
+  <circle cx="1280" cy="380" r="3" fill="#7a3cff" opacity="0.6"/>
+  <circle cx="160" cy="480" r="4" fill="#ff8a3c" opacity="0.65"/>
+  <circle cx="420" cy="400" r="5" fill="#ff8a3c" opacity="0.75"/>
+  <circle cx="620" cy="500" r="4" fill="#ff8a3c" opacity="0.7"/>
+  <circle cx="820" cy="430" r="5" fill="#7a3cff" opacity="0.7"/>
+  <circle cx="1050" cy="520" r="4" fill="#ff8a3c" opacity="0.65"/>
+  <circle cx="1250" cy="460" r="3" fill="#1ac8db" opacity="0.6"/>
+  <circle cx="60"  cy="350" r="2" fill="#1ac8db" opacity="0.5"/>
+  <circle cx="950" cy="140" r="2" fill="#7a3cff" opacity="0.5"/>
+  <circle cx="1350" cy="200" r="2" fill="#ff8a3c" opacity="0.5"/>
+  <circle cx="350" cy="600" r="2" fill="#1ac8db" opacity="0.4"/>
+  <circle cx="1150" cy="620" r="2" fill="#7a3cff" opacity="0.4"/>
+  <circle cx="700" cy="640" r="3" fill="#ff8a3c" opacity="0.5"/>
+</svg>
   <div class="hero-inner">
     <div class="reveal">
       <p class="hero-eyebrow">ICONE METHOD — SISTEMA DE ACOMPAÑAMIENTO EMPRESARIAL</p>
       <h1 class="hero-h1">Identifica tu potencial,<br/>conecta tu estrategia,<br/><em>ejecuta con IA.</em></h1>
-      <p class="hero-sub">El ICONE Method es un sistema de acompañamiento empresarial estructurado en 3 pasos reales: Identificar, Conectar y Ejecutar. Sin promesas vacías — con metodología probada.</p>
+      <p class="hero-sub">Ayudo a <b>líderes y empresas en LATAM</b> que sienten que la <span style="color:var(--icone-identificar);font-weight:700">IA los está dejando atrás</span> a convertirla en su <span style="color:var(--icone-ejecutar);font-weight:700">ventaja competitiva real</span>, con el <b>ICONE <em style="color:var(--icone-teal);font-style:normal">Method</em></b>.</p>
       <div class="audience-pills">
         <span class="aud-pill active">Soy Startup</span>
         <span class="aud-pill">Soy Emprendedor</span>
@@ -276,15 +331,15 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
         <div class="hero-card-tag">El ICONE Method en 3 pasos</div>
         <div class="hms">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <p class="hms-name"><small class="hms-step">Paso A</small>Identifica<small class="hms-desc">Diagnóstico real de tu negocio</small></p>
+          <p class="hms-name"><small class="hms-step"><span style="color:var(--icone-identificar);font-weight:700">I</span></small>Identifica<small class="hms-desc">Diagnóstico real de tu negocio</small></p>
         </div>
         <div class="hms">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <p class="hms-name"><small class="hms-step">Paso B</small>Conecta<small class="hms-desc">Estrategia + IA como herramienta real</small></p>
+          <p class="hms-name"><small class="hms-step"><span style="color:var(--icone-conectar);font-weight:700">C</span></small>Conecta<small class="hms-desc">Estrategia + IA como herramienta real</small></p>
         </div>
         <div class="hms" style="margin-bottom:0">
           <svg class="hms-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <p class="hms-name"><small class="hms-step">Paso C</small>Ejecuta<small class="hms-desc">Implementación con método y métricas</small></p>
+          <p class="hms-name"><small class="hms-step"><span style="color:var(--icone-ejecutar);font-weight:700">E</span></small>Ejecuta<small class="hms-desc">Implementación con método y métricas</small></p>
         </div>
     </div>
   </div>
@@ -301,17 +356,17 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
     <div class="method-grid">
       <div class="method-card a reveal">
         <svg class="method-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v3l2 2" stroke-width="1.5"/></svg>
-        <p class="method-title"><small class="method-step">Paso A — Identifica</small>Diagnóstico real</p>
+        <p class="method-title"><small class="method-step"><span style="color:var(--icone-identificar);font-weight:700">I</span> — Identifica</small>Diagnóstico real</p>
         <p class="method-desc">Diagnóstico real de tu negocio: dónde estás, qué frena tu crecimiento, cuáles son tus fortalezas ocultas y qué oportunidades no estás aprovechando.</p>
       </div>
       <div class="method-card b reveal">
         <svg class="method-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        <p class="method-title"><small class="method-step">Paso B — Conecta</small>Estrategia + IA aplicada</p>
+        <p class="method-title"><small class="method-step"><span style="color:var(--icone-conectar);font-weight:700">C</span> — Conecta</small>Estrategia + IA aplicada</p>
         <p class="method-desc">Diseño de la estrategia que une tus recursos, tu mercado y tus objetivos. Aquí la IA entra como herramienta de análisis y decisión — no como moda, sino como ventaja real.</p>
       </div>
       <div class="method-card c reveal">
         <svg class="method-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1ac8db" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <p class="method-title"><small class="method-step">Paso C — Ejecuta</small>Implementación con método</p>
+        <p class="method-title"><small class="method-step"><span style="color:var(--icone-ejecutar);font-weight:700">E</span> — Ejecuta</small>Implementación con método</p>
         <p class="method-desc">Implementación estructurada con acompañamiento. No se trata de saber qué hacer — se trata de hacerlo con método, métricas y ajustes en tiempo real.</p>
       </div>
     </div>
@@ -385,7 +440,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Metodología completa, plantillas aplicables y guías de diagnóstico</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>A tu ritmo, cuando quieras — sin horarios</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Esencial" target="_blank" rel="noopener" class="btn-outline">Quiero empezar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Esencial" target="_blank" rel="noopener" class="btn-ejecutar">Quiero empezar →</a>
         </div>
       </div>
       <div class="acomp-item reveal" id="acomp-1">
@@ -406,7 +461,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Sesiones en vivo con Jorge Hugo, feedback personalizado, acceso a materiales</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>Grupal + sesiones en vivo</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Acelerado" target="_blank" rel="noopener" class="btn-outline">Quiero acelerar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Acelerado" target="_blank" rel="noopener" class="btn-ejecutar">Quiero acelerar →</a>
         </div>
       </div>
       <div class="acomp-item featured reveal" id="acomp-2">
@@ -431,7 +486,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Diagnóstico profundo, diseño estratégico, implementación acompañada, revisiones periódicas</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>Consultoría directa con Jorge Hugo</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Premium" target="_blank" rel="noopener" class="btn-primary">Quiero aplicar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Premium" target="_blank" rel="noopener" class="btn-ejecutar">Quiero aplicar →</a>
         </div>
       </div>
     </div>
@@ -472,9 +527,9 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(26,200,219,.1)}
         <!-- Métricas de impacto -->
         <div class="stat-grid">
           <p class="stat-card"><b>25+</b>años de experiencia</p>
-          <p class="stat-card"><b>500+</b>empresas acompañadas</p>
-          <p class="stat-card"><b>3K+</b>estudiantes impactados</p>
-          <p class="stat-card"><b>150+</b>proyectos exitosos</p>
+          <p class="stat-card"><b style="color:var(--icone-identificar)">500+</b>empresas acompañadas</p>
+          <p class="stat-card"><b style="color:var(--icone-conectar)">3K+</b>estudiantes impactados</p>
+          <p class="stat-card"><b style="color:var(--icone-ejecutar)">150+</b>proyectos exitosos</p>
         </div>
 
         <div class="current-label">Roles actuales</div>
