@@ -1102,13 +1102,13 @@ setInterval(spawnPulse, 110);
 function buildParticles() {
   pts = [];
   const mob = W < 768;
-  const count = mob ? 22 : 48;
+  const count = mob ? 10 : 20;
   for (let i = 0; i < count; i++) {
     pts.push({
       x: Math.random()*W, y: Math.random()*H,
-      vx: (Math.random()-.5)*.05, vy: (Math.random()-.5)*.05,
-      r: Math.random()*.4+.2,
-      o: Math.random()*.12+.03,
+      vx: (Math.random()-.5)*.018, vy: (Math.random()-.5)*.018,
+      r: Math.random()*.3+.15,
+      o: Math.random()*.07+.02,
       ci: Math.floor(Math.random()*3)
     });
   }
@@ -1125,16 +1125,7 @@ function drawParticles() {
     ctx.fillStyle = `rgba(${r},${g},${b},${p.o})`;
     ctx.fill();
   });
-  // proximity lines between particles
-  pts.forEach((a, i) => pts.slice(i+1).forEach(b => {
-    const d = Math.hypot(a.x-b.x, a.y-b.y);
-    if (d < 115) {
-      const [r,g,b2] = ICE_ARR[a.ci];
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-      ctx.strokeStyle = `rgba(${r},${g},${b2},${.04*(1-d/115)})`;
-      ctx.lineWidth = .4; ctx.stroke();
-    }
-  }));
+  // proximity lines — disabled (noise reduction)
 }
 
 // ── MAIN LOOP ──
