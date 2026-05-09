@@ -1117,8 +1117,10 @@ function buildParticles() {
 function drawParticles() {
   pts.forEach(p => {
     p.x += p.vx; p.y += p.vy;
-    if (p.x < 0 || p.x > W) p.vx *= -1;
-    if (p.y < 0 || p.y > H) p.vy *= -1;
+    if (p.x < -10) p.x = W + 10;
+    if (p.x > W + 10) p.x = -10;
+    if (p.y < -10) p.y = H + 10;
+    if (p.y > H + 10) p.y = -10;
     const [r,g,b] = ICE_ARR[p.ci];
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
