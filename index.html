@@ -1107,7 +1107,6 @@ function buildParticles() {
     pts.push({
       x: Math.random()*W, y: Math.random()*H,
       vx: (Math.random()-.5)*.28, vy: (Math.random()-.5)*.28,
-      ox: Math.random()*W, oy: Math.random()*H,
       r: Math.random()*.3+.15,
       o: Math.random()*.07+.02,
       ci: Math.floor(Math.random()*3)
@@ -1118,8 +1117,8 @@ function buildParticles() {
 function drawParticles() {
   pts.forEach(p => {
     p.x += p.vx; p.y += p.vy;
-    if (Math.abs(p.x - p.ox) > 90) p.vx *= -1;
-    if (Math.abs(p.y - p.oy) > 90) p.vy *= -1;
+    if (p.x < 0 || p.x > W) p.vx *= -1;
+    if (p.y < 0 || p.y > H) p.vy *= -1;
     const [r,g,b] = ICE_ARR[p.ci];
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
