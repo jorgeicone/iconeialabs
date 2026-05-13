@@ -1008,101 +1008,105 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
 </footer>
 
 <script>
-// ── ICONE ialabs · Particle Field (Logo Echo v3) ──
-const cvs = document.getElementById('pc'), ctx = cvs.getContext('2d');
-let W, H, particles = [], hidden = false;
-document.addEventListener('visibilitychange', () => hidden = document.hidden);
+// ── ICONE ialabs · Particle Network (Premium · Logo Echo v4) ──
+(function() {
+  const canvas = document.getElementById('pc');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], hidden = false;
+  document.addEventListener('visibilitychange', () => hidden = document.hidden);
 
-const COLORS = [
-  [0, 212, 255],
-  [123, 47, 255],
-  [255, 140, 0]
-];
-const WEIGHTS = [0.55, 0.25, 0.20];
+  const NUM_NODES_DESKTOP = 75;
+  const NUM_NODES_MOBILE  = 38;
+  const MAX_DIST_DESKTOP  = 165;
+  const MAX_DIST_MOBILE   = 120;
 
-function pickColor() {
-  const r = Math.random();
-  let acc = 0;
-  for (let i = 0; i < WEIGHTS.length; i++) {
-    acc += WEIGHTS[i];
-    if (r < acc) return COLORS[i];
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
   }
-  return COLORS[0];
-}
 
-function resize() {
-  W = cvs.width = window.innerWidth;
-  H = cvs.height = window.innerHeight;
-  buildParticles();
-}
-
-function buildParticles() {
-  particles = [];
-  const mob = W < 768;
-  const count = mob ? 22 : 46;
-  for (let i = 0; i < count; i++) {
-    particles.push({
+  function createNode() {
+    const roll = Math.random();
+    // 65% cyan (dominante, como el nodo central del logo), 25% púrpura, 10% naranja
+    const color = roll < 0.65 ? '#00d4ff' : (roll < 0.90 ? '#7b2fff' : '#ff8c00');
+    return {
       x: Math.random() * W,
       y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.22,
-      vy: (Math.random() - 0.5) * 0.22,
-      r: Math.random() * 1.3 + 0.7,
-      color: pickColor(),
-      phase: Math.random() * Math.PI * 2
-    });
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2.5 + 1.4,
+      color: color
+    };
   }
-}
 
-function draw() {
-  if (hidden) { requestAnimationFrame(draw); return; }
-  ctx.clearRect(0, 0, W, H);
-  const MAX_DIST = W < 768 ? 110 : 150;
-  const t = performance.now() * 0.001;
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < MAX_DIST) {
-        const opacity = (1 - dist / MAX_DIST) * 0.15;
-        const [r1, g1, b1] = particles[i].color;
-        const [r2, g2, b2] = particles[j].color;
-        const r = (r1 + r2) >> 1;
-        const g = (g1 + g2) >> 1;
-        const b = (b1 + b2) >> 1;
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
-        ctx.lineWidth = 0.7;
-        ctx.stroke();
+  function initNodes() {
+    const mob = W < 768;
+    const count = mob ? NUM_NODES_MOBILE : NUM_NODES_DESKTOP;
+    nodes = [];
+    for (let i = 0; i < count; i++) nodes.push(createNode());
+  }
+
+  function drawNetwork() {
+    ctx.clearRect(0, 0, W, H);
+    const MAX_DIST = W < 768 ? MAX_DIST_MOBILE : MAX_DIST_DESKTOP;
+
+    // Conexiones (líneas tenues entre partículas cercanas) — cyan dominante
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.32;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(0, 212, 255, ${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
       }
     }
-  }
-  particles.forEach(p => {
-    p.x += p.vx; p.y += p.vy;
-    if (p.x < -10) p.x = W + 10;
-    if (p.x > W + 10) p.x = -10;
-    if (p.y < -10) p.y = H + 10;
-    if (p.y > H + 10) p.y = -10;
-    const pulse = 0.82 + 0.18 * Math.sin(t * 1.2 + p.phase);
-    const [r, g, b] = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r + 2.5, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${r},${g},${b},${0.06 * pulse})`;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${r},${g},${b},${0.7 * pulse})`;
-    ctx.fill();
-  });
-  requestAnimationFrame(draw);
-}
 
-let _rt;
-window.addEventListener('resize', () => { clearTimeout(_rt); _rt = setTimeout(resize, 120); });
-resize();
-draw();
+    // Nodos con shadow blur (halo premium)
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = n.color;
+      ctx.shadowColor = n.color;
+      ctx.shadowBlur = 9;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }
+
+  function updateNodes() {
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+  }
+
+  function animate() {
+    if (!hidden) {
+      updateNodes();
+      drawNetwork();
+    }
+    requestAnimationFrame(animate);
+  }
+
+  let _rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(_rt);
+    _rt = setTimeout(() => { resize(); initNodes(); }, 120);
+  });
+  resize();
+  initNodes();
+  animate();
+})();
 
 // Nav scroll
 const nav=document.getElementById('navbar');
