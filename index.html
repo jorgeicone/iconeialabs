@@ -40,6 +40,16 @@
 .logo-img-footer{width:34px;height:34px;display:block;border-radius:7px;filter:drop-shadow(0 0 6px rgba(0,212,255,.25));animation:logoBreath 5.5s ease-in-out infinite}
 @keyframes logoBreath{0%,100%{filter:drop-shadow(0 0 6px rgba(0,212,255,.25)) drop-shadow(0 0 12px rgba(0,212,255,.12));transform:scale(1)}50%{filter:drop-shadow(0 0 14px rgba(0,212,255,.55)) drop-shadow(0 0 22px rgba(123,47,255,.18));transform:scale(1.035)}}
 @media(prefers-reduced-motion:reduce){.logo-img,.logo-img-footer{animation:none}}
+
+.trust-bar{padding:80px 40px;text-align:center}
+.trust-bar .container{max-width:1200px;margin:0 auto}
+.trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:32px 28px;align-items:center;justify-items:center;margin-top:48px}
+.trust-logo{display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(255,255,255,.02);border:1px solid rgba(0,212,255,.08);border-radius:14px;width:100%;height:96px;transition:all .3s ease}
+.trust-logo:hover{border-color:rgba(0,212,255,.35);background:rgba(0,212,255,.04);transform:translateY(-3px)}
+.trust-logo img{max-width:100%;max-height:64px;filter:grayscale(1) brightness(1.4) opacity(.7);transition:filter .35s ease}
+.trust-logo:hover img{filter:grayscale(0) brightness(1) opacity(1)}
+.trust-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:8px;letter-spacing:.5px}
+@media(max-width:768px){.trust-bar{padding:56px 20px}.trust-grid{grid-template-columns:repeat(3,1fr);gap:18px 12px}.trust-logo{height:72px;padding:10px}.trust-logo img{max-height:48px}}
 </style>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -346,9 +356,9 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
       <h1 class="hero-h1">Identifica tu potencial,<br/>conecta tu estrategia,<br/><em>ejecuta con IA.</em></h1>
       <p class="hero-sub">Ayudo a <b>líderes y empresas en LATAM</b> que sienten que la <span style="color:var(--icone-identificar);font-weight:700">IA los está dejando atrás</span> a convertirla en su <span style="color:var(--icone-ejecutar);font-weight:700">ventaja competitiva real</span>, con el <b>ICONE <em style="color:var(--icone-teal);font-style:normal">Method</em></b>.</p>
       <div class="audience-pills">
-        <span class="aud-pill active">Soy Startup</span>
-        <span class="aud-pill">Soy Emprendedor</span>
-        <span class="aud-pill">Tengo una Empresa</span>
+        <a href="/startup/" class="aud-pill" style="text-decoration:none">Soy Startup →</a>
+        <a href="/emprendedor/" class="aud-pill" style="text-decoration:none">Soy Emprendedor →</a>
+        <a href="/empresa/" class="aud-pill" style="text-decoration:none">Tengo una Empresa →</a>
       </div>
       <div class="hero-btns">
         <a href="#metodo" class="btn-primary">Conocer el ICONE Method →</a>
@@ -471,7 +481,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Metodología completa, plantillas aplicables y guías de diagnóstico</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>A tu ritmo, cuando quieras — sin horarios</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Esencial" target="_blank" rel="noopener" class="btn-ejecutar">Quiero empezar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20vengo%20del%20sitio%20iconeialabs.com.%0AMe%20interesa%20el%20%2AICONE%20Method%20Esencial%2A.%0A%0A%E2%80%A2%20Empresa/proyecto%3A%20%0A%E2%80%A2%20Vertical%3A%20%0A%E2%80%A2%20Necesidad%20principal%3A%20%0A%0AQuedo%20atento." target="_blank" rel="noopener" class="btn-ejecutar">Quiero empezar →</a>
         </div>
       </div>
       <div class="acomp-item reveal" id="acomp-1">
@@ -492,7 +502,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Sesiones en vivo con Jorge Hugo, feedback personalizado, acceso a materiales</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>Grupal + sesiones en vivo</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Acelerado" target="_blank" rel="noopener" class="btn-ejecutar">Quiero acelerar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20vengo%20del%20sitio%20iconeialabs.com.%0AMe%20interesa%20el%20%2AICONE%20Method%20Acelerado%2A%20%28mentor%C3%ADa%20grupal%29.%0A%0A%E2%80%A2%20Empresa%3A%20%0A%E2%80%A2%20Vertical%3A%20%0A%E2%80%A2%20Reto%20principal%3A%20%0A%E2%80%A2%20Disponibilidad%20para%2020%20min%20de%20pre-screening%3A%20%0A%0AQuedo%20atento." target="_blank" rel="noopener" class="btn-ejecutar">Quiero acelerar →</a>
         </div>
       </div>
       <div class="acomp-item featured reveal" id="acomp-2">
@@ -517,7 +527,7 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
               <p class="acomp-detail"><b class="acomp-detail-label">Contenido</b>Diagnóstico profundo, diseño estratégico, implementación acompañada, revisiones periódicas</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Modalidad</b>Consultoría directa con Jorge Hugo</p>
             </div>
-            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20quiero%20el%20ICONE%20Method%20Premium" target="_blank" rel="noopener" class="btn-ejecutar">Quiero aplicar →</a>
+            <a href="https://wa.me/573158940980?text=Hola%20Jorge%2C%20vengo%20del%20sitio%20iconeialabs.com.%0AMe%20interesa%20el%20%2AICONE%20Method%20Premium%2A%20%28consultor%C3%ADa%201%3A1%29.%0A%0ABrief%20inicial%3A%0A1%29%20Empresa%20y%20sector%3A%20%0A2%29%20Reto/objetivo%20de%20negocio%3A%20%0A3%29%20Equipo%20y%20tiempo%20disponible%3A%20%0A4%29%20Por%20qu%C3%A9%20ahora%3A%20%0A%0AQuedo%20atento%20a%20tu%20confirmaci%C3%B3n%20de%20llamada." target="_blank" rel="noopener" class="btn-ejecutar">Quiero aplicar →</a>
         </div>
       </div>
     </div>
@@ -618,137 +628,89 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
   </div>
 </section>
 
-<!-- RECONOCIMIENTOS -->
-<section id="reconocimientos">
+<!-- TRUST BAR (fusión Reconocimientos + Empresas) -->
+<section id="reconocimientos" class="trust-bar">
   <div class="container">
-    <div style="text-align:center;margin-bottom:56px" class="reveal">
-      <span class="tag">Trayectoria reconocida</span>
-      <h2 class="section-title">Reconocimientos &amp; Escenarios internacionales</h2>
-      <p class="section-sub" style="margin:12px auto 0;text-align:center">Más de 25 años de trabajo validado por escenarios, organizaciones y comunidades de alto nivel en Latinoamérica y el mundo.</p>
+    <div style="text-align:center;margin-bottom:8px" class="reveal">
+      <span class="tag">Trayectoria validada · LATAM</span>
+      <h2 class="section-title">Quienes han confiado en el método</h2>
+      <p class="section-sub" style="margin:12px auto 0;max-width:680px">25 años de trabajo validado por empresas, instituciones y escenarios de alto nivel en Latinoamérica — desde multinacionales hasta universidades y gobiernos.</p>
     </div>
-    <div class="rec-grid">
-      <div class="rec-card reveal">
+    <div class="trust-grid">
+      <div class="trust-logo reveal" title="Universidad EAN">
         <picture>
-  <source srcset="images/recono-exma.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-exma.jpg" alt="EXMA — Marketing Festival" class="rec-img" width="800" height="450"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">Speaker Internacional</div>
-          <p class="rec-title">EXMA — Marketing Festival<small class="rec-org">Congreso de Marketing más importante de LATAM</small></p>
+          <source srcset="images/emp-ean.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-ean.jpg" alt="Universidad EAN">
+        </picture>
       </div>
-      <div class="rec-card reveal">
+      <div class="trust-logo reveal" title="Amazon Web Services">
         <picture>
-  <source srcset="images/recono-gofest.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-gofest.jpg" alt="GoFest — Congreso de Emprendimiento" class="rec-img" width="800" height="800"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">Conferencista &amp; Mentor</div>
-          <p class="rec-title">GoFest — Congreso de Emprendimiento<small class="rec-org">Escenario de innovación y negocios en Colombia</small></p>
+          <source srcset="images/emp-amazon.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-amazon.jpg" alt="Amazon Web Services">
+        </picture>
       </div>
-      <div class="rec-card reveal">
+      <div class="trust-logo reveal" title="Politécnico Grancolombiano">
         <picture>
-  <source srcset="images/recono-mentor-ean.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-mentor-ean.jpg" alt="Mentor Emprendimiento EAN" class="rec-img" width="800" height="621"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">Mentor Universitario</div>
-          <p class="rec-title">Mentor de Emprendimiento<small class="rec-org">Universidad EAN — Ecosistema de innovación</small></p>
+          <source srcset="images/emp-poli.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-poli.jpg" alt="Politécnico Grancolombiano">
+        </picture>
       </div>
-      <div class="rec-card reveal">
+      <div class="trust-logo reveal" title="Cámara de Comercio Bogotá">
         <picture>
-  <source srcset="images/recono-speaker.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-speaker.jpg" alt="Speaker Internacional" class="rec-img" width="800" height="533"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">Speaker</div>
-          <p class="rec-title">Speaker Internacional<small class="rec-org">Congresos y eventos empresariales en LATAM</small></p>
+          <source srcset="images/emp-camara-comercio.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-camara-comercio.jpg" alt="Cámara de Comercio Bogotá">
+        </picture>
       </div>
-      <div class="rec-card reveal">
+      <div class="trust-logo reveal" title="Universidad Javeriana">
         <picture>
-  <source srcset="images/recono-innpulsa.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-innpulsa.jpg" alt="iNNpulsa Colombia" class="rec-img" width="800" height="800"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">Facilitador Nacional</div>
-          <p class="rec-title">iNNpulsa Colombia<small class="rec-org">Entidad del Gobierno para el emprendimiento</small></p>
+          <source srcset="images/emp-javeriana.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-javeriana.jpg" alt="Universidad Javeriana">
+        </picture>
       </div>
-      <div class="rec-card reveal">
+      <div class="trust-logo reveal" title="EXMA Festival">
         <picture>
-  <source srcset="images/recono-proposito-impacto.webp" type="image/webp">
-  <img loading="lazy" src="images/recono-proposito-impacto.jpg" alt="Propósito e impacto" class="rec-img" width="768" height="1024"/>
-</picture>
-                  <div class="rec-badge" style="margin-bottom:8px">+1.200 empresas</div>
-          <p class="rec-title">Impacto real en negocios latinoamericanos<small class="rec-org">Colombia, México, Perú, Ecuador, España</small></p>
+          <source srcset="images/recono-exma.webp" type="image/webp">
+          <img loading="lazy" src="images/recono-exma.jpg" alt="EXMA Festival">
+        </picture>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- EMPRESAS Y ORGANIZACIONES -->
-<section id="empresas" style="background:linear-gradient(180deg,transparent,rgba(0,212,255,.02),transparent)">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:56px" class="reveal">
-      <span class="tag">Confianza empresarial</span>
-      <h2 class="section-title">Empresas y organizaciones que han trabajado con el método</h2>
-      <p class="section-sub" style="margin:12px auto 0;text-align:center">Organizaciones de distintos sectores han aplicado el ICONE Method para transformar su estrategia, sus equipos y sus resultados.</p>
-    </div>
-    <div class="empresas-grid">
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="Ministerio de Comercio">
         <picture>
-  <source srcset="images/emp-amazon.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-amazon.jpg" alt="Amazon" class="emp-img" width="800" height="1000"/>
-</picture>
-        <p class="emp-name">Amazon Web Services<small class="emp-desc">Ecosistema cloud &amp; transformación digital</small></p>
+          <source srcset="images/emp-mincomercio.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-mincomercio.jpg" alt="Ministerio de Comercio">
+        </picture>
       </div>
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="GoFest">
         <picture>
-  <source srcset="images/emp-camara-comercio.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-camara-comercio.jpg" alt="Cámara de Comercio de Bogotá" class="emp-img" width="800" height="800"/>
-</picture>
-        <p class="emp-name">Cámara de Comercio de Bogotá<small class="emp-desc">Programas de mentoría y emprendimiento</small></p>
+          <source srcset="images/recono-gofest.webp" type="image/webp">
+          <img loading="lazy" src="images/recono-gofest.jpg" alt="GoFest">
+        </picture>
       </div>
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="Mompreneurs">
         <picture>
-  <source srcset="images/emp-ean.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-ean.jpg" alt="Universidad EAN" class="emp-img" width="800" height="800"/>
-</picture>
-        <p class="emp-name">Universidad EAN<small class="emp-desc">Talleres MBA &amp; Posgrados</small></p>
+          <source srcset="images/emp-mompreneurs.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-mompreneurs.jpg" alt="Mompreneurs">
+        </picture>
       </div>
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="iNNpulsa Colombia">
         <picture>
-  <source srcset="images/emp-poli.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-poli.jpg" alt="Politécnico Grancolombiano" class="emp-img" width="800" height="991"/>
-</picture>
-        <p class="emp-name">Politécnico Grancolombiano<small class="emp-desc">Diplomado Experiencia del Consumidor</small></p>
+          <source srcset="images/recono-innpulsa.webp" type="image/webp">
+          <img loading="lazy" src="images/recono-innpulsa.jpg" alt="iNNpulsa Colombia">
+        </picture>
       </div>
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="Satena">
         <picture>
-  <source srcset="images/emp-javeriana.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-javeriana.jpg" alt="Pontificia Universidad Javeriana" class="emp-img" width="800" height="800"/>
-</picture>
-        <p class="emp-name">Pontificia Universidad Javeriana<small class="emp-desc">Programas de formación empresarial</small></p>
+          <source srcset="images/emp-satena.webp" type="image/webp">
+          <img loading="lazy" src="images/emp-satena.jpg" alt="Satena">
+        </picture>
       </div>
-      <div class="emp-card reveal">
+      <div class="trust-logo reveal" title="Speaker Internacional">
         <picture>
-  <source srcset="images/emp-mompreneurs.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-mompreneurs.jpg" alt="Mompreneurs" class="emp-img" width="800" height="800"/>
-</picture>
-        <p class="emp-name">Mompreneurs<small class="emp-desc">Mentoring emprendimiento femenino</small></p>
-      </div>
-      <div class="emp-card reveal">
-        <picture>
-  <source srcset="images/emp-mincomercio.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-mincomercio.jpg" alt="Ministerio de Comercio" class="emp-img" width="601" height="901"/>
-</picture>
-        <p class="emp-name">Ministerio de Comercio<small class="emp-desc">Programas nacionales de emprendimiento</small></p>
-      </div>
-      <div class="emp-card reveal">
-        <picture>
-  <source srcset="images/emp-satena.webp" type="image/webp">
-  <img loading="lazy" src="images/emp-satena.jpg" alt="Satena" class="emp-img" width="800" height="800"/>
-</picture>
-        <p class="emp-name">Satena<small class="emp-desc">Formación y desarrollo organizacional</small></p>
-      </div>
-      <div class="emp-card reveal">
-        <p class="emp-more-img"><b>+</b>Más organizaciones</p>
-        <p class="emp-name">Y muchas más...<small class="emp-desc">Pymes, startups y multinacionales en LATAM</small></p>
+          <source srcset="images/recono-speaker.webp" type="image/webp">
+          <img loading="lazy" src="images/recono-speaker.jpg" alt="Speaker Internacional">
+        </picture>
       </div>
     </div>
+    <p class="reveal" style="margin-top:36px;font-size:13px;color:var(--muted)">+ pymes, startups y multinacionales en Colombia, México, Perú, Ecuador y España.</p>
   </div>
 </section>
 
