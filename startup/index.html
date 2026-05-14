@@ -50,6 +50,35 @@
 .trust-logo:hover img{filter:grayscale(0) brightness(1) opacity(1)}
 .trust-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:8px;letter-spacing:.5px}
 @media(max-width:768px){.trust-bar{padding:56px 20px}.trust-grid{grid-template-columns:repeat(3,1fr);gap:18px 12px}.trust-logo{height:72px;padding:10px}.trust-logo img{max-height:48px}}
+
+.pkg-report{position:relative;width:100%;aspect-ratio:16/10;border-radius:14px;background:linear-gradient(145deg,#0a1530 0%,#06112a 100%);border:1px solid rgba(0,212,255,.18);overflow:hidden;padding:20px 22px;display:flex;flex-direction:column;gap:14px;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.02);margin-bottom:24px}
+.pkg-report::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ax),transparent)}
+.pkg-report.r-esencial{--ax:#00d4ff}
+.pkg-report.r-acelerado{--ax:#7b2fff}
+.pkg-report.r-premium{--ax:#ff8c00}
+.r-head{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ax)}
+.r-head-num{font-family:var(--font2);font-weight:700;font-size:11px;color:var(--muted);letter-spacing:1.5px}
+.r-title{font-size:14px;font-weight:700;color:#fff;line-height:1.3;margin:0}
+.r-subtitle{font-size:11px;color:var(--muted);margin:-4px 0 0 0}
+.r-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto}
+.r-metric{padding:8px 10px;background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.08);border-radius:8px}
+.r-metric-val{font-size:18px;font-weight:800;color:var(--ax);line-height:1;font-family:var(--font)}
+.r-metric-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;display:block}
+.r-viz{flex:1;display:flex;align-items:flex-end;gap:4px;padding:8px 0;border-top:1px dashed rgba(0,212,255,.1);border-bottom:1px dashed rgba(0,212,255,.1)}
+.r-bar{flex:1;background:linear-gradient(180deg,var(--ax),transparent);border-radius:2px 2px 0 0;opacity:.85;transition:all .3s}
+.r-status{display:inline-flex;align-items:center;gap:6px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.r-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ax);box-shadow:0 0 8px var(--ax)}
+@media(max-width:768px){.pkg-report{padding:16px 14px;aspect-ratio:16/11}.r-title{font-size:13px}.r-metric-val{font-size:15px}}
+
+.sec-filter{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:36px}
+.sec-chip{padding:9px 18px;border-radius:50px;font-size:13px;font-weight:600;background:rgba(0,212,255,.04);border:1.5px solid rgba(0,212,255,.16);color:var(--muted);cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px;user-select:none;font-family:var(--font)}
+.sec-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:rgba(0,212,255,.4)}
+.sec-chip:hover{border-color:rgba(0,212,255,.5);color:#fff;background:rgba(0,212,255,.07)}
+.sec-chip.active{background:linear-gradient(135deg,rgba(0,212,255,.18),rgba(123,47,255,.18));border-color:var(--teal);color:#fff;box-shadow:0 0 16px rgba(0,212,255,.18)}
+.sec-chip.active::before{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.sector-card{transition:all .35s cubic-bezier(.2,.7,.2,1)}
+.sector-card.dim{opacity:.25;filter:saturate(.4)}
+.sector-card.spotlight{border-color:rgba(0,212,255,.45)!important;box-shadow:0 8px 30px rgba(0,212,255,.15);transform:translateY(-3px)}
 </style>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -471,10 +500,26 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
           <div class="acomp-toggle" id="tog-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-0">
-                      <picture>
-  <source srcset="/images/icone-method-esencial.webp" type="image/webp">
-  <img loading="lazy" src="/images/icone-method-esencial.jpg" alt="Infoproducto ICONE Method Esencial" class="acomp-img" width="600" height="337"/>
-</picture>
+                      <div class="pkg-report r-esencial">
+              <div class="r-head"><span>Reporte · Esencial</span><span class="r-head-num">REF · ICONE-01 / AUTODIRIGIDO</span></div>
+              <h4 class="r-title">ICONE Method · Plan de implementación autodirigido</h4>
+              <p class="r-subtitle">Acceso inmediato · sin horarios · plantillas aplicables</p>
+              <div class="r-viz">
+                <div class="r-bar" style="height:35%"></div>
+                <div class="r-bar" style="height:55%"></div>
+                <div class="r-bar" style="height:78%"></div>
+                <div class="r-bar" style="height:42%"></div>
+                <div class="r-bar" style="height:88%"></div>
+                <div class="r-bar" style="height:65%"></div>
+                <div class="r-bar" style="height:95%"></div>
+              </div>
+              <div class="r-metrics">
+                <div class="r-metric"><span class="r-metric-val">6</span><span class="r-metric-lbl">Módulos</span></div>
+                <div class="r-metric"><span class="r-metric-val">12+</span><span class="r-metric-lbl">Plantillas</span></div>
+                <div class="r-metric"><span class="r-metric-val">100%</span><span class="r-metric-lbl">A tu ritmo</span></div>
+              </div>
+              <div class="r-status">Disponible · acceso instantáneo</div>
+            </div>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Infoproducto digital — acceso inmediato, autodirigido</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Emprendedores que quieren implementar el método por su cuenta con estructura</p>
@@ -492,10 +537,26 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
           <div class="acomp-toggle" id="tog-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-1">
-                      <picture>
-  <source srcset="/images/mentoria-grupal-icone.webp" type="image/webp">
-  <img loading="eager" fetchpriority="high" src="/images/mentoria-grupal-icone.jpg" alt="Mentoría grupal ICONE" class="acomp-img" width="800" height="1000"/>
-</picture>
+                      <div class="pkg-report r-acelerado">
+              <div class="r-head"><span>Reporte · Acelerado</span><span class="r-head-num">REF · ICONE-02 / GRUPAL</span></div>
+              <h4 class="r-title">ICONE Method · Cohorte de mentoría con feedback en vivo</h4>
+              <p class="r-subtitle">Sesiones programadas · comunidad · revisiones semanales</p>
+              <div class="r-viz">
+                <div class="r-bar" style="height:50%"></div>
+                <div class="r-bar" style="height:65%"></div>
+                <div class="r-bar" style="height:80%"></div>
+                <div class="r-bar" style="height:90%"></div>
+                <div class="r-bar" style="height:75%"></div>
+                <div class="r-bar" style="height:95%"></div>
+                <div class="r-bar" style="height:88%"></div>
+              </div>
+              <div class="r-metrics">
+                <div class="r-metric"><span class="r-metric-val">8</span><span class="r-metric-lbl">Sesiones live</span></div>
+                <div class="r-metric"><span class="r-metric-val">15-20</span><span class="r-metric-lbl">Cohorte</span></div>
+                <div class="r-metric"><span class="r-metric-val">Q&amp;A</span><span class="r-metric-lbl">Semanal</span></div>
+              </div>
+              <div class="r-status">Próxima cohorte · cupos limitados</div>
+            </div>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Mentoría grupal — cohortes programadas</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Emprendedores que quieren estructura, comunidad y acompañamiento grupal</p>
@@ -517,10 +578,26 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
           <div class="acomp-toggle" id="tog-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
         <div class="acomp-body" id="body-2">
-                      <picture>
-  <source srcset="/images/consultoria-premium-icone.webp" type="image/webp">
-  <img loading="lazy" src="/images/consultoria-premium-icone.jpg" alt="Consultoría premium ICONE" class="acomp-img" width="800" height="1000"/>
-</picture>
+                      <div class="pkg-report r-premium">
+              <div class="r-head"><span>Reporte · Premium</span><span class="r-head-num">REF · ICONE-03 / CONSULTORÍA 1:1</span></div>
+              <h4 class="r-title">ICONE Method · Estrategia + ejecución acompañada 1:1</h4>
+              <p class="r-subtitle">Diagnóstico profundo · diseño + implementación · revisiones quincenales</p>
+              <div class="r-viz">
+                <div class="r-bar" style="height:60%"></div>
+                <div class="r-bar" style="height:75%"></div>
+                <div class="r-bar" style="height:88%"></div>
+                <div class="r-bar" style="height:95%"></div>
+                <div class="r-bar" style="height:90%"></div>
+                <div class="r-bar" style="height:98%"></div>
+                <div class="r-bar" style="height:92%"></div>
+              </div>
+              <div class="r-metrics">
+                <div class="r-metric"><span class="r-metric-val">1:1</span><span class="r-metric-lbl">Estratega</span></div>
+                <div class="r-metric"><span class="r-metric-val">15d</span><span class="r-metric-lbl">Revisión</span></div>
+                <div class="r-metric"><span class="r-metric-val">Custom</span><span class="r-metric-lbl">Programa</span></div>
+              </div>
+              <div class="r-status">Brief requerido · selección de casos</div>
+            </div>
             <div class="acomp-details">
               <p class="acomp-detail"><b class="acomp-detail-label">Formato</b>Consultoría 1:1 personalizada</p>
               <p class="acomp-detail"><b class="acomp-detail-label">Para quién</b>Empresas que quieren resultados con acompañamiento experto directo</p>
@@ -839,28 +916,37 @@ footer{padding:48px 40px 32px;border-top:1px solid rgba(0,212,255,.1)}
       <h2 class="section-title">El ICONE Method en sectores de alto impacto</h2>
       <p class="section-sub" style="margin:12px auto 0;text-align:center">El método es transversal. Estos son los sectores donde se está aplicando con mayor profundidad:</p>
     </div>
+    <div class="sec-filter reveal">
+      <span class="sec-chip active" data-filter="all">Todos los sectores</span>
+      <span class="sec-chip" data-filter="fintech">FinTech</span>
+      <span class="sec-chip" data-filter="climatech">ClimaTech</span>
+      <span class="sec-chip" data-filter="agrotech">AgroTech</span>
+      <span class="sec-chip" data-filter="deeptech">DeepTech</span>
+      <span class="sec-chip" data-filter="ia">IA y Tecnologías Emergentes</span>
+      <span class="sec-chip" data-filter="edtech">EdTech</span>
+    </div>
     <div class="sector-grid">
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="fintech">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
         <p class="sector-title">FinTech<small class="sector-desc">Estrategia y crecimiento para empresas de tecnología financiera. Modelos de monetización, canales digitales y adopción de IA en operaciones financieras.</small></p>
       </div>
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="climatech">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <p class="sector-title">ClimaTech<small class="sector-desc">Modelos de negocio sostenibles con enfoque de impacto. Estrategia para empresas que buscan escalar su propuesta de valor ambiental y social.</small></p>
       </div>
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="agrotech">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/><path d="M12 6v3M10.5 7.5h3"/></svg>
         <p class="sector-title">AgroTech<small class="sector-desc">Digitalización y escalabilidad del sector agro. Estrategia comercial, integración de datos y tecnología al servicio del campo.</small></p>
       </div>
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="deeptech">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
         <p class="sector-title">DeepTech<small class="sector-desc">Estrategia comercial para empresas de tecnología profunda. Cómo llevar innovación compleja al mercado con claridad y velocidad.</small></p>
       </div>
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="ia">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
         <p class="sector-title">IA y Tecnologías Emergentes<small class="sector-desc">Integración práctica de IA en negocios reales. Estrategia para adoptar y monetizar tecnologías emergentes sin perder el foco.</small></p>
       </div>
-      <div class="sector-card reveal">
+      <div class="sector-card reveal" data-sec="edtech">
         <svg class="sector-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
         <p class="sector-title">EdTech<small class="sector-desc">Diseño de modelos educativos escalables y rentables. Estrategia de producto, monetización y crecimiento para empresas de educación digital.</small></p>
       </div>
@@ -1235,6 +1321,26 @@ Responde siempre en español.`;
 // Fix page load \u2014 always start at top
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 window.scrollTo(0,0);
+
+// Sector filter chips
+(function(){
+  const chips = document.querySelectorAll('.sec-chip');
+  const cards = document.querySelectorAll('.sector-card[data-sec]');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const f = chip.dataset.filter;
+      cards.forEach(card => {
+        card.classList.remove('dim','spotlight');
+        if (f === 'all') return;
+        if (card.dataset.sec === f) card.classList.add('spotlight');
+        else card.classList.add('dim');
+      });
+    });
+  });
+})();
+
 </script>
 </body>
 </html>
