@@ -193,6 +193,17 @@ function togAviso(){
 }
 
 function startDx(){
+  /* Segunda barrera: si por cualquier vía se llegó hasta aquí sin
+     autorización registrada, se devuelve al paso 1. Sin esto el
+     usuario respondería las 30 preguntas y solo fallaría al guardar,
+     donde lo detiene la constraint de la base de datos. */
+  if(!S.datos || !S.autorizaTs){
+    show('s-welcome');
+    $('err-legal').classList.add('on');
+    $('f-legal').scrollIntoView({block:'center', behavior:'smooth'});
+    return;
+  }
+
   const v = k => $('i-' + k).value;
   let ok = true;
   [['sector','f-sector'], ['tamano','f-tamano'], ['aformar','f-aformar'], ['horizonte','f-horizonte']]
