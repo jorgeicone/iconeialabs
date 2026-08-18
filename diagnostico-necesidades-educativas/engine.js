@@ -540,7 +540,11 @@ async function saveResult(){
 }
 
 /* ───────────── Panel de administración ───────────── */
-function goAdmin(){ show('s-admin'); renderLogin(); }
+function goAdmin(){
+  if(location.hash !== '#admin') history.replaceState(null, '', '#admin');
+  show('s-admin');
+  renderLogin();
+}
 
 function renderLogin(msg){
   $('adm-root').innerHTML =
@@ -672,6 +676,7 @@ function verAviso(){
 async function admOut(){
   const c = getSB();
   if(c) await c.auth.signOut();
+  history.replaceState(null, '', location.pathname);
   show('s-welcome');
 }
 
@@ -683,6 +688,18 @@ function initLegal(){
   if(e) e.textContent = ENCARGADO.nombre;
 }
 
-function init(){ renderChips(); initLegal(); }
+function salirAdmin(){
+  history.replaceState(null, '', location.pathname);
+  show('s-welcome');
+}
+
+/* El panel tiene URL propia (#admin) para poder guardarlo en marcadores.
+   No es un control de acceso: el enlace solo abre el formulario de
+   ingreso, y los datos siguen protegidos por RLS del lado del servidor. */
+function init(){
+  renderChips();
+  initLegal();
+  if(location.hash === '#admin') goAdmin();
+}
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
