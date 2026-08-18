@@ -433,6 +433,63 @@ function progItem(p){
     '</div>';
 }
 
+
+/* ───────────── Radar de madurez ─────────────
+   Hexágono porque son seis dimensiones. Se dibuja en SVG plano, sin
+   librería: son 6 vértices y cuatro anillos, no justifica una
+   dependencia. El eje 0 apunta arriba y se avanza en sentido horario. */
+function radarSVG(dims){
+  const W = 460, H = 380, cx = W / 2, cy = 186, R = 118;
+  const paso = (Math.PI * 2) / dims.length;
+  const punto = (i, f) => {
+    const a = -Math.PI / 2 + i * paso;
+    return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f];
+  };
+
+  /* anillos de referencia al 25, 50, 75 y 100 por ciento */
+  const anillos = [0.25, 0.5, 0.75, 1].map(f => {
+    const pts = dims.map((_, i) => punto(i, f).map(n => n.toFixed(1)).join(',')).join(' ');
+    return '<polygon points="' + pts + '" fill="none" stroke="var(--line)" ' +
+           'stroke-width="' + (f === 1 ? 1.5 : 1) + '"/>';
+  }).join('');
+
+  const ejes = dims.map((_, i) => {
+    const [x, y] = punto(i, 1);
+    return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) +
+           '" stroke="var(--line)" stroke-width="1"/>';
+  }).join('');
+
+  const area = dims.map((d, i) => punto(i, Math.max(d.pct, 2) / 100).map(n => n.toFixed(1)).join(',')).join(' ');
+
+  const vertices = dims.map((d, i) => {
+    const [x, y] = punto(i, Math.max(d.pct, 2) / 100);
+    return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4.5" ' +
+           'fill="' + d.hex + '" stroke="#fff" stroke-width="2"/>';
+  }).join('');
+
+  const etiquetas = dims.map((d, i) => {
+    const [x, y] = punto(i, 1);
+    const dx = x - cx, dy = y - cy;
+    const lx = cx + dx * 1.24, ly = cy + dy * 1.24;
+    const anchor = Math.abs(dx) < 6 ? 'middle' : (dx > 0 ? 'start' : 'end');
+    const baseY = dy > 6 ? 12 : (dy < -6 ? -4 : 4);
+    return '<text x="' + lx.toFixed(1) + '" y="' + (ly + baseY).toFixed(1) + '" text-anchor="' + anchor + '" ' +
+             'font-size="11.5" font-weight="700" fill="var(--text-2)">' + esc(d.short) + '</text>' +
+           '<text x="' + lx.toFixed(1) + '" y="' + (ly + baseY + 14).toFixed(1) + '" text-anchor="' + anchor + '" ' +
+             'font-size="12" font-weight="800" fill="' + d.hex + '">' + d.pct + '%</text>';
+  }).join('');
+
+  return '<div class="radar">' +
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" ' +
+         'aria-label="Radar de madurez por dimensión: ' +
+         esc(dims.map(d => d.short + ' ' + d.pct + '%').join(', ')) + '">' +
+      anillos + ejes +
+      '<polygon points="' + area + '" fill="rgba(47,110,92,.16)" stroke="#2F6E5C" stroke-width="2.5" stroke-linejoin="round"/>' +
+      vertices + etiquetas +
+    '</svg>' +
+  '</div>';
+}
+
 function renderResults(){
   const res = S.result, lv = res.level, reco = S.reco;
   const CIRC = 2 * Math.PI * 76;
@@ -513,12 +570,15 @@ function renderResults(){
                   'stroke-linecap="round" stroke-dasharray="' + dash + ' ' + CIRC + '"/>' +
         '</svg>' +
         '<div class="score-val"><div class="score-num">' + res.total + '</div>' +
-        '<div class="score-of">de 100</div></div>' +
+        '<div class="score-of">Porcentaje de Madurez</div></div>' +
       '</div>' +
       '<div class="score-lv">' + lv.label + '</div>' +
       '<div class="score-rng">' + lv.range + '</div>' +
       '<div class="score-desc">' + lv.desc + '</div>' +
     '</div>' +
+
+    '<div class="sec-h">Perfil de madurez</div>' +
+    radarSVG(res.dims) +
 
     '<div class="sec-h">Resultado por dimensión</div>' +
     '<div class="dims">' + dimsHtml + '</div>' +
@@ -526,7 +586,7 @@ function renderResults(){
     '<div class="sec-h">Las tres brechas que más pesan</div>' +
     '<div class="dims">' + gapsHtml + '</div>' +
 
-    '<div class="sec-h">Ruta formativa recomendada</div>' +
+    '<div class="sec-h">Ruta de Fortalecimiento</div>' +
     '<div class="dims">' + fasesHtml + extrasHtml + '</div>' +
 
     '<div class="sec-h">Contexto declarado</div>' +
@@ -534,8 +594,8 @@ function renderResults(){
 
     '<div class="cta">' +
       '<h3>Convirtamos esto en un plan</h3>' +
-      '<p>Un asesor de EAN Educación Continua puede estructurar esta ruta como programa cerrado ' +
-         'para su organización, con fechas, modalidad y cotización.</p>' +
+      '<p>Un asesor de EAN puede estructurar esta Ruta de Fortalecimiento como programa ' +
+         'cerrado para su organización, con fechas, modalidad y cotización.</p>' +
       '<button class="btn btn-primary" onclick="window.print()">Descargar informe (PDF)</button>' +
     '</div>' +
 
