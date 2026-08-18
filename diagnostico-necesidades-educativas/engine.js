@@ -28,16 +28,20 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ESCMAP[c]);
 /* El lavado sigue a la sección: portada en bienvenida, contexto e
    informe; la imagen de la dimensión mientras se responde; nada en el
    panel, que es una tabla y no necesita atmósfera. */
-let washActual = null;
+let washActual = null, washTimer = null;
 function wash(src){
   const el = $('bg-img');
   if(!el || src === washActual) return;
   washActual = src;
+  /* Cancelar el fundido pendiente: si no, el temporizador del cambio
+     anterior se dispara después y repinta la imagen vieja encima de la
+     nueva. Pasaba al saltar de dimensión rápido y al entrar al informe. */
+  clearTimeout(washTimer);
   if(!src){ el.classList.remove('on'); return; }
   const pintar = () => { el.src = src; el.classList.add('on'); };
   if(el.classList.contains('on') && el.getAttribute('src')){
     el.classList.remove('on');
-    setTimeout(pintar, 260);
+    washTimer = setTimeout(pintar, 260);
   } else pintar();
 }
 
@@ -45,7 +49,9 @@ function show(id){
   document.querySelectorAll('.sect').forEach(s => s.classList.remove('on'));
   $(id).classList.add('on');
   if(id === 's-admin') wash(null);
-  else if(id !== 's-questions') wash('img/hero.jpg');
+  /* cuestionario e informe fijan su propio fondo desde quien los
+     renderiza: la dimensión activa y la de mayor brecha */
+  else if(id !== 's-questions' && id !== 's-results') wash('img/hero.jpg');
   window.scrollTo({top:0});
 }
 
@@ -399,6 +405,10 @@ function finish(){
   S.reco   = recommend(S.result);
   renderResults();
   show('s-results');
+  /* El fondo del informe es la dimensión con mayor brecha: así el
+     fondo dice algo en vez de repetir la portada. */
+  const mayorBrecha = S.result.dims.slice().sort((a, b) => a.pct - b.pct)[0];
+  wash(mayorBrecha.img);
   saveResult();
 }
 
