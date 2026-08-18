@@ -456,6 +456,12 @@ function renderResults(){
   ).join('');
 
   $('res-root').innerHTML =
+    '<div class="print-brand">' +
+      '<img src="img/ean-logo.png" alt="EAN Universidad · Educación Continua">' +
+      '<div class="print-brand-txt">Diagnóstico de Necesidades Educativas' +
+        '<small>' + esc(S.empresa) + ' · ' + new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}) + '</small>' +
+      '</div>' +
+    '</div>' +
     '<div id="save-note" class="save-note wait">⏳ Guardando el diagnóstico…</div>' +
 
     '<div class="score-card">' +
