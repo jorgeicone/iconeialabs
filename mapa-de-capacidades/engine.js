@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Motor de flujo, puntaje, recomendación y panel
+   Mapa de Capacidades · motor de flujo, puntaje y recomendación
    ICONE Dx. — © 2026 Ing. Jorge Hugo Pérez Gaona
    ═══════════════════════════════════════════════════════════════ */
 
@@ -555,7 +555,7 @@ function renderResults(){
   $('res-root').innerHTML =
     '<div class="print-brand">' +
       '<img src="img/ean-logo.png" alt="EAN Universidad · Educación Continua">' +
-      '<div class="print-brand-txt">Diagnóstico de Necesidades Educativas' +
+      '<div class="print-brand-txt">Mapa de Capacidades' +
         '<small>' + esc(S.empresa) + ' · ' + new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}) + '</small>' +
       '</div>' +
     '</div>' +

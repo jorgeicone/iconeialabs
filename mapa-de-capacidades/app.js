@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Diagnóstico de Necesidades Educativas · EAN Educación Continua
+   Mapa de Capacidades · Universidad EAN
    Motor ICONE Dx. — © 2026 Ing. Jorge Hugo Pérez Gaona
    ═══════════════════════════════════════════════════════════════ */
 

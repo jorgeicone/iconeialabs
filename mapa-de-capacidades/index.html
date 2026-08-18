@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mapa de Capacidades · Universidad EAN</title>
+<meta name="description" content="Mapa de Capacidades empresariales de la Universidad EAN. Identifique en qué capacidades está la brecha real de su organización y reciba una Ruta de Fortalecimiento con los programas de Extensión, Consultoría y Educación Continua 2026.">
+<meta name="author" content="Ing. Jorge Hugo Pérez Gaona · ICONE ialabs">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Mapa de Capacidades · Universidad EAN">
+<meta property="og:description" content="30 preguntas · 10 minutos · 6 dimensiones. Vea el mapa de capacidades de su empresa y su Ruta de Fortalecimiento para 2026.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230E2E3D'/><text y='68' x='50' text-anchor='middle' font-size='52' font-family='system-ui' font-weight='700' fill='%233FBF95'>Dx</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* ═══════════════════════════════════════════════════
+   Mapa de Capacidades · Universidad EAN
+   Motor ICONE Dx. · © Ing. Jorge Hugo Pérez Gaona
+   ═══════════════════════════════════════════════════ */
+:root{
+  /* Colores tomados del logo oficial de EAN, no aproximados:
+     el gradiente de la pastilla va de #66BD9A a #285359 y la
+     tinta del texto es #111E31. */
+  --ean-dark:#111E31;
+  --ean-dark-2:#1C2C42;
+  --ean-teal:#285359;
+  --ean-green:#66BD9A;
+  --ean-green-d:#2F6E5C;
+  --ean-green-l:#8FD4B7;
+  /* Gradiente vivo: solo para filetes y texto recortado, donde no
+     hay texto encima. Sobre el extremo claro, el blanco da 2.26 de
+     contraste. */
+  --ean-grad:linear-gradient(100deg,#66BD9A 0%,#498D7E 52%,#285359 100%);
+  /* Gradiente profundo: para superficies que sí llevan texto blanco. */
+  --ean-grad-deep:linear-gradient(100deg,#2F6E5C 0%,#26565A 55%,#1B3A40 100%);
+
+  --d1:#0EA5E9; --d2:#7B2FFF; --d3:#F59E0B;
+  --d4:#10B981; --d5:#EC4899; --d6:#FF8C00;
+
+  --bg:#F2F5F6;
+  --surface:#FFFFFF;
+  --surface-2:#E9EFF0;
+  --line:#DCE4E6;
+  --line-soft:#EAF0F1;
+  --text:#111E31;
+  --text-2:#3F5261;
+  --text-muted:#48596A;
+
+  --lv-1:#D6453B; --lv-2:#D98A22; --lv-3:#3E8A73;
+
+  --r:14px;
+  --shadow:0 1px 2px rgba(17,30,49,.04),0 6px 20px -12px rgba(17,30,49,.16);
+  --shadow-lg:0 2px 4px rgba(17,30,49,.05),0 28px 56px -24px rgba(17,30,49,.26);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text);
+  line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;
+  min-height:100dvh;display:flex;flex-direction:column;
+}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:1rem}
+
+/* ── header ── */
+.hdr{
+  background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(12px);
+  position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line);
+}
+.hdr::after{content:'';display:block;height:3px;background:var(--ean-grad)}
+.hdr-in{
+  max-width:1080px;margin:0 auto;padding:.7rem 1.25rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.hdr-logo{display:flex;align-items:center;gap:.85rem;min-width:0}
+.hdr-logo img{width:132px;height:39px;object-fit:contain;flex:0 0 auto}
+.hdr-rule{width:1px;height:26px;background:var(--line);flex:0 0 1px}
+.hdr-sub{
+  font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);font-weight:700;line-height:1.35;max-width:15ch;
+}
+.hdr-spacer{flex:1}
+.hdr-admin{
+  font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-muted);padding:.4rem .7rem;border-radius:8px;transition:.15s;
+}
+.hdr-admin:hover{color:var(--ean-green-d);background:var(--surface-2)}
+
+/* ── layout ── */
+main{flex:1;width:100%}
+.wrap{
+  max-width:812px;margin:2rem auto 3.5rem;padding:2.75rem 2.4rem 3rem;
+  background:var(--surface);border-radius:20px;box-shadow:var(--shadow-lg);
+}
+.wrap-wide{max-width:1120px}
+.sect{display:none;animation:fade .35s ease}
+.sect.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── hero ── */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.55rem;
+  color:var(--ean-green-d);padding:0 0 .55rem;
+  border-bottom:2px solid var(--ean-green);
+  font-size:.67rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+h1{
+  font-size:clamp(2rem,5.6vw,3.15rem);line-height:1.06;letter-spacing:-.035em;
+  font-weight:800;margin-bottom:1.1rem;text-wrap:balance;
+}
+h1 em{
+  font-style:normal;background:var(--ean-grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.lead{
+  font-size:1.08rem;color:var(--text-2);max-width:54ch;margin-bottom:2.25rem;
+  line-height:1.62;
+}
+
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:2.5rem;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.stat{padding:1.15rem .7rem;text-align:center;border-left:1px solid var(--line-soft);background:var(--surface)}
+.stat:first-child{border-left:none}
+.stat-n{
+  font-size:1.65rem;font-weight:800;color:var(--ean-dark);line-height:1;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+}
+.stat-l{
+  font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-muted);font-weight:700;margin-top:.45rem;
+}
+
+/* ── cards / forms ── */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:1.6rem;margin-bottom:1.25rem;
+}
+.card-t{
+  font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+  color:var(--ean-green-d);margin-bottom:.35rem;
+}
+.card-h{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.3rem}
+.card-d{font-size:.88rem;color:var(--text-muted);margin-bottom:1.4rem}
+
+.fgrid{display:grid;gap:1rem}
+.fgrid.two{grid-template-columns:1fr 1fr}
+.field label{
+  display:block;font-size:.74rem;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--text-2);margin-bottom:.4rem;
+}
+.field label .opt{text-transform:none;letter-spacing:0;font-weight:500;color:var(--text-muted)}
+.field input,.field select{
+  width:100%;padding:.8rem .9rem;border:1.5px solid var(--line);border-radius:10px;
+  background:#fff;color:var(--text);transition:.15s;
+}
+.field input:focus,.field select:focus{
+  outline:none;border-color:var(--ean-green);box-shadow:0 0 0 3px rgba(63,191,149,.14);
+}
+.field input::placeholder{color:#A9BBC4}
+.field.err input,.field.err select{border-color:#EF4444}
+.err-msg{display:none;font-size:.76rem;color:#EF4444;margin-top:.35rem;font-weight:600}
+.field.err .err-msg{display:block}
+
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{
+  padding:.55rem .9rem;border:1.5px solid var(--line);border-radius:999px;
+  background:#fff;font-size:.85rem;font-weight:600;color:var(--text-2);transition:.15s;
+}
+.chip:hover{border-color:var(--ean-green-l)}
+.chip.on{background:var(--ean-dark);border-color:var(--ean-dark);color:#fff}
+
+.toggle-row{
+  display:flex;align-items:flex-start;gap:.9rem;padding:.95rem 1rem;
+  border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  transition:.15s;text-align:left;width:100%;
+}
+.toggle-row:hover{border-color:var(--ean-green-l)}
+.toggle-row.on{border-color:var(--ean-green);background:rgba(63,191,149,.06)}
+.toggle-box{
+  width:22px;height:22px;flex:0 0 22px;border:2px solid var(--line);border-radius:6px;
+  display:grid;place-items:center;margin-top:1px;transition:.15s;
+  font-size:.8rem;color:transparent;font-weight:800;
+}
+.toggle-row.on .toggle-box{background:var(--ean-green);border-color:var(--ean-green);color:#fff}
+.toggle-txt{font-size:.9rem;font-weight:600;line-height:1.4}
+.toggle-txt small{display:block;font-weight:400;color:var(--text-muted);font-size:.8rem;margin-top:.15rem}
+
+/* ── radar ── */
+.radar{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:.75rem .5rem .4rem;margin-bottom:1.25rem;
+}
+.radar svg{width:100%;height:auto;display:block;overflow:visible}
+.radar text{font-family:var(--font)}
+
+/* ── lavado de fondo ── */
+.bg-wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  overflow:hidden;background:var(--bg);
+}
+.bg-wash img{
+  width:100%;height:100%;object-fit:cover;
+  filter:blur(30px) saturate(1.18);
+  transform:scale(1.12);
+  opacity:0;transition:opacity .65s ease;
+}
+.bg-wash img.on{opacity:.28}
+main,.ftr{position:relative;z-index:1}
+
+/* ── marca en el PDF ── */
+.print-brand{display:none}
+
+/* ── imágenes ── */
+.hero-img{
+  margin:0 0 2rem;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--line);box-shadow:var(--shadow-lg);
+  background:var(--line);aspect-ratio:1400/764;
+}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+
+.q-band{
+  position:relative;border-radius:12px;overflow:hidden;margin-bottom:1.4rem;
+  aspect-ratio:1408/300;background:var(--line);border:1px solid var(--line);
+}
+.q-band img{width:100%;height:100%;object-fit:cover;object-position:center 42%}
+.q-band::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(95deg,rgba(17,30,49,.96) 2%,rgba(17,30,49,.74) 44%,rgba(17,30,49,.06) 82%);
+}
+.q-band-txt{
+  position:absolute;inset:0;display:flex;align-items:center;
+  padding:0 1.25rem;z-index:2;
+}
+.q-band-txt span{
+  color:#fff;font-weight:800;letter-spacing:-.01em;line-height:1.2;
+  font-size:clamp(.9rem,2.6vw,1.1rem);text-shadow:0 1px 12px rgba(0,0,0,.35);
+}
+.q-band-txt small{
+  display:block;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ean-green-l);font-weight:700;margin-bottom:.15rem;
+}
+
+.dim-img{
+  aspect-ratio:1408/300;background:var(--line);overflow:hidden;
+  border-radius:9px;margin:-.15rem 0 .8rem;
+}
+.dim-img img{width:100%;height:100%;object-fit:cover;object-position:center 42%}
+
+/* ── bloque legal · habeas data ── */
+.legal{
+  margin-top:1.6rem;padding:1.15rem 1.25rem;
+  background:var(--surface-2,#F0F4F5);border:1px solid var(--line);
+  border-left:3px solid var(--ean-green);border-radius:10px;
+}
+.legal-h{
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;font-weight:800;
+  color:var(--ean-green-d);margin-bottom:.6rem;
+}
+.legal-p{font-size:.84rem;color:var(--text-2);line-height:1.6;margin-bottom:.7rem}
+.legal-p b{color:var(--text)}
+.legal-more{
+  font-size:.79rem;font-weight:700;color:var(--ean-green-d);
+  padding:.3rem 0;margin-bottom:.9rem;text-decoration:underline;
+  text-underline-offset:3px;
+}
+.legal-more:hover{color:var(--ean-dark)}
+.legal-full{
+  font-size:.8rem;color:var(--text-2);line-height:1.65;
+  background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:1rem 1.1rem;margin-bottom:1rem;max-height:19rem;overflow-y:auto;
+}
+.legal-full h4{
+  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ean-dark);margin:1rem 0 .35rem;font-weight:800;
+}
+.legal-full h4:first-child{margin-top:0}
+.legal-full p{margin-bottom:.6rem}
+.legal-full ul{margin:0 0 .6rem 1.1rem}
+.legal-full li{margin-bottom:.3rem}
+.legal-full a{color:var(--ean-green-d)}
+#err-legal{margin-top:.5rem}
+#err-legal.on{display:block}
+
+/* ── buttons ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.9rem 1.6rem;border-radius:11px;font-weight:700;font-size:.95rem;
+  transition:.18s;letter-spacing:-.005em;
+}
+.btn-primary{background:var(--ean-dark);color:#fff;box-shadow:var(--shadow)}
+.btn-primary:hover{background:var(--ean-dark-2);transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn:focus-visible{outline:2px solid var(--ean-green-d);outline-offset:3px}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-green{background:var(--ean-grad-deep);color:#fff}
+.btn-green:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{border:1.5px solid var(--line);background:#fff;color:var(--text-2)}
+.btn-ghost:hover{border-color:var(--ean-dark);color:var(--ean-dark)}
+.btn-full{width:100%}
+.btn-row{display:flex;gap:.75rem;flex-wrap:wrap}
+
+/* ── progress ── */
+.prog-bar{
+  position:sticky;top:60px;z-index:40;background:var(--surface);
+  padding:1rem 0 .9rem;margin-bottom:1.5rem;
+}
+.prog-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:.55rem;
+}
+.prog-dim{color:var(--dim,var(--ean-green-d))}
+.prog-track{
+  height:4px;background:var(--line);border-radius:2px;overflow:hidden;position:relative;
+}
+.prog-track::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,
+    transparent 0,transparent calc(16.6667% - 1px),
+    var(--surface) calc(16.6667% - 1px),var(--surface) 16.6667%);
+}
+.prog-fill{
+  height:100%;border-radius:2px;background:var(--dim,var(--ean-green));
+  transition:width .45s cubic-bezier(.4,0,.2,1),background .3s;
+}
+
+/* ── question ── */
+.q-dim{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-size:.65rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  padding:.38rem .8rem;border-radius:999px;margin-bottom:1rem;
+}
+.q-text{
+  font-size:clamp(1.22rem,3.4vw,1.6rem);font-weight:700;line-height:1.3;
+  letter-spacing:-.025em;margin-bottom:1.7rem;text-wrap:balance;
+}
+.opts{display:grid;gap:.7rem}
+.opt-btn{
+  display:flex;align-items:flex-start;gap:.95rem;text-align:left;width:100%;
+  padding:1.05rem 1.2rem;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--surface);line-height:1.45;position:relative;overflow:hidden;
+  transition:border-color .16s,background .16s,transform .16s,box-shadow .16s;
+}
+.opt-btn::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--dim,var(--ean-green));transform:scaleY(0);transform-origin:center;
+  transition:transform .18s cubic-bezier(.4,0,.2,1);
+}
+.opt-btn:hover{border-color:var(--dim,var(--ean-green));box-shadow:var(--shadow)}
+.opt-btn:focus-visible{outline:2px solid var(--dim,var(--ean-green));outline-offset:2px}
+.opt-btn.on{
+  border-color:var(--dim,var(--ean-green));
+  background:color-mix(in srgb,var(--dim,var(--ean-green)) 6%,#fff);
+  box-shadow:var(--shadow);
+}
+.opt-btn.on::before{transform:scaleY(1)}
+.opt-k{
+  width:27px;height:27px;flex:0 0 27px;border-radius:8px;
+  border:1.5px solid var(--line);display:grid;place-items:center;
+  font-size:.74rem;font-weight:800;color:var(--text-muted);transition:.16s;margin-top:1px;
+}
+.opt-btn.on .opt-k{background:var(--dim,var(--ean-green));border-color:var(--dim,var(--ean-green));color:#fff}
+.opt-t{font-size:.94rem;font-weight:500;color:var(--text-2)}
+.opt-btn.on .opt-t{color:var(--text);font-weight:600}
+
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.6rem;gap:1rem}
+.q-hint{font-size:.78rem;color:var(--text-muted)}
+
+/* ── results ── */
+.score-card{
+  background:var(--ean-dark);color:#fff;border-radius:20px;padding:2.6rem 1.75rem;
+  text-align:center;margin-bottom:1.25rem;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+.score-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 55% at 50% -8%,rgba(102,189,154,.30),transparent 68%);
+  pointer-events:none;
+}
+.score-card::after{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--ean-grad);
+}
+.score-card>*{position:relative}
+.score-emp{
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ean-green-l);font-weight:700;margin-bottom:1.4rem;
+}
+.score-ring{width:170px;height:170px;margin:0 auto 1.25rem;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-val{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.score-num{font-size:3.1rem;font-weight:800;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.score-of{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:.3rem;font-weight:600}
+.score-lv{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.35rem}
+.score-rng{font-size:.75rem;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.05em}
+.score-desc{
+  font-size:.93rem;color:rgba(255,255,255,.82);max-width:50ch;
+  margin:1.15rem auto 0;line-height:1.6;
+}
+
+.dims{display:grid;gap:.85rem}
+.dim{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.05rem 1.15rem;box-shadow:var(--shadow);
+}
+.dim-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem}
+.dim-ico{
+  width:32px;height:32px;flex:0 0 32px;border-radius:9px;
+  display:grid;place-items:center;font-size:1rem;
+}
+.dim-name{font-size:.94rem;font-weight:700;flex:1;letter-spacing:-.015em}
+.dim-pct{font-size:1.08rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.dim-track{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.dim-fill{height:100%;border-radius:4px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.dim-read{font-size:.82rem;color:var(--text-muted);margin-top:.55rem;line-height:1.5}
+
+.gap-card{
+  border:1px solid var(--line);border-left:4px solid var(--gc,var(--lv-1));
+  background:var(--surface);border-radius:12px;padding:1.1rem 1.2rem;
+  box-shadow:var(--shadow);
+}
+.gap-rank{
+  font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;
+  font-weight:800;color:var(--gc);margin-bottom:.3rem;
+}
+.gap-name{font-size:1rem;font-weight:700;margin-bottom:.35rem;letter-spacing:-.01em}
+.gap-why{font-size:.87rem;color:var(--text-2);line-height:1.55}
+
+.phase{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.phase-h{
+  padding:1.05rem 1.25rem;background:var(--ean-dark);color:#fff;
+  display:flex;align-items:center;gap:.85rem;position:relative;
+}
+.phase-h::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--ph,var(--ean-green));
+}
+.phase-n{
+  width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+  background:var(--ph,var(--ean-green));color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:.85rem;
+}
+.phase-t{font-weight:700;font-size:.98rem;letter-spacing:-.01em;line-height:1.25}
+.phase-t small{display:block;font-weight:500;font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:.04em}
+.prog-list{padding:.5rem 0}
+.prog-item{
+  display:flex;gap:.85rem;padding:.9rem 1.25rem;align-items:flex-start;
+  border-bottom:1px solid var(--line-soft);transition:background .14s;
+}
+.prog-item:hover{background:var(--surface-2)}
+.prog-item:last-child{border-bottom:none}
+.prog-dot{
+  width:8px;height:8px;flex:0 0 8px;border-radius:50%;margin-top:.5rem;
+  background:var(--pc,var(--ean-green));
+}
+.prog-body{flex:1;min-width:0}
+.prog-name{font-size:.92rem;font-weight:600;line-height:1.4;letter-spacing:-.008em}
+.prog-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.tag{
+  font-size:.64rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:.22rem .55rem;border-radius:999px;
+  background:rgba(14,46,61,.06);color:var(--text-muted);
+}
+.tag.cl{background:color-mix(in srgb,var(--pc,var(--ean-green)) 14%,#fff);color:var(--pc,var(--ean-green-d))}
+
+.cta{
+  background:var(--ean-grad-deep);
+  border-radius:18px;padding:2.2rem 1.7rem;text-align:center;color:#fff;
+  box-shadow:var(--shadow-lg);
+}
+.cta p{color:rgba(255,255,255,.92)}
+.cta h3{font-size:1.35rem;font-weight:800;letter-spacing:-.025em;margin-bottom:.55rem}
+.cta p{font-size:.92rem;margin-bottom:1.4rem;opacity:.86;max-width:46ch;margin-inline:auto}
+
+.sec-h{
+  font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800;
+  color:var(--text-muted);margin:2.4rem 0 .95rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.sec-h::after{content:'';flex:1;height:1px;background:var(--line)}
+.sec-h:first-child{margin-top:0}
+
+/* ── save state ── */
+.save-note{
+  display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:600;
+  padding:.7rem 1rem;border-radius:10px;margin-bottom:1.25rem;
+}
+.save-note.ok{background:rgba(63,191,149,.12);color:var(--ean-green-d)}
+.save-note.warn{background:rgba(245,158,11,.12);color:#B45309}
+.save-note.wait{background:rgba(14,46,61,.06);color:var(--text-muted)}
+
+/* ── admin ── */
+.adm-login{max-width:380px;margin:3rem auto}
+.adm-tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.adm-tbl th{
+  text-align:left;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);padding:.6rem .7rem;border-bottom:1.5px solid var(--line);font-weight:700;
+}
+.adm-tbl td{padding:.7rem;border-bottom:1px solid var(--line);vertical-align:top}
+.adm-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pill{
+  display:inline-block;padding:.2rem .55rem;border-radius:999px;
+  font-size:.68rem;font-weight:700;white-space:nowrap;
+}
+
+/* ── footer ── */
+.ftr{
+  background:var(--ean-dark);color:rgba(255,255,255,.6);
+  padding:2.25rem 1.25rem;font-size:.78rem;text-align:center;margin-top:auto;
+  border-top:3px solid transparent;
+  border-image:var(--ean-grad) 1;
+}
+.ftr-in{max-width:760px;margin:0 auto;display:grid;gap:.6rem}
+.ftr b{color:#fff;font-weight:700}
+.ftr a{color:var(--ean-green-l);text-decoration:none}
+.ftr a:hover{text-decoration:underline}
+.ftr-link{color:var(--ean-green-l);text-decoration:underline;text-underline-offset:3px;font-size:.78rem;font-family:inherit}
+.ftr-link:hover{color:#fff}
+.ftr-legal{font-size:.7rem;color:rgba(255,255,255,.38);line-height:1.6}
+
+@media(max-width:640px){
+  .wrap{
+    margin:0 auto;padding:1.5rem 1.1rem 2.5rem;
+    border-radius:0;box-shadow:none;
+  }
+  .stats{grid-template-columns:repeat(2,1fr)}
+  /* en dos columnas el filete vertical sobra en la primera de cada
+     fila, y hace falta uno horizontal entre filas */
+  .stat:nth-child(odd){border-left:none}
+  .stat:nth-child(n+3){border-top:1px solid var(--line-soft)}
+  .fgrid.two{grid-template-columns:1fr}
+  .card{padding:1.25rem}
+  .prog-bar{top:59px}
+  .btn{width:100%}
+  .btn-row .btn{width:auto;flex:1}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ── impresión / PDF del informe ── */
+@media print{
+  @page{margin:14mm}
+  /* el encabezado de pantalla se oculta, así que el informe lleva
+     su propia cabecera de marca: el PDF es lo que se queda la empresa */
+  .print-brand{
+    display:flex!important;align-items:center;gap:1rem;
+    padding-bottom:.9rem;margin-bottom:1.4rem;
+    border-bottom:2px solid var(--ean-dark);
+  }
+  .print-brand img{width:118px;height:35px;object-fit:contain}
+  .print-brand-txt{
+    font-size:.82rem;font-weight:700;color:var(--ean-dark);line-height:1.3;
+    border-left:1px solid #CBD5DB;padding-left:1rem;
+  }
+  .print-brand-txt small{
+    display:block;font-weight:500;color:#5E7280;font-size:.72rem;margin-top:.1rem;
+  }
+  .hdr,.cta,.save-note,.btn,.sect:not(.on),.q-band,.bg-wash{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .wrap{max-width:none;padding:0;margin:0;background:#fff;border-radius:0;box-shadow:none}
+  .sect{animation:none}
+  .score-card{
+    background:var(--ean-dark)!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    padding:1.5rem;border-radius:12px;
+  }
+  .card,.dim,.phase,.gap-card,.stat{
+    box-shadow:none;border:1px solid #CBD5DB;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .dim-fill,.tag,.tag.cl,.dim-ico,.phase-h,.pill{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .dim,.gap-card,.phase,.prog-item,.radar{break-inside:avoid;page-break-inside:avoid}
+  .radar{border:1px solid #CBD5DB}
+  .sec-h{break-after:avoid;page-break-after:avoid;margin-top:1.2rem}
+  .ftr{
+    background:#fff!important;color:#5A7280!important;
+    border-top:1px solid #CBD5DB;margin-top:1.5rem;padding:1rem 0;
+  }
+  .ftr b{color:#0E2E3D!important}
+  .ftr a{color:#2E9E7A!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Lavado de fondo: la imagen de la sección, muy desenfocada y casi
+     transparente. El desenfoque elimina las zonas oscuras puntuales,
+     así que el contraste del texto que va encima sigue siendo estable. -->
+<div class="bg-wash" aria-hidden="true"><img id="bg-img" alt=""></div>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-logo">
+      <img src="img/ean-logo.png" alt="EAN Universidad · Educación Continua" width="289" height="85">
+      <span class="hdr-rule"></span>
+      <span class="hdr-sub">Extensión, Consultoría<br>y Educación Continua</span>
+    </div>
+    <div class="hdr-spacer"></div>
+    <button class="hdr-admin" onclick="goAdmin()">Admin</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════ BIENVENIDA ══════════ -->
+<section id="s-welcome" class="sect on">
+  <div class="wrap">
+    <figure class="hero-img">
+      <img src="img/hero.jpg" alt="Equipo directivo de una empresa revisando conjuntamente su plan de formación sobre una mesa de juntas" width="1400" height="764" fetchpriority="high">
+    </figure>
+    <div class="eyebrow">◆ Necesidades de Formación · 2026</div>
+    <h1>Mapa de <em>Capacidades</em></h1>
+    <p class="lead">
+      Vea en qué capacidades está la brecha real de su organización y reciba una
+      Ruta de Fortalecimiento concreta, construida con el portafolio 2026 de
+      Extensión, Consultoría y Educación Continua.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-n">30</div><div class="stat-l">Preguntas</div></div>
+      <div class="stat"><div class="stat-n">~10</div><div class="stat-l">Minutos</div></div>
+      <div class="stat"><div class="stat-n">6</div><div class="stat-l">Dimensiones</div></div>
+      <div class="stat"><div class="stat-n">79</div><div class="stat-l">Programas</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-t">Paso 1 de 2</div>
+      <div class="card-h">Datos de la organización</div>
+      <div class="card-d">Con esto identificamos el informe y lo hacemos llegar a la persona correcta.</div>
+      <div class="fgrid">
+        <div class="fgrid two">
+          <div class="field" id="f-empresa">
+            <label for="i-empresa">Empresa</label>
+            <input id="i-empresa" type="text" placeholder="Razón social o nombre comercial" autocomplete="organization">
+            <div class="err-msg">Indique el nombre de la empresa</div>
+          </div>
+          <div class="field" id="f-contacto">
+            <label for="i-contacto">Nombre de quien responde</label>
+            <input id="i-contacto" type="text" placeholder="Nombre y apellido" autocomplete="name">
+            <div class="err-msg">Indique su nombre</div>
+          </div>
+        </div>
+        <div class="fgrid two">
+          <div class="field" id="f-cargo">
+            <label for="i-cargo">Cargo</label>
+            <input id="i-cargo" type="text" placeholder="Ej. Jefe de Talento Humano" autocomplete="organization-title">
+            <div class="err-msg">Indique su cargo</div>
+          </div>
+          <div class="field" id="f-email">
+            <label for="i-email">Correo corporativo</label>
+            <input id="i-email" type="email" placeholder="nombre@empresa.com" autocomplete="email" inputmode="email">
+            <div class="err-msg">Escriba un correo válido</div>
+          </div>
+        </div>
+        <div class="field" id="f-tel">
+          <label for="i-tel">Teléfono <span class="opt">(opcional)</span></label>
+          <input id="i-tel" type="tel" placeholder="+57 300 000 0000" autocomplete="tel" inputmode="tel">
+        </div>
+      </div>
+
+      <!-- ══ Habeas data · Ley 1581 de 2012 ══
+           Las casillas van SIN marcar: una autorización premarcada no es
+           consentimiento expreso. Y van separadas: si el contacto comercial
+           se empaqueta con la autorización obligatoria, esa parte es nula. -->
+      <div class="legal" id="f-legal">
+        <div class="legal-h">Autorización de tratamiento de datos personales</div>
+        <p class="legal-p">
+          <b id="resp-nombre"></b>, con domicilio en <span id="resp-dom"></span>, es la responsable
+          del tratamiento de los datos que usted registre. La plataforma es operada por
+          <span id="enc-nombre"></span> en calidad de encargado. Los datos se usan únicamente
+          para generar su informe de diagnóstico y entregarle la ruta formativa
+          correspondiente; no se venden ni se ceden a terceros.
+        </p>
+        <button type="button" class="legal-more" onclick="togAviso()" aria-expanded="false" id="btn-aviso">
+          Leer el aviso de privacidad completo ▾
+        </button>
+        <div class="legal-full" id="aviso-full" hidden></div>
+
+        <button class="toggle-row" id="t-datos" onclick="tog('datos')" aria-pressed="false">
+          <span class="toggle-box">✓</span>
+          <span class="toggle-txt">
+            Autorizo el tratamiento de mis datos personales conforme al aviso de privacidad
+            <small>Obligatorio. Sin esta autorización no podemos generar ni entregarle el diagnóstico.</small>
+          </span>
+        </button>
+        <div class="err-msg" id="err-legal">Debe autorizar el tratamiento de datos para continuar</div>
+
+        <button class="toggle-row" id="t-contacto" onclick="tog('autorizaContacto')" aria-pressed="false" style="margin-top:.6rem">
+          <span class="toggle-box">✓</span>
+          <span class="toggle-txt">
+            Acepto que un asesor de EAN Educación Continua me contacte
+            <small>Opcional. Puede completar el diagnóstico sin marcar esta casilla.</small>
+          </span>
+        </button>
+      </div>
+
+      <div style="margin-top:1.5rem">
+        <button class="btn btn-primary btn-full" onclick="toStep2()">Continuar →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CONTEXTO ══════════ -->
+<section id="s-context" class="sect">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-t">Paso 2 de 2</div>
+      <div class="card-h">Contexto de la operación</div>
+      <div class="card-d">
+        Esta sección no puntúa. Sirve para filtrar qué programas del portafolio
+        tienen sentido para su organización.
+      </div>
+
+      <div class="fgrid">
+        <div class="fgrid two">
+          <div class="field" id="f-sector">
+            <label for="i-sector">Sector</label>
+            <select id="i-sector">
+              <option value="">Seleccione…</option>
+              <option>Servicios profesionales</option>
+              <option>Manufactura e industria</option>
+              <option>Comercio y retail</option>
+              <option>Tecnología y software</option>
+              <option>Salud</option>
+              <option>Financiero y asegurador</option>
+              <option>Construcción e infraestructura</option>
+              <option>Logística y comercio exterior</option>
+              <option>Educación</option>
+              <option>Sector público</option>
+              <option>Turismo y hotelería</option>
+              <option>Agroindustria</option>
+              <option>Otro</option>
+            </select>
+            <div class="err-msg">Seleccione el sector</div>
+          </div>
+          <div class="field" id="f-tamano">
+            <label for="i-tamano">Tamaño de la empresa</label>
+            <select id="i-tamano">
+              <option value="">Seleccione…</option>
+              <option>Micro · menos de 10 colaboradores</option>
+              <option>Pequeña · 10 a 50</option>
+              <option>Mediana · 51 a 200</option>
+              <option>Grande · más de 200</option>
+            </select>
+            <div class="err-msg">Seleccione el tamaño</div>
+          </div>
+        </div>
+
+        <div class="fgrid two">
+          <div class="field" id="f-aformar">
+            <label for="i-aformar">Colaboradores a formar</label>
+            <select id="i-aformar">
+              <option value="">Seleccione…</option>
+              <option>1 a 10</option>
+              <option>11 a 30</option>
+              <option>31 a 100</option>
+              <option>Más de 100</option>
+              <option>Aún por definir</option>
+            </select>
+            <div class="err-msg">Seleccione un rango</div>
+          </div>
+          <div class="field" id="f-horizonte">
+            <label for="i-horizonte">Horizonte de ejecución</label>
+            <select id="i-horizonte">
+              <option value="">Seleccione…</option>
+              <option>Inmediato · menos de 3 meses</option>
+              <option>Este semestre</option>
+              <option>Este año</option>
+              <option>Exploratorio · sin fecha</option>
+            </select>
+            <div class="err-msg">Seleccione el horizonte</div>
+          </div>
+        </div>
+
+        <div class="field" id="f-perfiles">
+          <label>Perfiles que necesitan formación <span class="opt">(puede marcar varios)</span></label>
+          <div class="chips" id="chips-perfiles"></div>
+          <div class="err-msg">Marque al menos un perfil</div>
+        </div>
+
+        <div class="field">
+          <label>Condiciones particulares</label>
+          <div class="fgrid" style="gap:.6rem">
+            <button class="toggle-row" id="t-silver" onclick="tog('silver')">
+              <span class="toggle-box">✓</span>
+              <span class="toggle-txt">
+                Tenemos colaboradores de 50+ años en procesos de transición, retención o relevo
+                <small>Activa la ruta de Economía Silver del portafolio</small>
+              </span>
+            </button>
+            <button class="toggle-row" id="t-inter" onclick="tog('inter')">
+              <span class="toggle-box">✓</span>
+              <span class="toggle-txt">
+                Nuestra operación involucra comercio exterior, exportación o clientes internacionales
+                <small>Activa Escuela de Idiomas y programas de logística y comercio internacional</small>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:1.5rem">
+        <button class="btn btn-ghost" onclick="show('s-welcome')">← Atrás</button>
+        <button class="btn btn-primary" style="flex:1" onclick="startDx()">Comenzar diagnóstico →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PREGUNTAS ══════════ -->
+<section id="s-questions" class="sect">
+  <div class="wrap">
+    <div class="prog-bar" id="prog-bar">
+      <div class="prog-meta">
+        <span id="prog-dim" class="prog-dim">Dimensión</span>
+        <span id="prog-count">1 / 30</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="q-root"></div>
+  </div>
+</section>
+
+<!-- ══════════ RESULTADOS ══════════ -->
+<section id="s-results" class="sect">
+  <div class="wrap" id="res-root"></div>
+</section>
+
+<!-- ══════════ ADMIN ══════════ -->
+<section id="s-admin" class="sect">
+  <div class="wrap wrap-wide" id="adm-root"></div>
+</section>
+
+</main>
+
+<footer class="ftr">
+  <div class="ftr-in">
+    <div><b>Universidad EAN</b> · Extensión, Consultoría y Educación Continua · 2026</div>
+    <div>Motor de diagnóstico <b>ICONE Dx.</b> · <a href="https://iconeialabs.com" target="_blank" rel="noopener">iconeialabs.com</a></div>
+    <div><button class="ftr-link" onclick="verAviso()">Política de tratamiento de datos personales</button> · Ley 1581 de 2012</div>
+    <div class="ftr-legal">
+      © 2026 <b>Ing. Jorge Hugo Pérez Gaona</b>. Todos los derechos reservados.<br>
+      El motor de diagnóstico, el instrumento de medición y el algoritmo de recomendación
+      son obra protegida por derechos de autor. Su reproducción, distribución o
+      modificación sin autorización escrita está prohibida.
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="app.js" defer></script>
+<script src="engine.js" defer></script>
+</body>
+</html>
