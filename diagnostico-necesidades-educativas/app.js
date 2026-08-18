@@ -16,7 +16,7 @@
    texto cambia, las autorizaciones anteriores siguen probando qué
    fue exactamente lo que el titular aceptó. Al modificar el aviso,
    suba POLITICA_VERSION. */
-const POLITICA_VERSION = '2.0-2026-08';
+const POLITICA_VERSION = '2.1-2026-08';
 
 /* RESPONSABLE: decide la finalidad del tratamiento. Es EAN, porque los
    leads son suyos y es la marca que ve el titular al entregar sus datos.
@@ -30,13 +30,13 @@ const POLITICA_VERSION = '2.0-2026-08';
 const RESPONSABLE = {
   nombre:    'Universidad EAN · EAN Educación Continua',
   domicilio: 'Bogotá D.C., Colombia',
-  correo:    'jorgeicone.com@gmail.com',
+  correo:    'jorgehugoperez@iconeialabs.com',
   sitio:     'https://universidadean.edu.co'
 };
 
 const ENCARGADO = {
   nombre: 'ICONE ialabs — Ing. Jorge Hugo Pérez Gaona',
-  correo: 'jorgeicone.com@gmail.com',
+  correo: 'jorgehugoperez@iconeialabs.com',
   sitio:  'https://iconeialabs.com'
 };
 
