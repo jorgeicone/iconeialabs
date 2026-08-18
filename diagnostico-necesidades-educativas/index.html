@@ -46,7 +46,7 @@
   --line-soft:#EAF0F1;
   --text:#111E31;
   --text-2:#3F5261;
-  --text-muted:#5E7280;
+  --text-muted:#526470;
 
   --lv-1:#D6453B; --lv-2:#D98A22; --lv-3:#3E8A73;
 
@@ -189,6 +189,20 @@ h1 em{
 .toggle-row.on .toggle-box{background:var(--ean-green);border-color:var(--ean-green);color:#fff}
 .toggle-txt{font-size:.9rem;font-weight:600;line-height:1.4}
 .toggle-txt small{display:block;font-weight:400;color:var(--text-muted);font-size:.8rem;margin-top:.15rem}
+
+/* ── lavado de fondo ── */
+.bg-wash{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  overflow:hidden;background:var(--bg);
+}
+.bg-wash img{
+  width:100%;height:100%;object-fit:cover;
+  filter:blur(48px) saturate(1.3);
+  transform:scale(1.2);
+  opacity:0;transition:opacity .65s ease;
+}
+.bg-wash img.on{opacity:.07}
+main,.ftr{position:relative;z-index:1}
 
 /* ── marca en el PDF ── */
 .print-brand{display:none}
@@ -541,7 +555,7 @@ h1 em{
   .print-brand-txt small{
     display:block;font-weight:500;color:#5E7280;font-size:.72rem;margin-top:.1rem;
   }
-  .hdr,.cta,.save-note,.btn,.sect:not(.on),.q-band{display:none!important}
+  .hdr,.cta,.save-note,.btn,.sect:not(.on),.q-band,.bg-wash{display:none!important}
   body{background:#fff;font-size:11pt}
   .wrap{max-width:none;padding:0}
   .sect{animation:none}
@@ -569,6 +583,11 @@ h1 em{
 </style>
 </head>
 <body>
+
+<!-- Lavado de fondo: la imagen de la sección, muy desenfocada y casi
+     transparente. El desenfoque elimina las zonas oscuras puntuales,
+     así que el contraste del texto que va encima sigue siendo estable. -->
+<div class="bg-wash" aria-hidden="true"><img id="bg-img" alt=""></div>
 
 <header class="hdr">
   <div class="hdr-in">

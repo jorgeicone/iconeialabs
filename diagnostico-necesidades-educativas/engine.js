@@ -25,9 +25,27 @@ const $ = id => document.getElementById(id);
 const ESCMAP = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ESCMAP[c]);
 
+/* El lavado sigue a la sección: portada en bienvenida, contexto e
+   informe; la imagen de la dimensión mientras se responde; nada en el
+   panel, que es una tabla y no necesita atmósfera. */
+let washActual = null;
+function wash(src){
+  const el = $('bg-img');
+  if(!el || src === washActual) return;
+  washActual = src;
+  if(!src){ el.classList.remove('on'); return; }
+  const pintar = () => { el.src = src; el.classList.add('on'); };
+  if(el.classList.contains('on') && el.getAttribute('src')){
+    el.classList.remove('on');
+    setTimeout(pintar, 260);
+  } else pintar();
+}
+
 function show(id){
   document.querySelectorAll('.sect').forEach(s => s.classList.remove('on'));
   $(id).classList.add('on');
+  if(id === 's-admin') wash(null);
+  else if(id !== 's-questions') wash('img/hero.jpg');
   window.scrollTo({top:0});
 }
 
@@ -208,6 +226,7 @@ function renderQ(){
   const i = S.idx, q = QS[i], dim = DIMS[q.d - 1];
   const pct = Math.round((i / QS.length) * 100);
 
+  wash(dim.img);
   $('prog-bar').style.setProperty('--dim', dim.color);
   $('prog-dim').textContent   = dim.name;
   $('prog-count').textContent = (i + 1) + ' / ' + QS.length;
@@ -705,6 +724,7 @@ function salirAdmin(){
 function init(){
   renderChips();
   initLegal();
+  wash('img/hero.jpg');
   if(location.hash === '#admin') goAdmin();
 }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
