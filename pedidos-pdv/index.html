@@ -465,6 +465,18 @@ details.sub > summary {
   .linea .col, .linea .cod { width: auto; }
 }
 
+/* ── Ajuste de cantidades fijas por línea ───────────────────── */
+
+.cantidades { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.cantidad {
+  background: #fff; border: 1px solid var(--linea); border-radius: 10px;
+  padding: 10px 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.cantidad .etq { flex: 1; font-size: 12.5px; line-height: 1.35; min-width: 110px; }
+.cantidad .etq code { font-size: 11px; color: var(--tenue); }
+.cantidad input { width: 78px; flex: none; text-align: center; font-weight: 700; }
+.cantidad small { width: 100%; font-size: 11.5px; color: var(--naranja); font-weight: 600; }
+
 </style>
 </head>
 <body>
@@ -1194,7 +1206,6 @@ function saldoDe (saldos, cedi, codigo) {
  * Cualquier uso, copia o redistribución no autorizada queda prohibida y será
  * perseguida bajo Ley 23/1982 (Colombia) y normas internacionales aplicables.
  */
-
 /* ------------------------------------------------------------------ *
  *  Utilidades numéricas                                               *
  * ------------------------------------------------------------------ */
@@ -1330,8 +1341,14 @@ function puntosDeVenta ({ programacion, marcaCfg, cedi, inicioCiclo, diasCiclo }
  *  Paso 3-5 — Necesidad por PDV y línea                               *
  * ------------------------------------------------------------------ */
 
-/** Necesidad en paquetes de una línea para un PDV, según el modo de la línea. */
-function necesidadLinea (linea, pdv) {
+/**
+ * Necesidad en paquetes de una línea para un PDV, según el modo de la línea.
+ *
+ * `cantidades` permite sobreescribir a mano la cantidad por PDV de una
+ * referencia de modo fijo, sin tocar la configuración de la marca: el racional
+ * queda intacto y el ajuste vale solo para este pedido.
+ */
+function necesidadLinea (linea, pdv, cantidades = {}) {
   const dias = linea.dias === 'finde' ? pdv.diasFinde : pdv.diasTodos;
 
   if (linea.modo === 'fija') {
@@ -1339,7 +1356,7 @@ function necesidadLinea (linea, pdv) {
     // la suya — no es lo mismo un paquete de servilletas que tres de vasos.
     const porRef = {};
     for (const ref of linea.refs) {
-      porRef[ref.codigo] = ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
+      porRef[ref.codigo] = cantidades[ref.codigo] ?? ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
     }
     return {
       modo: 'fija',
@@ -1379,7 +1396,8 @@ function necesidadLinea (linea, pdv) {
  *  - La cantidad nunca se recorta en silencio: todo faltante queda en `avisos`.
  */
 function calcularPedido ({
-  programacion, inventario, marcaCfg, cedi: cediPedido, ciudad, inicioCiclo, diasCiclo
+  programacion, inventario, marcaCfg, cedi: cediPedido, ciudad, inicioCiclo, diasCiclo,
+  cantidades = {}
 }) {
   // Se acepta el CEDI directo o una ciudad, que se resuelve a su CEDI.
   const cedi = cediPedido || cediDeCiudad(ciudad);
@@ -1421,7 +1439,7 @@ function calcularPedido ({
   const requerido = new Map();
 
   for (const linea of marcaCfg.lineas) {
-    const detallePuntos = puntos.map(p => ({ pdv: p, nec: necesidadLinea(linea, p) }));
+    const detallePuntos = puntos.map(p => ({ pdv: p, nec: necesidadLinea(linea, p, cantidades) }));
     const totalPaquetes = detallePuntos.reduce((a, d) => a + d.nec.paquetes, 0);
 
     if (linea.modo === 'fija') {
@@ -2125,11 +2143,6 @@ function fechaCorta (iso) {
  * Cualquier uso, copia o redistribución no autorizada queda prohibida y será
  * perseguida bajo Ley 23/1982 (Colombia) y normas internacionales aplicables.
  */
-
-
-
-
-
 const XLSX = globalThis.XLSX;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -2489,7 +2502,8 @@ function recalcular (marcaId) {
     marcaCfg: m,
     cedi: p.cedi,
     inicioCiclo: p.semana,
-    diasCiclo: p.dias
+    diasCiclo: p.dias,
+    cantidades: p.cantidades || {}
   });
   r.horaEnvio = p.hora;
   aplicarAjustes(r, p.ajustes);
@@ -2792,6 +2806,7 @@ function calcular () {
     dias: parseInt($('#dias').value, 10) || m.diasCiclo || 6,
     hora: $('#hora').value.trim() || '10:00',
     ajustes: previo?.ajustes || {},
+    cantidades: previo?.cantidades || {},
     confirmado: false
   };
   const r = recalcular(m.id);
@@ -2898,7 +2913,7 @@ function pintarLineas (r, cat) {
     const conDias = l.detalle.filter(d => d.paquetes > 0);
 
     return `
-      <details class="linea">
+      <details class="linea" data-linea="${esc(l.id)}">
         <summary>
           <span class="nombre">${esc(l.nombre)}</span>
           <span class="etiqueta ${l.modo}">${l.modo}</span>
@@ -2925,6 +2940,8 @@ function pintarLineas (r, cat) {
               <td class="num">${num(refs.reduce((a, x) => a + x.pedido, 0))}</td></tr></tfoot>
           </table>
 
+          ${cfg?.modo === 'fija' ? panelCantidades(l, cfg, r) : ''}
+
           ${conDias.length ? `
           <details class="sub">
             <summary>Cómo se reparte entre los ${conDias.length} puntos de venta</summary>
@@ -2944,10 +2961,92 @@ function pintarLineas (r, cat) {
         </div>
       </details>`;
   }).join('');
+
+  conectarCantidades();
 }
 
 function saldoDeCedi (cedi, codigo) {
   return estado.fuentes.inventario.saldos.get(`${cedi}|${codigo}`) || 0;
+}
+
+/**
+ * Ajuste manual de una línea de cantidad fija: cambia cuánto va por punto de
+ * venta sin tocar la configuración de la marca. El racional queda intacto y el
+ * cambio vale solo para este pedido.
+ */
+function panelCantidades (l, cfg, r) {
+  const puestas = estado.pedidos[r.marcaId]?.cantidades || {};
+  const tocada = cfg.refs.some(ref => puestas[ref.codigo] != null);
+
+  return `
+    <div class="ajuste" data-panel-cantidades="${esc(l.id)}">
+      <label class="campo">Ajuste manual — cuántos van por punto de venta
+        ${tocada ? '<span class="insignia borrador">ajustada</span>' : ''}</label>
+      <div class="cantidades">
+        ${cfg.refs.map(ref => {
+          const base = ref.cantidadPorPdv ?? cfg.cantidadPorPdv ?? 1;
+          const valor = puestas[ref.codigo] ?? base;
+          return `
+            <div class="cantidad">
+              <span class="etq">${esc(ref.alias || ref.codigo)}<br><code>${esc(ref.codigo)}</code></span>
+              <input type="number" min="0" max="9999" value="${valor}"
+                     data-cant="${esc(ref.codigo)}" data-base="${base}">
+              ${valor !== base ? `<small>racional: ${base}</small>` : ''}
+            </div>`;
+        }).join('')}
+      </div>
+      <div class="acciones" style="margin-top:12px">
+        <button data-aplicar-cantidades="${esc(l.id)}">Aplicar al pedido</button>
+        ${tocada ? `<button class="secundario" data-restaurar-cantidades="${esc(l.id)}">
+          Volver a los valores del racional</button>` : ''}
+      </div>
+      <div class="ajuste-resp" data-resp-cant="${esc(l.id)}"></div>
+    </div>`;
+}
+
+function conectarCantidades () {
+  $$('[data-aplicar-cantidades]').forEach(b => b.addEventListener('click', () => {
+    const panel = b.closest('[data-panel-cantidades]');
+    const p = estado.pedidos[estado.marcaId];
+    p.cantidades = p.cantidades || {};
+    const cambios = [];
+
+    panel.querySelectorAll('[data-cant]').forEach(input => {
+      const codigo = input.dataset.cant;
+      const base = parseInt(input.dataset.base, 10);
+      const valor = Math.max(0, parseInt(input.value, 10) || 0);
+      if (valor === base) delete p.cantidades[codigo];
+      else { p.cantidades[codigo] = valor; cambios.push(`${codigo}: ${base} → ${valor}`); }
+    });
+
+    p.confirmado = false;
+    guardarPedidos();
+    const abiertas = $$('#tabla-lineas .linea[open]').map(d => d.dataset.linea);
+    pintarResultado(recalcular(estado.marcaId));
+    abiertas.forEach(id => { const d = $(`#tabla-lineas .linea[data-linea="${id}"]`); if (d) d.open = true; });
+
+    const resp = $(`[data-resp-cant="${panel.dataset.panelCantidades}"]`);
+    if (resp) {
+      resp.innerHTML = cambios.length
+        ? `<div class="aviso ok" style="margin:10px 0 0"><div class="d">
+             ${esc(cambios.join(' · '))}. El pedido vuelve a quedar sin confirmar.</div></div>`
+        : '<div class="aviso ajustado" style="margin:10px 0 0"><div class="d">' +
+          'Las cantidades quedaron iguales a las del racional.</div></div>';
+    }
+  }));
+
+  $$('[data-restaurar-cantidades]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.restaurarCantidades;
+    const m = marcaPorId(estado.marcaId);
+    const cfg = m.lineas.find(x => x.id === id);
+    const p = estado.pedidos[estado.marcaId];
+    cfg.refs.forEach(ref => { delete p.cantidades?.[ref.codigo]; });
+    p.confirmado = false;
+    guardarPedidos();
+    const abiertas = $$('#tabla-lineas .linea[open]').map(d => d.dataset.linea);
+    pintarResultado(recalcular(estado.marcaId));
+    abiertas.forEach(x => { const d = $(`#tabla-lineas .linea[data-linea="${x}"]`); if (d) d.open = true; });
+  }));
 }
 
 /* ── Referencias, en acordeón: a qué puntos va cada una ──────── */
