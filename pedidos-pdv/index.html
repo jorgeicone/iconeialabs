@@ -814,6 +814,20 @@ const MARCAS = [
           { codigo: 'CRD024392', alias: 'Bebida vegetal almendras' },
           { codigo: 'CRD024393', alias: 'Bebida vegetal coco' }
         ]
+      },
+      {
+        // Lo que la asesora necesita para servir, no para entregar. Las cantidades
+        // salen del último pedido de insumos emitido, no de una regla de contactos:
+        // cada referencia lleva la suya.
+        id: 'utensilios',
+        nombre: 'Utensilios de degustación',
+        modo: 'fija',
+        refs: [
+          { codigo: 'CRD005022', alias: 'Servilletas ecológicas x200', cantidadPorPdv: 1 },
+          { codigo: 'CRD031951', alias: 'Vaso blanco Tosh 4 oz x50 — infusiones', cantidadPorPdv: 3 },
+          { codigo: 'CRD028451', alias: 'Vaso 3 oz transparente x12 — parfait', cantidadPorPdv: 3 },
+          { codigo: 'CRD020501', alias: 'Rollo de papel de cocina', cantidadPorPdv: 1 }
+        ]
       }
     ],
     // Cabecera fija del archivo para el ERP.
@@ -1304,14 +1318,19 @@ function necesidadLinea (linea, pdv) {
   const dias = linea.dias === 'finde' ? pdv.diasFinde : pdv.diasTodos;
 
   if (linea.modo === 'fija') {
-    // No depende de contactos: cantidad fija por PDV, por cada referencia.
+    // No depende de contactos: cantidad fija por PDV. Cada referencia puede llevar
+    // la suya — no es lo mismo un paquete de servilletas que tres de vasos.
+    const porRef = {};
+    for (const ref of linea.refs) {
+      porRef[ref.codigo] = ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
+    }
     return {
       modo: 'fija',
       dias,
       contactos: 0,
       preparaciones: 0,
-      paquetes: (linea.cantidadPorPdv ?? 1) * linea.refs.length,
-      porRef: linea.cantidadPorPdv ?? 1
+      paquetes: Object.values(porRef).reduce((a, b) => a + b, 0),
+      porRef
     };
   }
 
@@ -1394,7 +1413,8 @@ function calcularPedido ({
         const mapa = requerido.get(ref.codigo) || new Map();
         for (const d of detallePuntos) {
           if (d.nec.dias === 0 && linea.dias === 'finde') continue;
-          mapa.set(d.pdv, (mapa.get(d.pdv) || 0) + d.nec.porRef);
+          const cantidad = d.nec.porRef[ref.codigo] || 0;
+          if (cantidad > 0) mapa.set(d.pdv, (mapa.get(d.pdv) || 0) + cantidad);
         }
         requerido.set(ref.codigo, mapa);
       }
@@ -2782,8 +2802,14 @@ function formulaLinea (l, m) {
            `× ${cfg.consumoReceta} unidades ÷ ${cfg.unidadesPorPaquete} por paquete</code> — ` +
            `cada preparación rinde ${cfg.rindeContactos} contactos.`;
   }
-  return `<code>${cfg.cantidadPorPdv} paquete de cada referencia por punto de venta</code> — ` +
-         'no depende de los contactos.' +
+  // En modo fijo cada referencia puede llevar su propia cantidad.
+  const cantidades = cfg.refs.map(x => x.cantidadPorPdv ?? cfg.cantidadPorPdv ?? 1);
+  const iguales = cantidades.every(c => c === cantidades[0]);
+  const detalle = iguales
+    ? `<code>${cantidades[0]} paquete${cantidades[0] === 1 ? '' : 's'} de cada referencia por punto de venta</code>`
+    : '<code>' + cfg.refs.map((x, i) => `${cantidades[i]} × ${x.codigo}`).join(' · ') + '</code>';
+
+  return `${detalle} — no depende de los contactos.` +
          (cfg.dias === 'finde' ? ' Solo va a los puntos que trabajan de viernes a domingo.' : '');
 }
 
