@@ -414,6 +414,57 @@ footer.legal .privacidad { margin-top: 9px; color: var(--verde); font-weight: 60
   .punto .asesora, .punto .sap { width: 100%; }
 }
 
+/* ── Acordeón de líneas y de referencias ────────────────────── */
+
+.linea {
+  border: 1px solid var(--linea); border-radius: 11px; margin-bottom: 8px;
+  background: #fff; overflow: hidden;
+}
+.linea[open] { border-color: var(--naranja-borde); box-shadow: var(--sombra); }
+.linea > summary {
+  cursor: pointer; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; font-size: 13.5px; list-style: none;
+}
+.linea > summary::-webkit-details-marker { display: none; }
+.linea > summary::before {
+  content: '▸'; color: var(--naranja); font-size: 13px; flex: none; transition: .15s;
+}
+.linea[open] > summary::before { transform: rotate(90deg); }
+.linea > summary:hover { background: #FCFAF8; }
+.linea .nombre { font-weight: 700; flex: 1; min-width: 140px; }
+.linea .cod { flex: none; }
+.linea .col { font-size: 12px; color: var(--tenue); white-space: nowrap; }
+.linea .col b { display: block; font-size: 14.5px; color: var(--carbon); font-variant-numeric: tabular-nums; }
+.linea .cobertura {
+  font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13.5px; color: var(--carbon);
+  background: var(--naranja-claro); padding: 4px 11px; border-radius: 999px;
+}
+.linea .cobertura.mal { background: var(--rojo-claro); color: var(--rojo); }
+
+.formula {
+  margin: 8px 0 14px; font-size: 13px; color: var(--carbon-2);
+  background: #FBFAF8; border-left: 3px solid var(--naranja-borde);
+  padding: 9px 12px; border-radius: 0 8px 8px 0;
+}
+.formula code { color: var(--carbon); font-weight: 600; }
+
+details.sub { margin-top: 14px; }
+details.sub > summary {
+  cursor: pointer; font-size: 13px; font-weight: 700; color: var(--naranja); margin-bottom: 8px;
+}
+
+.total-refs {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding: 13px 15px; margin-top: 4px;
+  background: var(--carbon); color: #fff; border-radius: 11px; font-size: 13.5px;
+}
+.total-refs b { font-size: 19px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  .linea > summary { gap: 8px; }
+  .linea .col, .linea .cod { width: auto; }
+}
+
 </style>
 </head>
 <body>
@@ -2694,24 +2745,9 @@ function pintarResultado (r) {
     : '<div class="aviso ok"><div class="t">Sin faltantes</div>' +
       '<div class="d">Todas las líneas se cubren completas con el inventario del CEDI.</div></div>';
 
-  $('#tabla-lineas').innerHTML = `
-    <table><thead><tr><th>Línea</th><th>Modo</th><th class="num">Requerido</th>
-      <th class="num">Disponible</th><th class="num">Cobertura</th></tr></thead>
-      <tbody>${r.lineas.map(l => {
-        const cob = l.requerido ? l.disponible / l.requerido : null;
-        const mal = cob !== null && cob < 1;
-        return `<tr><td><b>${esc(l.nombre)}</b></td>
-          <td><span class="etiqueta ${l.modo}">${l.modo}</span></td>
-          <td class="num">${num(l.requerido)}</td><td class="num">${num(l.disponible)}</td>
-          <td class="num" ${mal ? 'style="color:var(--rojo);font-weight:800"' : ''}>
-            ${cob === null ? '—' : cob.toFixed(2) + ' sem'}</td></tr>`;
-      }).join('')}</tbody></table>`;
+  pintarLineas(r, cat);
 
-  $('#tabla-refs').innerHTML = `
-    <table><thead><tr><th>Artículo</th><th>Descripción (maestro)</th><th class="num">Paquetes</th></tr></thead>
-      <tbody>${filasResumen(r, cat).map(f => `<tr><td><code>${esc(f.Articulo)}</code></td>
-        <td>${esc(f.Dato_adicional)}</td><td class="num">${num(f.Total)}</td></tr>`).join('')}</tbody>
-      <tfoot><tr><td colspan="2">Total</td><td class="num">${num(r.totalPaquetes)}</td></tr></tfoot></table>`;
+  pintarReferencias(r, cat);
 
   pintarPuntos(r, cat);
 
@@ -2730,6 +2766,146 @@ function pintarResultado (r) {
   $('#btn-descargar').disabled = hayError || !confirmado;
 
   $('#resultado').classList.remove('oculto');
+}
+
+/* ── Líneas, en acordeón: de dónde sale cada número ──────────── */
+
+/** Explica la fórmula de la línea con los números de esta semana. */
+function formulaLinea (l, m) {
+  const cfg = m?.lineas.find(x => x.id === l.id);
+  if (!cfg) return '';
+  if (cfg.modo === 'directa') {
+    return `<code>${cfg.contactosDia} contactos/día × días trabajados</code> — un contacto es un paquete.`;
+  }
+  if (cfg.modo === 'preparada') {
+    return `<code>ceil(${cfg.contactosDia} × días ÷ ${cfg.rindeContactos}) preparaciones ` +
+           `× ${cfg.consumoReceta} unidades ÷ ${cfg.unidadesPorPaquete} por paquete</code> — ` +
+           `cada preparación rinde ${cfg.rindeContactos} contactos.`;
+  }
+  return `<code>${cfg.cantidadPorPdv} paquete de cada referencia por punto de venta</code> — ` +
+         'no depende de los contactos.' +
+         (cfg.dias === 'finde' ? ' Solo va a los puntos que trabajan de viernes a domingo.' : '');
+}
+
+function pintarLineas (r, cat) {
+  const m = marcaPorId(r.marcaId);
+
+  $('#tabla-lineas').innerHTML = r.lineas.map(l => {
+    const cob = l.requerido ? l.disponible / l.requerido : null;
+    const mal = cob !== null && cob < 1;
+    const cfg = m?.lineas.find(x => x.id === l.id);
+
+    const refs = (cfg?.refs || []).map(ref => ({
+      codigo: ref.codigo,
+      alias: cat.get(ref.codigo)?.nombre || ref.alias || '',
+      disponible: saldoDeCedi(r.cedi, ref.codigo),
+      pedido: r.totalPorRef.get(ref.codigo) || 0
+    }));
+
+    const conDias = l.detalle.filter(d => d.paquetes > 0);
+
+    return `
+      <details class="linea">
+        <summary>
+          <span class="nombre">${esc(l.nombre)}</span>
+          <span class="etiqueta ${l.modo}">${l.modo}</span>
+          <span class="col">Requerido <b>${num(l.requerido)}</b></span>
+          <span class="col">Disponible <b>${num(l.disponible)}</b></span>
+          <span class="col cobertura ${mal ? 'mal' : ''}">
+            ${cob === null ? '—' : cob.toFixed(2) + ' sem'}</span>
+        </summary>
+        <div class="punto-cuerpo">
+          <p class="formula">${formulaLinea(l, m)}</p>
+
+          <table>
+            <thead><tr><th>Artículo</th><th>Descripción</th>
+              <th class="num">Disponible en ${esc(r.cedi)}</th><th class="num">Se pide</th></tr></thead>
+            <tbody>${refs.map(x => `<tr>
+              <td><code>${esc(x.codigo)}</code></td>
+              <td>${esc(x.alias)}</td>
+              <td class="num" ${x.disponible === 0 ? 'style="color:var(--rojo);font-weight:700"' : ''}>${num(x.disponible)}</td>
+              <td class="num">${x.pedido ? num(x.pedido) : '—'}</td></tr>`).join('')}
+            </tbody>
+            <tfoot><tr><td colspan="2">Total de la línea</td>
+              <td class="num">${num(l.disponible)}</td>
+              <td class="num">${num(refs.reduce((a, x) => a + x.pedido, 0))}</td></tr></tfoot>
+          </table>
+
+          ${conDias.length ? `
+          <details class="sub">
+            <summary>Cómo se reparte entre los ${conDias.length} puntos de venta</summary>
+            <table>
+              <thead><tr><th>Punto de venta</th><th class="num">Días</th>
+                <th class="num">Contactos</th>
+                ${l.modo === 'preparada' ? '<th class="num">Preparaciones</th>' : ''}
+                <th class="num">Paquetes</th></tr></thead>
+              <tbody>${conDias.map(d => `<tr>
+                <td>${esc(d.pdv)}</td><td class="num">${d.dias}</td>
+                <td class="num">${d.contactos ? num(d.contactos) : '—'}</td>
+                ${l.modo === 'preparada' ? `<td class="num">${d.preparaciones}</td>` : ''}
+                <td class="num">${num(d.paquetes)}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </details>` : ''}
+        </div>
+      </details>`;
+  }).join('');
+}
+
+function saldoDeCedi (cedi, codigo) {
+  return estado.fuentes.inventario.saldos.get(`${cedi}|${codigo}`) || 0;
+}
+
+/* ── Referencias, en acordeón: a qué puntos va cada una ──────── */
+
+function pintarReferencias (r, cat) {
+  const m = marcaPorId(r.marcaId);
+  const lineaDe = codigo => m?.lineas.find(l => l.refs.some(x => x.codigo === codigo));
+
+  const filas = [...r.totalPorRef.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+
+  $('#tabla-refs').innerHTML = filas.map(([codigo, total]) => {
+    const disponible = saldoDeCedi(r.cedi, codigo);
+    const linea = lineaDe(codigo);
+    const puntos = r.pedidos
+      .map(p => ({ pdv: p.pdv, sap: p.sap, cant: p.items.find(i => i.codigo === codigo)?.cantidad || 0 }))
+      .filter(x => x.cant > 0)
+      .sort((a, b) => b.cant - a.cant);
+    const sobra = disponible - total;
+
+    return `
+      <details class="linea">
+        <summary>
+          <span class="cod"><code>${esc(codigo)}</code></span>
+          <span class="nombre">${esc(cat.get(codigo)?.nombre || '')}</span>
+          ${linea ? `<span class="etiqueta ${linea.modo}">${esc(linea.nombre)}</span>` : ''}
+          <span class="col">En ${esc(r.cedi)} <b>${num(disponible)}</b></span>
+          <span class="col cobertura ${sobra < 0 ? 'mal' : ''}">${num(total)} paq</span>
+        </summary>
+        <div class="punto-cuerpo">
+          <p class="formula">
+            Se piden <b>${num(total)}</b> de <b>${num(disponible)}</b> disponibles en ${esc(r.cedi)};
+            ${sobra >= 0 ? `quedan <b>${num(sobra)}</b> en la bodega.`
+                         : `<b style="color:var(--rojo)">faltan ${num(-sobra)}</b>.`}
+            Se reparten entre ${puntos.length} punto${puntos.length === 1 ? '' : 's'} de venta.
+          </p>
+          <table>
+            <thead><tr><th>Punto de venta</th><th>SAP</th><th class="num">Paquetes</th>
+              <th class="num">% del total</th></tr></thead>
+            <tbody>${puntos.map(x => `<tr>
+              <td>${esc(x.pdv)}</td><td><code>${esc(x.sap)}</code></td>
+              <td class="num">${num(x.cant)}</td>
+              <td class="num" style="color:var(--tenue)">${(x.cant * 100 / total).toFixed(1)}%</td>
+            </tr>`).join('')}</tbody>
+            <tfoot><tr><td colspan="2">Total</td><td class="num">${num(total)}</td><td class="num">100%</td></tr></tfoot>
+          </table>
+        </div>
+      </details>`;
+  }).join('') + `
+    <div class="total-refs">
+      <span>Total del pedido</span><b>${num(r.totalPaquetes)} paquetes</b>
+      <span style="color:var(--tenue)">en ${filas.length} referencias</span>
+    </div>`;
 }
 
 /* ── Puntos de venta, en acordeón, con ajuste manual ─────────── */
