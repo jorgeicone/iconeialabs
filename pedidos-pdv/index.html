@@ -816,6 +816,23 @@ const MARCAS = [
         ]
       },
       {
+        // Premios de redención del racional: por compras > $30.000 el shopper elige
+        // cuaderno o lonchera; por > $35.000 lleva termo. No dependen de contactos
+        // sino de cuánta gente redime, así que van a cantidad fija por punto.
+        id: 'obsequios',
+        nombre: 'Obsequios',
+        modo: 'fija',
+        nota: 'Las 15 loncheras por punto salen del último pedido emitido. ' +
+              'Cuaderno y termo están en proporción al saldo que el racional reporta ' +
+              'por CEDI (480 loncheras · 458 cuadernos · 280 termos en Bogotá): ' +
+              'confirmar con el equipo comercial antes de darlos por buenos.',
+        refs: [
+          { codigo: 'CRD033666', alias: 'Lonchera Tosh — desde $30.000', cantidadPorPdv: 15 },
+          { codigo: 'CRD032392', alias: 'Cuaderno notoriedad — desde $30.000', cantidadPorPdv: 14 },
+          { codigo: 'CRD032391', alias: 'Termo notoriedad — desde $35.000', cantidadPorPdv: 9 }
+        ]
+      },
+      {
         // Lo que la asesora necesita para servir, no para entregar. Las cantidades
         // salen del último pedido de insumos emitido, no de una regla de contactos:
         // cada referencia lleva la suya.
@@ -2854,6 +2871,15 @@ function formulaLinea (l, m) {
          (cfg.dias === 'finde' ? ' Solo va a los puntos que trabajan de viernes a domingo.' : '');
 }
 
+/** Advertencia de la línea, cuando sus cantidades todavía están por confirmar. */
+function notaLinea (l, m) {
+  const cfg = m?.lineas.find(x => x.id === l.id);
+  return cfg?.nota
+    ? `<div class="aviso ajustado" style="margin:0 0 12px"><div class="t">Cantidades por confirmar</div>
+       <div class="d">${esc(cfg.nota)}</div></div>`
+    : '';
+}
+
 function pintarLineas (r, cat) {
   const m = marcaPorId(r.marcaId);
 
@@ -2883,6 +2909,7 @@ function pintarLineas (r, cat) {
         </summary>
         <div class="punto-cuerpo">
           <p class="formula">${formulaLinea(l, m)}</p>
+          ${notaLinea(l, m)}
 
           <table>
             <thead><tr><th>Artículo</th><th>Descripción</th>
