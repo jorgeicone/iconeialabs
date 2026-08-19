@@ -1664,7 +1664,6 @@ function aplicarAjustes (resultado, ajustes) {
  * Cualquier uso, copia o redistribución no autorizada queda prohibida y será
  * perseguida bajo Ley 23/1982 (Colombia) y normas internacionales aplicables.
  */
-
 /**
  * El archivo se genera **calcado del que hoy se carga al ERP**: misma hoja
  * `inicia benet`, mismas 23 columnas, mismo orden y mismos valores fijos.
@@ -1766,22 +1765,6 @@ function filasResumen (resultados, catalogo) {
   return filas;
 }
 
-function filasAvisos (resultados) {
-  const lista = Array.isArray(resultados) ? resultados : [resultados];
-  const filas = [];
-  for (const r of lista) {
-    if (!r.avisos.length) {
-      filas.push({ Marca: r.marca, Nivel: 'ok', Linea: '', Aviso: 'Sin faltantes',
-        Detalle: 'Todas las líneas se cubren completas.' });
-      continue;
-    }
-    for (const a of r.avisos) {
-      filas.push({ Marca: r.marca, Nivel: a.nivel, Linea: a.linea || '', Aviso: a.titulo, Detalle: a.detalle });
-    }
-  }
-  return filas;
-}
-
 /** Encabezado azul con letra blanca, como el del archivo de referencia. */
 const ESTILO_CABECERA = {
   fill: { patternType: 'solid', fgColor: { rgb: 'FF1F4E79' } },
@@ -1873,8 +1856,11 @@ function anchos (filas, columnas) {
 }
 
 /**
- * Libro listo para descargar. La primera hoja es la que carga el ERP; las otras
- * dos son de control, igual que en los archivos que hoy circulan.
+ * Libro listo para descargar: **una sola hoja**, la que carga el ERP.
+ *
+ * No se agregan hojas de resumen ni de avisos. El resumen por referencia y los
+ * faltantes se revisan en pantalla antes de confirmar; en el archivo solo
+ * estorban a quien lo carga.
  */
 function construirLibro (XLSX, resultados, catalogo, opciones = {}) {
   const libro = XLSX.utils.book_new();
@@ -1891,16 +1877,6 @@ function construirLibro (XLSX, resultados, catalogo, opciones = {}) {
   pedido['!autofilter'] = { ref: XLSX.utils.encode_range({
     s: { r: 0, c: 0 }, e: { r: filas.length, c: COLUMNAS_ERP.length - 1 } }) };
   XLSX.utils.book_append_sheet(libro, pedido, HOJA_ERP);
-
-  const resumen = filasResumen(resultados, catalogo);
-  const hResumen = XLSX.utils.json_to_sheet(resumen);
-  hResumen['!cols'] = anchos(resumen, Object.keys(resumen[0] || { Marca: '' }));
-  XLSX.utils.book_append_sheet(libro, pintarCabecera(XLSX, hResumen), 'resumen');
-
-  const avisos = filasAvisos(resultados);
-  const hAvisos = XLSX.utils.json_to_sheet(avisos);
-  hAvisos['!cols'] = anchos(avisos, Object.keys(avisos[0] || { Marca: '' }));
-  XLSX.utils.book_append_sheet(libro, pintarCabecera(XLSX, hAvisos), 'avisos');
 
   return libro;
 }
