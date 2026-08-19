@@ -1805,6 +1805,63 @@ function pintarCabecera (XLSX, hoja) {
   return hoja;
 }
 
+/**
+ * Un color de fondo por punto de venta, para que quien despacha vea de un
+ * vistazo dónde empieza y dónde termina cada pedido.
+ *
+ * Son tonos muy claros a propósito: el texto va en negro encima y tiene que
+ * seguir leyéndose, también impreso en blanco y negro. Se recorren en ciclo, así
+ * que dos puntos consecutivos nunca comparten color aunque haya muchos pedidos.
+ */
+const COLORES_PEDIDO = [
+  'FFFDF3E7', // durazno
+  'FFEAF3FB', // azul claro
+  'FFEDF7EC', // verde claro
+  'FFFBEEF4', // rosa
+  'FFF3EFFA', // lila
+  'FFFDF9E3', // amarillo
+  'FFE9F6F6', // agua
+  'FFF6F1E8'  // arena
+];
+
+const BORDE_SEPARADOR = { style: 'medium', color: { rgb: 'FF8A8A88' } };
+const BORDE_TENUE = { style: 'thin', color: { rgb: 'FFD9D4CE' } };
+
+/**
+ * Pinta cada bloque de filas del mismo pedido con su color y le marca el borde
+ * superior, que es lo que separa un punto de venta del siguiente.
+ */
+function pintarPedidos (XLSX, hoja, filas) {
+  const rango = XLSX.utils.decode_range(hoja['!ref'] || 'A1');
+  let anterior = null;
+  let indice = -1;
+
+  filas.forEach((f, i) => {
+    const clave = String(f.Pedido);
+    const empieza = clave !== anterior;
+    if (empieza) { indice++; anterior = clave; }
+
+    const relleno = { patternType: 'solid', fgColor: { rgb: COLORES_PEDIDO[indice % COLORES_PEDIDO.length] } };
+
+    for (let c = rango.s.c; c <= rango.e.c; c++) {
+      const celda = hoja[XLSX.utils.encode_cell({ r: i + 1, c })];
+      if (!celda) continue;
+      celda.s = {
+        fill: relleno,
+        font: { sz: 10, bold: empieza },
+        alignment: { vertical: 'center' },
+        border: {
+          top: empieza ? BORDE_SEPARADOR : BORDE_TENUE,
+          bottom: BORDE_TENUE,
+          left: BORDE_TENUE,
+          right: BORDE_TENUE
+        }
+      };
+    }
+  });
+  return hoja;
+}
+
 /** Ancho de columna aproximado al contenido, para que no salgan columnas cortadas. */
 function anchos (filas, columnas) {
   return columnas.map(col => ({
@@ -1825,7 +1882,15 @@ function construirLibro (XLSX, resultados, catalogo, opciones = {}) {
   const filas = filasErp(resultados, catalogo, opciones);
   const pedido = XLSX.utils.json_to_sheet(filas, { header: COLUMNAS_ERP });
   pedido['!cols'] = anchos(filas, COLUMNAS_ERP);
-  XLSX.utils.book_append_sheet(libro, pintarCabecera(XLSX, pedido), HOJA_ERP);
+  // El orden importa: primero los bloques por PDV y encima la cabecera, que no
+  // debe quedar teñida con el color del primer pedido.
+  pintarPedidos(XLSX, pedido, filas);
+  pintarCabecera(XLSX, pedido);
+  // Filtro en la cabecera para poder aislar un punto de venta o un artículo.
+  // (Congelar la fila no se puede: la librería no escribe paneles.)
+  pedido['!autofilter'] = { ref: XLSX.utils.encode_range({
+    s: { r: 0, c: 0 }, e: { r: filas.length, c: COLUMNAS_ERP.length - 1 } }) };
+  XLSX.utils.book_append_sheet(libro, pedido, HOJA_ERP);
 
   const resumen = filasResumen(resultados, catalogo);
   const hResumen = XLSX.utils.json_to_sheet(resumen);
