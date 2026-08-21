@@ -74,3 +74,35 @@ subir `POLITICA_VERSION` en `app.js`.
   dimensiones en particular.
 - El logo del encabezado es el de la Universidad EAN. Si JaguarCol quiere su
   marca en la pieza, hay que pedir el archivo original.
+
+## Dos permisos, no uno (lección aprendida en producción)
+
+En Supabase, que una política RLS exista **no** basta. Son dos capas:
+
+- El **GRANT** dice si el rol puede tocar la tabla.
+- La **política RLS** dice qué filas puede tocar.
+
+La tabla nació con las políticas correctas pero sin `GRANT INSERT ... TO anon`,
+así que PostgREST rechazaba cada respuesta y la persona perdía las 35 preguntas
+que acababa de contestar. Y la verificación inicial no lo detectó porque se
+insertó por la conexión administrativa, que tiene privilegios que el navegador
+no tiene: se probó por un camino que no era el camino.
+
+Para verificar de verdad, hay que hacerse pasar por el rol:
+
+```sql
+set local role anon;
+insert into public.jaguarcol_diagnosticos (...) values (...);  -- sin RETURNING
+```
+
+Sin `RETURNING`: esa cláusula exige permiso de lectura, y `anon` no lo tiene a
+propósito. El navegador tampoco lo usa — supabase-js manda `return=minimal`
+cuando no se encadena `.select()`.
+
+## La respuesta no se pierde aunque falle el envío
+
+Desde la versión 1.1 del registro, la fila se guarda en el navegador **antes**
+de intentar enviarla, y solo se borra de ahí cuando el servidor confirma. Si el
+envío falla, queda pendiente, aparece un botón para reintentar y se reenvía
+sola al volver a abrir la página. Tope de 20 pendientes para no llenar el
+almacenamiento del navegador.

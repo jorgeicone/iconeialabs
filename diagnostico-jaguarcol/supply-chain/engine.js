@@ -570,16 +570,34 @@ function renderResults(){
 }
 
 /* ───────────── Guardado ───────────── */
-async function saveResult(){
-  const note = $('save-note');
-  const c = getSB();
-  if(!c){
-    note.className = 'save-note warn';
-    note.innerHTML = '⚠ No se pudo conectar con el servidor. Su informe está en pantalla, pero no quedó registrado.';
-    return;
-  }
+/* ───────────── Guardado ─────────────
+   Una respuesta perdida son 35 preguntas que la persona no vuelve a
+   contestar. Asi que la fila se guarda en el navegador ANTES de intentar
+   enviarla, y solo se borra de ahi cuando el servidor confirma. Si el
+   envio falla —red caida, servidor con un mal rato— queda pendiente y se
+   reintenta sola al volver a abrir la pagina, ademas del boton manual. */
+const PENDIENTES = 'jaguarcol_dx_pendientes';
+
+function leerPendientes(){
+  try{ return JSON.parse(localStorage.getItem(PENDIENTES) || '[]'); }
+  catch(e){ return []; }
+}
+function escribirPendientes(lista){
+  try{ localStorage.setItem(PENDIENTES, JSON.stringify(lista)); }catch(e){}
+}
+function apuntarPendiente(row){
+  const l = leerPendientes();
+  l.push(row);
+  escribirPendientes(l.slice(-20));   // tope: no llenar el almacenamiento
+}
+function quitarPendiente(row){
+  escribirPendientes(leerPendientes().filter(x => x.__k !== row.__k));
+}
+
+function filaActual(){
   const d = S.result.dims;
-  const row = {
+  return {
+    __k: (S.email || '') + '|' + (S.autorizaTs || ''),   // identifica el intento
     area:AREA.nombre, subarea:S.subarea,
     nombre:S.nombre, email:S.email,
     antiguedad:S.antiguedad, equipo_a_cargo:S.equipo || null,
@@ -599,18 +617,71 @@ async function saveResult(){
       prioritarios:S.reco.prioritarios,
       fases:S.reco.fases.map(f => ({fase:f.n, dims:f.items.map(x => x.dim.short)}))
     },
-    meta:{v:'1.0', area_id:AREA.id}
+    meta:{v:'1.1', area_id:AREA.id}
   };
+}
+
+/* Envia una fila. Devuelve true solo si el servidor la acepto. */
+async function enviarFila(row){
+  const c = getSB();
+  if(!c) return false;
+  const limpia = Object.assign({}, row);
+  delete limpia.__k;                 // la llave es local, no va a la base
   try{
-    const r = await c.from(TABLE).insert(row);
+    const r = await c.from(TABLE).insert(limpia);
     if(r.error) throw r.error;
-    note.className = 'save-note ok';
-    note.innerHTML = '✓ Diagnóstico registrado. El equipo docente ya lo tiene.';
+    return true;
   }catch(e){
     console.error('[dx] guardado', e);
-    note.className = 'save-note warn';
-    note.innerHTML = '⚠ El informe no quedó registrado en el servidor. Descárguelo antes de cerrar la página.';
+    return false;
   }
+}
+
+function notaGuardado(estado, texto){
+  const note = $('save-note');
+  if(!note) return;
+  note.className = 'save-note ' + estado;
+  note.innerHTML = texto;
+}
+
+async function saveResult(){
+  const row = filaActual();
+  apuntarPendiente(row);             // primero al navegador, luego al servidor
+  notaGuardado('wait', '⏳ Guardando su diagnóstico…');
+
+  if(await enviarFila(row)){
+    quitarPendiente(row);
+    notaGuardado('ok', '✓ Diagnóstico registrado. El equipo docente ya lo tiene.');
+    return;
+  }
+  notaGuardado('warn',
+    '⚠ No pudimos enviarlo todavía. <b>Sus respuestas quedaron guardadas en este ' +
+    'navegador</b> y se enviarán solas cuando vuelva a abrir esta página. ' +
+    '<button class="btn btn-ghost" style="margin-left:.6rem;padding:.35rem .8rem;font-size:.82rem" ' +
+    'onclick="reintentarEnvio()">Reintentar ahora</button>');
+}
+
+async function reintentarEnvio(){
+  notaGuardado('wait', '⏳ Reintentando…');
+  const quedan = await vaciarPendientes();
+  notaGuardado(quedan ? 'warn' : 'ok',
+    quedan ? '⚠ Sigue sin poder enviarse. Sus respuestas siguen guardadas aquí; ' +
+             'inténtelo más tarde o descargue el informe. ' +
+             '<button class="btn btn-ghost" style="margin-left:.6rem;padding:.35rem .8rem;font-size:.82rem" ' +
+             'onclick="reintentarEnvio()">Reintentar</button>'
+           : '✓ Diagnóstico registrado. El equipo docente ya lo tiene.');
+}
+
+/* Intenta enviar todo lo pendiente. Devuelve cuantas quedaron sin enviar. */
+async function vaciarPendientes(){
+  const lista = leerPendientes();
+  if(!lista.length) return 0;
+  const fallidas = [];
+  for(const row of lista){
+    if(!(await enviarFila(row))) fallidas.push(row);
+  }
+  escribirPendientes(fallidas);
+  return fallidas.length;
 }
 
 /* ───────────── Panel de administración ───────────── */
@@ -855,6 +926,9 @@ function salirAdmin(){
    ingreso, y los datos siguen protegidos por RLS del lado del servidor. */
 function init(){
   renderChips();
+  /* Rescate: si un envío anterior no llegó, se reintenta al abrir, sin
+     molestar a quien esté empezando un diagnóstico nuevo. */
+  if(leerPendientes().length) setTimeout(vaciarPendientes, 1500);
   initLegal();
   wash('img/hero.jpg');
   if(location.hash === '#admin') goAdmin();
