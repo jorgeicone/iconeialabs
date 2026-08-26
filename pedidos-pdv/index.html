@@ -671,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1208</b> &middot;
+    Versión <b id="sello-version">20260826-1214</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1027,6 +1027,25 @@ const RUTA_IMAGEN = {
         refs: [
           { codigo: 'CRD029958', alias: 'Folleto pasta oriental', cantidadPorPdv: 15 }
         ]
+      },
+      {
+        // Mecánica de agosto: compra mínima de $5.000 en especialidades y el shopper
+        // elige tabla de picar o paño de cocina. El racional habla de 524 tablas y 519
+        // paños para todo el mes: repartidos entre 20 cupos y las semanas, salen ~6.
+        //
+        // La cartuchera del racional (`CRD033958`, premio de septiembre, 8.000 unidades)
+        // **todavía no existe en el maestro de artículos**, así que no se puede pedir.
+        // Cuando entre a inventario se agrega acá o desde el editor de líneas.
+        id: 'premios',
+        nombre: 'Premios de la mecánica',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'Cantidades estimadas del racional (524 tablas y 519 paños al mes entre 20 cupos). ' +
+              'La cartuchera de septiembre aún no está en el maestro y por eso no aparece.',
+        refs: [
+          { codigo: 'CRD031860', alias: 'Tabla para picar x2 — Chefs', cantidadPorPdv: 6 },
+          { codigo: 'CRD031861', alias: 'Paño de cocina — Chefs', cantidadPorPdv: 6 }
+        ]
       }
     ],
     erp: {
@@ -1104,6 +1123,113 @@ const RUTA_IMAGEN = {
           { codigo: 'CRD000129', alias: 'Azúcar bolsa x200 sobres', cantidadPorPdv: 1 },
           { codigo: 'CRD025973', alias: 'Mezcladores de madera x500', cantidadPorPdv: 1 },
           { codigo: 'CRD020501', alias: 'Rollo de papel de cocina', cantidadPorPdv: 1 }
+        ]
+      }
+    ],
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
+  },
+
+  /**
+   * Saltín Noel — Campaña de marca 2026.
+   *
+   * Sale del racional de la operación (23 láminas, resumen del 26-08-2026): del
+   * 1 al 30 de agosto, 10 asesoras multimarca que durante agosto se enfocan en
+   * Saltín. La receta es Saltín Menos Sodio con preparación de atún y maíz Zenú.
+   *
+   * **Una preparación rinde 30 contactos**, y de ahí sale todo: 30 contactos al
+   * día en bajo tráfico, 60 en alto. Cada preparación lleva **2 latas de atún**,
+   * **1 de maíz** y salsa rosada.
+   *
+   * Los números del racional lo confirman: 324 latas de maíz para el periodo son
+   * 324 preparaciones, y 324 trozos + 324 lomos son las 648 latas de atún que
+   * esas preparaciones consumen a 2 por vez. Con 10 asesoras y 30 días salen
+   * ~1,08 preparaciones por día, que es el escenario de bajo tráfico.
+   *
+   * El atún va con **dos referencias en la misma línea** —trozos y lomos— porque
+   * el racional dice que ambas latas sean de la misma referencia pero no cuál:
+   * el motor reparte según el saldo de cada CEDI, que es la decisión correcta.
+   *
+   * Fuera del cálculo, a propósito: la **salsa rosada** (8 cucharadas por
+   * preparación) no tiene referencia en el maestro; el **kit de mueble**
+   * `CRD033718` tampoco existe ahí y además es dotación durable; y el **pollo
+   * esparcible Zenú** `CRD006117` es solo para Medellín —hay 42 unidades y solo
+   * en ese CEDI—, y el motor no sabe condicionar una línea a un CEDI. Si esa
+   * degustación se repite, hay que resolverlo antes.
+   */
+  {
+    id: 'saltin',
+    marca: 'Saltín Noel',
+    evento: 'Campaña Saltín Noel',
+    imagen: 'galletas',
+    patronMarcaProgramacion: 'saltin',
+    // Cubre 'Campaña Saltín Sin Sellos' y 'Campaña Saltín Sin Sellos 2' (39 filas).
+    // Deja fuera 'Promo Saltín y Ducales' (93), que es otra actividad.
+    patronIniciativaProgramacion: 'campaña saltín sin sellos',
+    vigencia: { desde: '2026-08-01', hasta: '2026-08-30' },
+    contactosDiaTotal: 30,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'galleta-base',
+        nombre: 'Saltín Menos Sodio — la galleta de la receta',
+        modo: 'preparada',
+        contactosDia: 30,
+        dias: 'todos',
+        rindeContactos: 30,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD030712', alias: 'Saltín Menos Sodio Tc x2 x200 g' }
+        ]
+      },
+      {
+        id: 'atun',
+        nombre: 'Atún Zenú — 2 latas por preparación',
+        modo: 'preparada',
+        contactosDia: 30,
+        dias: 'todos',
+        rindeContactos: 30,
+        consumoReceta: 2,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD032506', alias: 'Trozos atún Zenú en girasol x140 g' },
+          { codigo: 'CRD023690', alias: 'Lomo atún Zenú en girasol x160 g' }
+        ]
+      },
+      {
+        id: 'maiz',
+        nombre: 'Maíz dulce Zenú — 1 lata por preparación',
+        modo: 'preparada',
+        contactosDia: 30,
+        dias: 'todos',
+        rindeContactos: 30,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD021829', alias: 'Maíz dulce Zenú x241 g' }
+        ]
+      },
+      {
+        id: 'muestreo',
+        nombre: 'Muestreo adicional — 20 al día',
+        modo: 'directa',
+        contactosDia: 20,
+        dias: 'todos',
+        nota: 'El racional pide 20 muestras diarias de Queso y Mantequilla e Integral, sin decir ' +
+              'la proporción: se reparten según el saldo de cada CEDI.',
+        refs: [
+          { codigo: 'CRD005030', alias: 'Saltín Noel Queso y Mantequilla x22 g' },
+          { codigo: 'CRD005029', alias: 'Saltín Noel Integral x24 g' }
         ]
       }
     ],
