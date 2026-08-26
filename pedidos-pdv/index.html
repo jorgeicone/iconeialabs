@@ -696,6 +696,15 @@ var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0"
  *   'fija'     → cantidad fija por PDV, no depende de contactos   (semillas, bebidas)
  *
  * dias: 'todos' | 'finde'  — 'finde' = solo viernes, sábado y domingo.
+ *
+ * sustitutos: referencias que pueden reemplazar a las de la línea cuando no hay
+ * saldo. **Van declaradas a mano, verificadas por quien conoce el producto.** No
+ * se deducen del maestro: ahí la clasificación es contable y mezcla utensilios con
+ * producto —el termo de notoriedad figura como GALLETAS/TOSH—, así que un filtro
+ * automático ofrecería termos para reemplazar galletas. Lista vacía = el artefacto
+ * avisa del faltante y no propone nada, que es preferible a proponer cualquier cosa.
+ *
+ *   sustitutos: [{ codigo: 'CRD0xxxxx', alias: 'Chai 20 g' }]
  */
 
 /**
@@ -792,6 +801,10 @@ const RUTA_IMAGEN = {
       {
         id: 'infusiones',
         nombre: 'Infusiones',
+        // Pendiente: es la única línea que hoy se queda sin saldo en BGTA. Cuando la
+        // operación diga con qué infusión se puede reemplazar, va acá y el módulo
+        // la ofrece sola en el aviso.
+        sustitutos: [],
         modo: 'preparada',
         contactosDia: 28,
         dias: 'todos',
@@ -1448,6 +1461,60 @@ function truncar (d) {
 }
 
 /* ------------------------------------------------------------------ *
+ *  Sustitución asistida                                               *
+ * ------------------------------------------------------------------ */
+
+/**
+ * Referencias con que se calcula una línea: las del racional, más los sustitutos
+ * que alguien haya activado a mano para este pedido.
+ *
+ * **La sustitución es asistida, no automática**, y las equivalencias se declaran
+ * en el módulo de marca — no se derivan del maestro de artículos. Se intentó
+ * derivarlas de `nombre_linea`/`nombre_sublinea` y no funciona: esa clasificación
+ * es contable, no funcional. `CRD032391 TERMO NOTORIEDAD` está catalogado como
+ * `GALLETAS / TOSH` y `CRD028451 VASO 3 ONZ` como `GESTION CARGO / BENET`, así que
+ * el algoritmo ofrecía termos y cuadernos para reemplazar galletas. Y en la única
+ * línea que hoy se queda sin saldo —Infusiones, `CAFE / TOSH`— no devolvía ningún
+ * candidato: no ayuda donde hace falta y estorba donde no.
+ *
+ * Quién reemplaza a qué lo dice quien conoce el producto. El artefacto solo ofrece
+ * lo declarado que además tenga saldo hoy, y nunca lo aplica solo.
+ */function refsEfectivas (linea, sustituciones) {
+  const activos = (sustituciones && sustituciones[linea.id]) || [];
+  if (!activos.length) return linea.refs;
+  const declarados = linea.sustitutos || [];
+  const extra = activos
+    .filter(c => !linea.refs.some(r => r.codigo === c))
+    .map(c => {
+      const d = declarados.find(s => s.codigo === c);
+      return { codigo: c, alias: (d && d.alias) || '(sustituto)', esSustituto: true };
+    });
+  return [...linea.refs, ...extra];
+}
+
+/** Sustitutos declarados que hoy tienen saldo en el CEDI y aún no se han activado. */function candidatosDe (linea, sustituciones, saldos, cedi) {
+  if (!cedi) return [];
+  const activos = (sustituciones && sustituciones[linea.id]) || [];
+  return (linea.sustitutos || [])
+    .filter(s => !activos.includes(s.codigo))
+    .map(s => ({ codigo: s.codigo, alias: s.alias, disponible: saldoDe(saldos, cedi, s.codigo) }))
+    .filter(s => s.disponible > 0)
+    .sort((a, b) => b.disponible - a.disponible);
+}
+
+/** Qué se puede hacer cuando una línea no alcanza. Se dice, no se calla. */
+function fraseCandidatos (cands, linea) {
+  if (cands.length) {
+    return ' Hay ' + cands.length + ' sustituto(s) declarado(s) con saldo: ' +
+           cands.map(c => c.codigo + ' (' + c.disponible + ')').join(', ') +
+           '. Actívelos si aplican a esta degustación.';
+  }
+  return ' No hay sustitutos declarados para esta línea. Las equivalencias se declaran ' +
+         'en el módulo de marca y no las deduce el sistema: la clasificación del maestro ' +
+         'es contable, no funcional, y mezcla utensilios con producto.';
+}
+
+/* ------------------------------------------------------------------ *
  *  Paso 6-7 — Cruce con inventario y armado del pre-pedido            *
  * ------------------------------------------------------------------ */
 
@@ -1465,7 +1532,7 @@ function truncar (d) {
  *  - La cantidad nunca se recorta en silencio: todo faltante queda en `avisos`.
  */function calcularPedido ({
   programacion, inventario, marcaCfg, cedi: cediPedido, ciudad, inicioCiclo, diasCiclo,
-  cantidades = {}, comprometido = null
+  cantidades = {}, comprometido = null, sustituciones = null
 }) {
   // Se calcula contra lo que queda, no contra el saldo bruto del corte.
   const disponibles = saldosEfectivos(inventario, comprometido);
@@ -1526,7 +1593,10 @@ function truncar (d) {
       }
     } else {
       // Se reparte la demanda de la línea entre sus referencias, proporcional al saldo.
-      const saldos = linea.refs.map(r => (cedi ? saldoDe(disponibles, cedi, r.codigo) : 0));
+      // `refs` incluye los sustitutos que alguien haya activado para este pedido.
+      const refs = refsEfectivas(linea, sustituciones);
+      const cands = candidatosDe(linea, sustituciones, disponibles, cedi);
+      const saldos = refs.map(r => (cedi ? saldoDe(disponibles, cedi, r.codigo) : 0));
       const saldoTotal = saldos.reduce((a, b) => a + b, 0);
 
       if (saldoTotal === 0) {
@@ -1535,11 +1605,13 @@ function truncar (d) {
           linea: linea.nombre,
           titulo: `Línea "${linea.nombre}" sin inventario en ${cedi || '—'}`,
           detalle: `Se requieren ${totalPaquetes} paquetes y no hay saldo de ninguna de sus ` +
-                   `referencias (${linea.refs.map(r => r.codigo).join(', ')}). ` +
-                   'No hay sustituto posible dentro de la línea.',
+                   `referencias (${refs.map(r => r.codigo).join(', ')}).` +
+                   fraseCandidatos(cands, linea),
           requerido: totalPaquetes,
           disponible: 0,
-          refs: linea.refs.map(r => ({ codigo: r.codigo, alias: r.alias, disponible: 0 }))
+          candidatos: cands,
+          lineaId: linea.id,
+          refs: refs.map(r => ({ codigo: r.codigo, alias: r.alias, disponible: 0 }))
         });
       } else {
         const servible = Math.min(totalPaquetes, saldoTotal);
@@ -1549,17 +1621,20 @@ function truncar (d) {
             linea: linea.nombre,
             titulo: `Línea "${linea.nombre}": el inventario no alcanza`,
             detalle: `Se requieren ${totalPaquetes} paquetes y hay ${saldoTotal} disponibles ` +
-                     `en ${cedi}. Faltan ${totalPaquetes - saldoTotal}.`,
+                     `en ${cedi}. Faltan ${totalPaquetes - saldoTotal}.` +
+                     (cands.length ? fraseCandidatos(cands, linea) : ''),
             requerido: totalPaquetes,
             disponible: saldoTotal,
-            refs: linea.refs.map((r, i) => ({ codigo: r.codigo, alias: r.alias, disponible: saldos[i] }))
+            candidatos: cands,
+            lineaId: linea.id,
+            refs: refs.map((r, i) => ({ codigo: r.codigo, alias: r.alias, disponible: saldos[i] }))
           });
         }
 
         // Reparto entre referencias, proporcional al saldo.
         const porRef = repartirProporcional(servible, saldos);
 
-        linea.refs.forEach((ref, i) => {
+        refs.forEach((ref, i) => {
           if (porRef[i] <= 0) {
             if (saldos[i] === 0) {
               avisos.push({
@@ -1590,7 +1665,12 @@ function truncar (d) {
       modo: linea.modo,
       contactosDia: linea.contactosDia || null,
       requerido: totalPaquetes,
-      disponible: cedi ? linea.refs.reduce((a, r) => a + saldoDe(disponibles, cedi, r.codigo), 0) : 0,
+      sustitutos: (sustituciones && sustituciones[linea.id]) || [],
+      candidatos: linea.modo === 'fija' ? [] : candidatosDe(linea, sustituciones, disponibles, cedi),
+      disponible: cedi
+        ? refsEfectivas(linea, sustituciones)
+            .reduce((a, r) => a + saldoDe(disponibles, cedi, r.codigo), 0)
+        : 0,
       detalle: detallePuntos.map(d => ({ pdv: d.pdv.nombre, ...d.nec }))
     });
   }
@@ -2694,6 +2774,7 @@ function recalcular (marcaId) {
     inicioCiclo: p.semana,
     diasCiclo: p.dias,
     cantidades: p.cantidades || {},
+    sustituciones: p.sustituciones || null,
     comprometido: comprometidoPara(marcaId)
   });
   r.horaEnvio = p.hora;
@@ -3141,7 +3222,7 @@ function pintarLineas (r, cat) {
               <td class="num">${num(refs.reduce((a, x) => a + x.pedido, 0))}</td></tr></tfoot>
           </table>
 
-          ${cfg?.modo === 'fija' ? panelCantidades(l, cfg, r) : ''}
+          ${cfg?.modo === 'fija' ? panelCantidades(l, cfg, r) : panelSustitutos(l, cfg, r)}
 
           ${conDias.length ? `
           <details class="sub">
@@ -3167,6 +3248,7 @@ function pintarLineas (r, cat) {
   }).join('');
 
   conectarCantidades();
+  conectarSustitutos();
 }
 
 /**
@@ -3174,6 +3256,73 @@ function pintarLineas (r, cat) {
  * lo que apartaron otras marcas: mostrar el saldo bruto haría creer que hay
  * material que en realidad ya está comprometido en otro pedido.
  */
+/**
+ * Panel de sustitución de una línea. Solo aparece cuando la marca declaró
+ * sustitutos para esa línea: si no hay nada declarado, no se muestra un selector
+ * vacío que invite a buscar equivalencias donde no las hay.
+ *
+ * La persona activa; el artefacto nunca sustituye solo. Cada cambio deja el
+ * pedido sin confirmar, igual que un ajuste manual.
+ */
+function panelSustitutos (l, cfg, r) {
+  const activos = l.sustitutos || [];
+  const cands = l.candidatos || [];
+  if (!activos.length && !cands.length) return '';
+
+  const cat = estado.fuentes.inventario.catalogo;
+  const nombre = c => esc(cat.get(c)?.nombre || '');
+
+  return `
+    <div class="ajuste" data-panel-sust="${esc(l.id)}">
+      <label class="campo">Sustitución — referencias declaradas que pueden reemplazar a esta línea
+        ${activos.length ? '<span class="insignia borrador">sustituida</span>' : ''}</label>
+
+      ${activos.length ? `
+        <div class="ajuste-lista">
+          ${activos.map(c => `<span class="chip">${esc(c)} → en uso
+            <button data-quitar-sust="${esc(l.id)}|${esc(c)}" title="Dejar de usarla">✕</button>
+          </span>`).join('')}
+        </div>` : ''}
+
+      ${cands.length ? `
+        <table>
+          <thead><tr><th>Referencia</th><th>Descripción</th>
+            <th class="num">En ${esc(r.cedi)}</th><th></th></tr></thead>
+          <tbody>${cands.map(c => `<tr>
+            <td><code>${esc(c.codigo)}</code></td>
+            <td>${nombre(c.codigo) || esc(c.alias || '')}</td>
+            <td class="num">${num(c.disponible)}</td>
+            <td><button class="secundario" data-usar-sust="${esc(l.id)}|${esc(c.codigo)}">Usar</button></td>
+          </tr>`).join('')}</tbody>
+        </table>
+        <p class="formula" style="margin-top:10px">Al activarla entra en el reparto de la línea
+          como una referencia más, proporcional al saldo. El pedido vuelve a quedar sin confirmar.</p>`
+        : '<p class="formula">Ninguno de los sustitutos declarados tiene saldo en este CEDI.</p>'}
+    </div>`;
+}
+
+function conectarSustitutos () {
+  const cambiar = (id, codigo, usar) => {
+    const p = estado.pedidos[estado.marcaId];
+    p.sustituciones = p.sustituciones || {};
+    const lista = new Set(p.sustituciones[id] || []);
+    if (usar) lista.add(codigo); else lista.delete(codigo);
+    if (lista.size) p.sustituciones[id] = [...lista]; else delete p.sustituciones[id];
+    // Sustituir cambia qué se despacha: nadie debe enviarlo sin volver a revisarlo.
+    p.confirmado = false;
+    guardarPedidos();
+    pintarResultado(recalcular(estado.marcaId));
+  };
+  $('[data-usar-sust]').forEach(b => b.addEventListener('click', () => {
+    const [id, codigo] = b.dataset.usarSust.split('|');
+    cambiar(id, codigo, true);
+  }));
+  $('[data-quitar-sust]').forEach(b => b.addEventListener('click', () => {
+    const [id, codigo] = b.dataset.quitarSust.split('|');
+    cambiar(id, codigo, false);
+  }));
+}
+
 function saldoDeCedi (r, codigo) {
   const saldos = r?.saldos || estado.fuentes.inventario.saldos;
   return saldos.get(`${r.cedi}|${codigo}`) || 0;
