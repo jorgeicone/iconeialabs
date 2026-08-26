@@ -668,7 +668,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1052</b> &middot;
+    Versión <b id="sello-version">20260826-1105</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -3795,11 +3795,11 @@ function conectarSustitutos () {
     guardarPedidos();
     pintarResultado(recalcular(estado.marcaId));
   };
-  $('[data-usar-sust]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-usar-sust]').forEach(b => b.addEventListener('click', () => {
     const [id, codigo] = b.dataset.usarSust.split('|');
     cambiar(id, codigo, true);
   }));
-  $('[data-quitar-sust]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-quitar-sust]').forEach(b => b.addEventListener('click', () => {
     const [id, codigo] = b.dataset.quitarSust.split('|');
     cambiar(id, codigo, false);
   }));
@@ -3909,7 +3909,7 @@ function conectarExtras (r) {
             ${hits.length > 12 ? `<p class="formula">y ${hits.length - 12} más — afine la búsqueda.</p>` : ''}`
         : '<p class="formula" style="margin-top:10px">Nada con saldo en este CEDI para esa búsqueda.</p>';
 
-      $('[data-agregar-extra]').forEach(b => b.addEventListener('click', () => {
+      $$('[data-agregar-extra]').forEach(b => b.addEventListener('click', () => {
         const codigo = b.dataset.agregarExtra;
         p.extras = p.extras || [];
         if (!p.extras.some(e => e.codigo === codigo)) {
@@ -3921,13 +3921,13 @@ function conectarExtras (r) {
     campo.addEventListener('input', buscar);
   }
 
-  $('[data-quitar-extra]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-quitar-extra]').forEach(b => b.addEventListener('click', () => {
     p.extras = (p.extras || []).filter(e => e.codigo !== b.dataset.quitarExtra);
     if (!p.extras.length) delete p.extras;
     guardar();
   }));
 
-  $('[data-extra-cant]').forEach(i => i.addEventListener('change', () => {
+  $$('[data-extra-cant]').forEach(i => i.addEventListener('change', () => {
     const e = (p.extras || []).find(x => x.codigo === i.dataset.extraCant);
     if (!e) return;
     e.cantidad = Math.max(1, parseInt(i.value, 10) || 1);
