@@ -668,7 +668,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1032</b> &middot;
+    Versión <b id="sello-version">20260826-1052</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -2414,7 +2414,28 @@ async function leerDeNube () {
     return null;
   }
 }
-async function subirFuentes (fuentes) {
+
+/**
+ * Huella de las fuentes. Si no cambió, no hay nada que subir.
+ *
+ * Las fuentes pesan ~723 KB y tardan unos 2,5 s en subir; en el celular con datos
+ * móviles, mucho más. `guardarFuentes()` se llama seis veces a lo largo de una
+ * sesión —marcar el racional, confirmar el embudo, crear una marca— y casi siempre
+ * con los mismos Excel. Subirlos otra vez es tiempo perdido con la interfaz
+ * esperando, que es exactamente lo que se siente como que la aplicación se traba.
+ */
+function huella (f) {
+  return [
+    f.programacion ? f.programacion.cargadoEl : '-',
+    f.inventario ? f.inventario.cargadoEl : '-',
+    Object.keys(f.racional || {}).sort().join(',')
+  ].join('|');
+}
+
+let ultimaHuella = null;
+async function subirFuentes (fuentes, forzar = false) {
+  const ahora = huella(fuentes);
+  if (!forzar && ahora === ultimaHuella) return { ok: true, omitido: true };
   try {
     const quien = await identidad();
     const prog = fuentes.programacion && {
@@ -2434,6 +2455,7 @@ async function subirFuentes (fuentes) {
       p_inventario: inv || null,
       p_quien: quien
     });
+    ultimaHuella = ahora;
     nube.disponible = true;
     nube.ultimoError = null;
     nube.sincronizadoEl = new Date().toISOString();
@@ -2443,6 +2465,11 @@ async function subirFuentes (fuentes) {
     nube.ultimoError = e.message;
     return { ok: false, motivo: e.message };
   }
+}
+
+/** Lo que baja de la nube ya está allá: no hace falta devolvérselo. */
+function marcarSincronizado (fuentes) {
+  ultimaHuella = huella(fuentes);
 }
 async function subirPedidos (pedidos) {
   try {
@@ -4480,6 +4507,9 @@ async function sincronizarConNube () {
     estado.historial = d.historial;
     cambio = true;
   }
+
+  // Lo que acaba de bajar ya vive en la nube: marcarlo evita devolverlo entero.
+  marcarSincronizado(estado.fuentes);
 
   if (!cambio) return;
 
