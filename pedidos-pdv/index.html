@@ -1725,43 +1725,116 @@ function nivelPeso (n) {
 
 /**
  * Interpreta una instrucción escrita a mano sobre un punto de venta.
+ *
+ * **No adivina.** Una orden mal leída cambia un despacho real, así que ante
+ * cualquier ambigüedad devuelve un error que dice exactamente qué no entendió.
+ * Antes fallaba en las dos direcciones: "quitar 20 de CRD020300" borraba la línea
+ * completa —el verbo se evaluaba antes que el número— y "bajar 30 a CRD020300"
+ * la dejaba fijada en 30, porque cualquier número suelto se tomaba como cantidad
+ * final. Las dos son frases que alguien escribe sin pensarlo dos veces.
+ *
  * Se aceptan las formas en que la gente realmente escribe:
  *
- *   CRD032318 = 150      fija la cantidad
- *   +20 CRD032318        suma
- *   CRD020300 -10        resta
- *   quitar CRD024393     elimina la línea
+ *   CRD032318 = 150          fija la cantidad
+ *   +20 CRD032318            suma
+ *   CRD020300 -10            resta
+ *   quitar CRD024393         elimina la línea
+ *   quitar 20 de CRD020300   resta 20 — el número manda sobre el verbo
+ *   bajar 30 a CRD020300     resta 30
+ *   poner CRD020300 en 80    fija en 80
  *
- * Devuelve { codigo, operacion, valor } o un error explicando qué no entendió:
- * nunca adivina, porque una instrucción mal interpretada cambia un despacho.
- */function interpretarAjuste (texto) {
+ * Devuelve { codigo, operacion, valor, frase } o { error }.
+ */
+
+// 'quitar' es el único verbo que también vale sin número: sin cantidad borra la
+// línea, con cantidad resta. Los demás exigen número.
+const VERBOS = [
+  { op: 'restar', borra: true,
+    re: /\b(quitar|quita|quite|eliminar|elimina|borrar|borra|sacar|saca|saque|retirar|retira|remover|remueve)\b/i },
+  { op: 'restar',
+    re: /\b(bajar|baja|baje|reducir|reduce|restar|resta|reste|disminuir|disminuye|descontar|descuenta|menos)\b/i },
+  { op: 'sumar',
+    re: /\b(subir|sube|suba|aumentar|aumenta|aumente|sumar|suma|sume|agregar|agrega|agregue|añadir|anadir|añade|anade|adicionar|adiciona)\b/i },
+  { op: 'fijar',
+    re: /\b(fijar|fija|fije|poner|pon|ponga|dejar|deja|deje|cambiar|cambia|cambie|queda|quedar)\b/i }
+];
+
+const NOMBRA = { fijar: 'dejar en otra cantidad', sumar: 'sumar', restar: 'restar' };
+
+// Palabras de relleno que no cambian el sentido de la orden.
+const RELLENO = /\b(a|al|en|de|del|la|el|los|las|y|con|paq|paquete|paquetes|unidad|unidades|und|uds|u|para|por|que|se|le|lo|completo|completa|todo|toda|favor|porfa|gracias)\b/gi;function interpretarAjuste (texto) {
   const t = String(texto || '').trim();
   if (!t) return { error: 'Escriba una instrucción.' };
 
-  const codigo = (t.match(/CRD\s*0*\d{4,}/i) || [''])[0].replace(/\s+/g, '').toUpperCase();
-  if (!codigo) return { error: 'No encontré ningún código CRD en la instrucción.' };
+  // ── 1 · El artículo. Uno solo: dos códigos son dos ajustes distintos.
+  const codigos = [...new Set((t.match(/CRD\s*\d{4,}/gi) || [])
+    .map(c => c.replace(/\s+/g, '').toUpperCase()))];
+  if (!codigos.length) {
+    return { error: 'No encontré ningún código CRD en la instrucción. ' +
+                    'Escriba por ejemplo "CRD032318 = 150".' };
+  }
+  if (codigos.length > 1) {
+    return { error: `Encontré ${codigos.length} códigos en la misma instrucción ` +
+                    `(${codigos.join(', ')}). Haga un ajuste por vez, de a un artículo.` };
+  }
+  const codigo = codigos[0];
 
-  if (/^(quitar|elimina|borra|sacar|quita)/i.test(t)) {
-    return { codigo, operacion: 'quitar', valor: 0 };
+  // ── 2 · La cantidad. Se busca fuera del código, para no leer sus dígitos.
+  const resto = t.replace(/CRD\s*\d{4,}/gi, ' ');
+  const cifras = [...resto.matchAll(/([+-])?\s*(\d+)/g)];
+  if (cifras.length > 1) {
+    return { error: `Entendí el código ${codigo}, pero hay ${cifras.length} números en la ` +
+                    'instrucción y no sé cuál es la cantidad. Deje uno solo.' };
+  }
+  const signo = cifras.length ? (cifras[0][1] || '') : '';
+  const valor = cifras.length ? parseInt(cifras[0][2], 10) : null;
+
+  // ── 3 · El verbo. Dos familias a la vez ("subir y bajar") es ambiguo.
+  const hallados = VERBOS.filter(v => v.re.test(resto));
+  const ops = [...new Set(hallados.map(v => v.op))];
+  if (ops.length > 1) {
+    return { error: `Entendí el código ${codigo}, pero la instrucción da dos órdenes ` +
+                    'distintas a la vez. Escriba una sola.' };
   }
 
-  const igual = t.match(/=\s*(\d+)/);
-  if (igual) return { codigo, operacion: 'fijar', valor: parseInt(igual[1], 10) };
+  const listo = (operacion, v) => ({
+    codigo, operacion, valor: v,
+    frase: operacion === 'quitar' ? `quitar ${codigo} del pedido`
+         : operacion === 'fijar'  ? `dejar ${codigo} en ${v}`
+         : `${operacion} ${v} a ${codigo}`
+  });
 
-  const signo = t.match(/([+-])\s*(\d+)/);
-  if (signo) {
-    return {
-      codigo,
-      operacion: signo[1] === '+' ? 'sumar' : 'restar',
-      valor: parseInt(signo[2], 10)
-    };
+  const igual = /=\s*[+-]?\d/.test(resto);
+
+  // ── 4 · Sin cantidad: solo 'quitar' significa algo.
+  if (valor == null) {
+    if (hallados.some(v => v.borra)) return listo('quitar', 0);
+    if (ops.length) {
+      return { error: `Entendí que quiere ${NOMBRA[ops[0]]} en ${codigo}, pero no cuánto. ` +
+                      `Escriba por ejemplo "${codigo} = 150" o "+20 ${codigo}".` };
+    }
+    return { error: `Entendí el código ${codigo}, pero no la cantidad. Escriba por ejemplo ` +
+                    `"${codigo} = 150", "+20 ${codigo}" o "quitar ${codigo}".` };
   }
 
-  const suelto = t.replace(codigo, '').match(/(\d+)/);
-  if (suelto) return { codigo, operacion: 'fijar', valor: parseInt(suelto[1], 10) };
+  // ── 5 · Con cantidad: el signo explícito manda, luego el verbo, luego "=".
+  if (signo === '+') return listo('sumar', valor);
+  if (signo === '-') return listo('restar', valor);
+  if (ops.length === 1) return listo(ops[0], valor);
+  if (igual) return listo('fijar', valor);
 
-  return { error: `Entendí el código ${codigo}, pero no la cantidad. ` +
-                  'Escriba por ejemplo "CRD032318 = 150", "+20 CRD032318" o "quitar CRD032318".' };
+  // Número suelto sin verbo: se acepta solo si no sobra nada sin entender.
+  const sobra = resto
+    .replace(/([+-])?\s*\d+/g, ' ')
+    .replace(RELLENO, ' ')
+    .replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+/g, ' ')
+    .trim();
+  if (sobra) {
+    return { error: `Entendí ${codigo} y el número ${valor}, pero no qué hacer con él ` +
+                    `("${sobra}"). Escriba "${codigo} = ${valor}" para fijarlo, ` +
+                    `"+${valor} ${codigo}" para sumarlo o "-${valor} ${codigo}" para restarlo.` };
+  }
+  return listo('fijar', valor);
 }
 
 /**
@@ -3275,7 +3348,7 @@ function pintarPuntos (r, cat) {
             <label class="campo">Ajuste manual de este punto</label>
             <div class="ajuste-fila">
               <input type="text" data-instruccion="${esc(p.sap)}"
-                     placeholder="CRD032318 = 150   ·   +20 CRD020300   ·   quitar CRD024393">
+                     placeholder="CRD032318 = 150   ·   +20 CRD020300   ·   bajar 30 a CRD020300   ·   quitar CRD024393">
               <button class="secundario" data-aplicar="${esc(p.sap)}">Aplicar</button>
             </div>
             <div class="ajuste-resp" data-resp="${esc(p.sap)}"></div>
@@ -3317,6 +3390,16 @@ function aplicarInstruccion (sap) {
   }
 
   const actual = pedido.items.find(i => i.codigo === orden.codigo)?.cantidad || 0;
+
+  // Un código que el inventario no conoce no lo va a reconocer el ERP tampoco.
+  const enCatalogo = estado.fuentes.inventario.catalogo.has(orden.codigo);
+  if (!enCatalogo && actual === 0) {
+    resp.innerHTML = `<div class="aviso error" style="margin:8px 0 0"><div class="d">
+      El código <code>${esc(orden.codigo)}</code> no está en el inventario cargado ni en este
+      pedido. Revise el código: el ERP rechaza los artículos que no existen.</div></div>`;
+    return;
+  }
+
   let nueva = actual;
   if (orden.operacion === 'fijar') nueva = orden.valor;
   if (orden.operacion === 'sumar') nueva = actual + orden.valor;
@@ -3330,10 +3413,26 @@ function aplicarInstruccion (sap) {
   p.confirmado = false;
   guardarPedidos();
 
+  // Un ajuste manual puede pasarse del saldo del CEDI, y el panel de avisos no lo
+  // recalcula. Se dice acá mismo, en la línea, para que nadie despache lo que no hay.
+  const disponible = saldoDeCedi(r, orden.codigo);
+  const totalRef = (r.totalPorRef.get(orden.codigo) || 0) - actual + nueva;
+  const exceso = totalRef - disponible;
+
   const nombreRef = estado.fuentes.inventario.catalogo.get(orden.codigo)?.nombre || orden.codigo;
-  resp.innerHTML = `<div class="aviso ok" style="margin:8px 0 0"><div class="d">
-     ${esc(nombreRef)}: ${num(actual)} → <b>${nueva === 0 ? 'quitado' : num(nueva)}</b>.
-     El pedido vuelve a quedar sin confirmar.</div></div>`;
+  resp.innerHTML = `
+    <div class="aviso ${exceso > 0 ? 'faltante' : 'ok'}" style="margin:8px 0 0">
+      <div class="t">Entendí: ${esc(orden.frase)}</div>
+      <div class="d">
+        ${esc(nombreRef)}: ${num(actual)} → <b>${nueva === 0 ? 'quitado' : num(nueva)}</b>
+        en este punto. El pedido vuelve a quedar sin confirmar.
+        ${exceso > 0
+          ? `<br><b>Ojo:</b> con este ajuste la marca pide ${num(totalRef)} de
+             <code>${esc(orden.codigo)}</code> y en ${esc(r.cedi)} hay ${num(disponible)}.
+             Se está pidiendo ${num(exceso)} más de lo que hay.`
+          : ''}
+      </div>
+    </div>`;
 
   campo.value = '';
   const abierto = $$('.punto[open]').map(d => d.dataset.sap);
