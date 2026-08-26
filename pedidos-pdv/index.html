@@ -555,6 +555,9 @@ details.sub > summary {
       <details class="detalle">
         <summary>Cómo se calcula cada línea de esta marca</summary>
         <div class="desplaza" id="modulo-lineas"></div>
+        <div class="acciones" style="margin-top:12px">
+          <button class="secundario chico" id="btn-editar-lineas">Editar las líneas de esta marca</button>
+        </div>
       </details>
       <div class="acciones">
         <button id="btn-calcular">Calcular pre-pedido</button>
@@ -668,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1105</b> &middot;
+    Versión <b id="sello-version">20260826-1146</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -919,13 +922,27 @@ const RUTA_IMAGEN = {
 ];
 
 /** Marcas dadas de alta desde la interfaz, guardadas en el navegador. */
-const CLAVE_LOCAL = 'cppdv_marcas_usuario_v1';function cargarMarcas () {
-  let extra = [];
-  try {
-    const crudo = globalThis.localStorage?.getItem(CLAVE_LOCAL);
-    if (crudo) extra = JSON.parse(crudo);
-  } catch { extra = []; }
-  return [...MARCAS, ...extra];
+const CLAVE_LOCAL = 'cppdv_marcas_usuario_v1';function marcasDeUsuario () {
+  try { return JSON.parse(globalThis.localStorage?.getItem(CLAVE_LOCAL) || '[]') || []; }
+  catch { return []; }
+}
+
+/** Guarda tal cual lo que bajó de la nube, sin fusionar: la nube manda. */function ponerMarcasDeUsuario (lista) {
+  try { globalThis.localStorage?.setItem(CLAVE_LOCAL, JSON.stringify(lista || [])); }
+  catch { /* sin espacio */ }
+}
+
+/**
+ * Las marcas del código más las que se dieron de alta desde la interfaz.
+ *
+ * Si una de usuario tiene el mismo id que una fija, **manda la de usuario**: es
+ * el caso de editar las líneas de Tosh desde el editor. Antes se devolvían las
+ * dos y la marca aparecía duplicada en la cuadrícula.
+ */function cargarMarcas () {
+  const extra = marcasDeUsuario();
+  const porId = new Map(MARCAS.map(m => [m.id, m]));
+  for (const m of extra) porId.set(m.id, m);
+  return [...porId.values()];
 }function guardarMarcaUsuario (marca) {
   const crudo = globalThis.localStorage?.getItem(CLAVE_LOCAL);
   const lista = crudo ? JSON.parse(crudo) : [];
@@ -962,12 +979,29 @@ const CLAVE_LOCAL = 'cppdv_marcas_usuario_v1';function cargarMarcas () {
 /**
  * Ciudad de labor → CEDI que la surte.
  *
- * Una ciudad puede no tener CEDI propio: Facatativá se surte desde Bogotá. El
- * mapa es por CEDI porque el inventario, la sustitución y la columna `Punto` del
- * archivo ERP trabajan a ese nivel, no a nivel de ciudad.
+ * **Bogotá surte todo Bogotá y Cundinamarca.** No se crea un CEDI por municipio:
+ * Facatativá, Zipaquirá, Chía o Mosquera no tienen bodega propia, se despachan
+ * desde Bogotá. Inventar un CEDI para cada uno solo añadiría fricción y dejaría
+ * esos puntos con inventario cero.
+ *
+ * El mapa es por CEDI porque el inventario, la sustitución y la columna `Punto`
+ * del archivo ERP trabajan a ese nivel, no a nivel de ciudad. Una ciudad que no
+ * aparezca acá se reporta en pantalla y no se calcula — nunca se descarta en
+ * silencio, porque perder puntos de venta callando es peor que no pedirlos.
  */
 const CIUDADES = {
-  BGTA: { nombre: 'Bogotá', alias: ['bogota', 'bogotá', 'facatativa', 'facatativá'] },
+  BGTA: {
+    nombre: 'Bogotá',
+    alias: [
+      'bogota', 'bogotá',
+      // Cundinamarca: se surte toda desde Bogotá.
+      'facatativa', 'facatativá', 'zipaquira', 'zipaquirá', 'chia', 'chía',
+      'mosquera', 'soacha', 'madrid', 'funza', 'cajica', 'cajicá', 'cota',
+      'sopo', 'sopó', 'tocancipa', 'tocancipá', 'la calera', 'fusagasuga',
+      'fusagasugá', 'girardot', 'ubate', 'ubaté', 'villeta', 'sibate', 'sibaté',
+      'tabio', 'tenjo', 'gachancipa', 'gachancipá', 'el rosal', 'bojaca', 'bojacá'
+    ]
+  },
   BARR: { nombre: 'Barranquilla', alias: ['barranquilla'] },
   CALI: { nombre: 'Cali', alias: ['cali'] },
   MEDE: { nombre: 'Medellín', alias: ['medellin', 'medellín'] },
@@ -2424,17 +2458,18 @@ async function leerDeNube () {
  * con los mismos Excel. Subirlos otra vez es tiempo perdido con la interfaz
  * esperando, que es exactamente lo que se siente como que la aplicación se traba.
  */
-function huella (f) {
+function huella (f, marcas) {
   return [
     f.programacion ? f.programacion.cargadoEl : '-',
     f.inventario ? f.inventario.cargadoEl : '-',
-    Object.keys(f.racional || {}).sort().join(',')
+    Object.keys(f.racional || {}).sort().join(','),
+    JSON.stringify(marcas || []).length
   ].join('|');
 }
 
 let ultimaHuella = null;
-async function subirFuentes (fuentes, forzar = false) {
-  const ahora = huella(fuentes);
+async function subirFuentes (fuentes, marcas = null, forzar = false) {
+  const ahora = huella(fuentes, marcas);
   if (!forzar && ahora === ultimaHuella) return { ok: true, omitido: true };
   try {
     const quien = await identidad();
@@ -2453,7 +2488,8 @@ async function subirFuentes (fuentes, forzar = false) {
       p_racional: fuentes.racional || {},
       p_programacion: prog || null,
       p_inventario: inv || null,
-      p_quien: quien
+      p_quien: quien,
+      p_marcas: marcas || null
     });
     ultimaHuella = ahora;
     nube.disponible = true;
@@ -2468,8 +2504,8 @@ async function subirFuentes (fuentes, forzar = false) {
 }
 
 /** Lo que baja de la nube ya está allá: no hace falta devolvérselo. */
-function marcarSincronizado (fuentes) {
-  ultimaHuella = huella(fuentes);
+function marcarSincronizado (fuentes, marcas) {
+  ultimaHuella = huella(fuentes, marcas);
 }
 async function subirPedidos (pedidos) {
   try {
@@ -2606,7 +2642,7 @@ function almacen () {
     // La nube va sin await a proposito: el navegador ya guardo, y si no hay
     // senal en el CEDI la interfaz no se puede quedar esperando. Lo que falle
     // queda registrado en `nube.ultimoError` y se ve en pantalla.
-    subirFuentes(estado.fuentes);
+    subirFuentes(estado.fuentes, marcasDeUsuario());
     return { ok: true };
   } catch (e) {
     // Cuota llena: se avisa en vez de fingir que quedó guardado.
@@ -3297,6 +3333,262 @@ function pintarMarcas () {
 
 /* ── Alta de marca ───────────────────────────────────────────── */
 
+/* ══════════════════════════════════════════════════════════════ *
+ *  EDITOR DE LÍNEAS — el racional de una marca, sin tocar código   *
+ * ══════════════════════════════════════════════════════════════ */
+
+/**
+ * Dar de alta una marca exigía editar `app/js/marcas.js` y reconstruir la
+ * aplicación. Es decir: la herramienta dejaba crear la marca pero no terminarla,
+ * y quien la usa no puede tocar el código. Sin esto, replicar el MVP a otra marca
+ * era imposible desde la interfaz.
+ *
+ * Las referencias se eligen del **inventario cargado**, nunca se escriben a mano:
+ * un CRD inventado produce un archivo que el ERP rechaza, y el error aparecería
+ * al cargarlo, no al escribirlo.
+ */
+
+const MODOS = [
+  { id: 'directa', nombre: 'Degustación directa — un contacto, un paquete' },
+  { id: 'preparada', nombre: 'Preparada con receta — infusión, parfait' },
+  { id: 'fija', nombre: 'Cantidad fija por cupo — dotación, utensilios' }
+];
+
+let borrador = null;   // copia de trabajo; no se toca la marca hasta Guardar
+
+function abrirEditorLineas (marcaId) {
+  const m = marcaPorId(marcaId);
+  if (!m) return;
+  borrador = JSON.parse(JSON.stringify(m));
+  if (!Array.isArray(borrador.lineas)) borrador.lineas = [];
+  irA('dialogo');
+  pintarEditorLineas();
+}
+
+function pintarEditorLineas () {
+  const cat = estado.fuentes.inventario?.catalogo;
+  const m = borrador;
+
+  $('#dialogo').innerHTML = `
+    <div class="tarjeta" style="max-width:860px;margin:0 auto">
+      <h3 class="th">Líneas de ${esc(m.marca)}</h3>
+      <div class="cuerpo">
+        <p style="margin-top:0;color:var(--carbon-2)">
+          Cada línea es una forma de degustar con su propio cálculo. Las referencias
+          salen del inventario cargado, así que solo se pueden elegir códigos que existen.
+        </p>
+
+        ${!cat ? `<div class="aviso faltante">
+          <div class="t">Todavía no hay inventario cargado</div>
+          <div class="d">Sin él no se pueden buscar las referencias. Cárguelo en
+            <b>Fuentes</b> y vuelva acá.</div></div>` : ''}
+
+        <div id="editor-lineas">
+          ${m.lineas.map((l, i) => tarjetaLinea(l, i, cat)).join('') ||
+            '<p style="color:var(--tenue)">Esta marca no tiene ninguna línea todavía.</p>'}
+        </div>
+
+        <div class="acciones" style="margin-top:16px">
+          <button class="secundario" data-linea-nueva>+ Agregar una línea</button>
+        </div>
+
+        <div class="acciones" style="margin-top:22px;border-top:1px solid var(--linea);padding-top:16px">
+          <button data-lineas-guardar>Guardar las líneas</button>
+          <button class="secundario" data-lineas-cancelar>Cancelar</button>
+        </div>
+      </div>
+    </div>`;
+
+  conectarEditorLineas();
+}
+
+function tarjetaLinea (l, i, cat) {
+  const nombreRef = c => esc(cat?.get(c)?.nombre || '');
+  return `
+    <div class="tarjeta" style="margin-top:14px" data-linea-idx="${i}">
+      <div class="cuerpo">
+        <div class="rejilla">
+          <div>
+            <label class="campo">Nombre de la línea</label>
+            <input type="text" data-l-nombre="${i}" value="${esc(l.nombre || '')}"
+                   placeholder="Galletas, Infusiones, Utensilios…">
+          </div>
+          <div>
+            <label class="campo">Cómo se calcula</label>
+            <select data-l-modo="${i}">
+              ${MODOS.map(x => `<option value="${x.id}"${x.id === l.modo ? ' selected' : ''}>
+                ${esc(x.nombre)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="rejilla" style="margin-top:12px">
+          ${l.modo === 'fija' ? `
+            <div>
+              <label class="campo">Cantidad por cupo</label>
+              <input type="number" min="1" max="999" data-l-cant="${i}"
+                     value="${l.cantidadPorPdv ?? 1}">
+            </div>` : `
+            <div>
+              <label class="campo">Contactos por día</label>
+              <input type="number" min="0" max="999" data-l-contactos="${i}"
+                     value="${l.contactosDia ?? 30}">
+            </div>`}
+          <div>
+            <label class="campo">Días en que va</label>
+            <select data-l-dias="${i}">
+              <option value="todos"${l.dias !== 'finde' ? ' selected' : ''}>Todos los del ciclo</option>
+              <option value="finde"${l.dias === 'finde' ? ' selected' : ''}>Solo viernes a domingo</option>
+            </select>
+          </div>
+        </div>
+
+        ${l.modo === 'preparada' ? `
+          <div class="rejilla" style="margin-top:12px">
+            <div>
+              <label class="campo">Contactos que rinde una preparación</label>
+              <input type="number" min="1" max="999" data-l-rinde="${i}" value="${l.rindeContactos ?? 14}">
+            </div>
+            <div>
+              <label class="campo">Unidades que consume</label>
+              <input type="number" min="1" max="999" data-l-consumo="${i}" value="${l.consumoReceta ?? 7}">
+            </div>
+            <div>
+              <label class="campo">Unidades por paquete</label>
+              <input type="number" min="1" max="999" data-l-porpaq="${i}" value="${l.unidadesPorPaquete ?? 20}">
+            </div>
+          </div>
+          <p class="formula" style="margin-top:8px">
+            <code>ceil(contactos ÷ rinde) × consume ÷ unidades por paquete</code>
+          </p>` : ''}
+
+        <label class="campo" style="margin-top:16px">Referencias de esta línea</label>
+        ${(l.refs || []).length ? `
+          <div class="ajuste-lista">
+            ${l.refs.map(r => `<span class="chip">
+              <code>${esc(r.codigo)}</code> ${nombreRef(r.codigo) || esc(r.alias || '')}
+              <button data-ref-quitar="${i}|${esc(r.codigo)}" title="Quitar">✕</button>
+            </span>`).join('')}
+          </div>` : '<p style="color:var(--tenue);margin:4px 0">Sin referencias: esta línea no pedirá nada.</p>'}
+
+        <div class="ajuste-fila" style="margin-top:10px">
+          <input type="text" data-ref-buscar="${i}" autocomplete="off"
+                 placeholder="Buscar en el inventario: pasta, salsa, CRD0…">
+        </div>
+        <div data-ref-resultado="${i}"></div>
+
+        <div class="acciones" style="margin-top:14px">
+          <button class="secundario chico" data-linea-borrar="${i}">Eliminar esta línea</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function conectarEditorLineas () {
+  const cat = estado.fuentes.inventario?.catalogo;
+
+  const leerCampos = () => {
+    borrador.lineas.forEach((l, i) => {
+      const v = (sel) => $(`[data-l-${sel}="${i}"]`)?.value;
+      if (v('nombre') != null) l.nombre = v('nombre').trim() || ('Línea ' + (i + 1));
+      if (v('modo') != null) l.modo = v('modo');
+      if (v('dias') != null) l.dias = v('dias');
+      if (v('contactos') != null) l.contactosDia = parseInt(v('contactos'), 10) || 0;
+      if (v('cant') != null) l.cantidadPorPdv = parseInt(v('cant'), 10) || 1;
+      if (v('rinde') != null) l.rindeContactos = parseInt(v('rinde'), 10) || 1;
+      if (v('consumo') != null) l.consumoReceta = parseInt(v('consumo'), 10) || 1;
+      if (v('porpaq') != null) l.unidadesPorPaquete = parseInt(v('porpaq'), 10) || 1;
+    });
+  };
+
+  // Cambiar el modo cambia qué campos hacen falta: hay que repintar.
+  $$('[data-l-modo]').forEach(s => s.addEventListener('change', () => {
+    leerCampos();
+    pintarEditorLineas();
+  }));
+
+  $$('[data-linea-borrar]').forEach(b => b.addEventListener('click', () => {
+    leerCampos();
+    borrador.lineas.splice(parseInt(b.dataset.lineaBorrar, 10), 1);
+    pintarEditorLineas();
+  }));
+
+  $$('[data-linea-nueva]').forEach(b => b.addEventListener('click', () => {
+    leerCampos();
+    borrador.lineas.push({
+      id: 'l' + Date.now().toString(36),
+      nombre: '', modo: 'directa', contactosDia: 30, dias: 'todos', refs: []
+    });
+    pintarEditorLineas();
+  }));
+
+  $$('[data-ref-quitar]').forEach(b => b.addEventListener('click', () => {
+    const [i, codigo] = b.dataset.refQuitar.split('|');
+    leerCampos();
+    const l = borrador.lineas[parseInt(i, 10)];
+    l.refs = (l.refs || []).filter(r => r.codigo !== codigo);
+    pintarEditorLineas();
+  }));
+
+  $$('[data-ref-buscar]').forEach(campo => {
+    const i = parseInt(campo.dataset.refBuscar, 10);
+    const salida = $(`[data-ref-resultado="${i}"]`);
+    campo.addEventListener('input', () => {
+      const q = normalizarBusqueda(campo.value);
+      if (!cat || q.length < 2) { salida.innerHTML = ''; return; }
+      const puestas = new Set(borrador.lineas.flatMap(x => (x.refs || []).map(r => r.codigo)));
+      const hits = [];
+      for (const [codigo, c] of cat) {
+        if (puestas.has(codigo)) continue;
+        if (!normalizarBusqueda(codigo + ' ' + (c.nombre || '')).includes(q)) continue;
+        hits.push({ codigo, nombre: c.nombre });
+        if (hits.length >= 12) break;
+      }
+      salida.innerHTML = hits.length
+        ? `<table style="margin-top:8px"><tbody>${hits.map(h => `<tr>
+             <td><code>${esc(h.codigo)}</code></td>
+             <td>${esc(h.nombre || '')}</td>
+             <td><button class="secundario chico" data-ref-poner="${i}|${esc(h.codigo)}">Agregar</button></td>
+           </tr>`).join('')}</tbody></table>`
+        : '<p class="formula" style="margin-top:8px">Nada con ese nombre en el inventario cargado.</p>';
+
+      $$('[data-ref-poner]').forEach(b => b.addEventListener('click', () => {
+        const [idx, codigo] = b.dataset.refPoner.split('|');
+        leerCampos();
+        const l = borrador.lineas[parseInt(idx, 10)];
+        l.refs = l.refs || [];
+        if (!l.refs.some(r => r.codigo === codigo)) {
+          l.refs.push({ codigo, alias: cat.get(codigo)?.nombre || codigo });
+        }
+        pintarEditorLineas();
+      }));
+    });
+  });
+
+  $$('[data-lineas-cancelar]').forEach(b => b.addEventListener('click', () => {
+    borrador = null;
+    abrirMarca(estado.marcaId);
+  }));
+
+  $$('[data-lineas-guardar]').forEach(b => b.addEventListener('click', () => {
+    leerCampos();
+    const sinRefs = borrador.lineas.filter(l => !(l.refs || []).length);
+    if (!borrador.lineas.length) { alert('Agregue al menos una línea.'); return; }
+    if (sinRefs.length && !confirm(
+      `${sinRefs.length} línea(s) no tienen ninguna referencia y no pedirán nada. ¿Guardar así?`)) return;
+
+    guardarMarcaUsuario(borrador);
+    estado.marcas = cargarMarcas();
+    // Cambiar el racional cambia el pedido: nadie debe despacharlo sin revisarlo.
+    const p = estado.pedidos[borrador.id];
+    if (p) p.confirmado = false;
+    guardarPedidos();
+    const id = borrador.id;
+    borrador = null;
+    abrirMarca(id);
+  }));
+}
+
 function abrirNuevaMarca () {
   $('#dialogo').innerHTML = `
     <div class="tarjeta" style="max-width:620px;margin:0 auto">
@@ -3425,6 +3717,16 @@ function pintarPuertaMarca (m) {
       <h3 class="th">Esta marca todavía no puede calcular</h3>
       <div class="cuerpo">
         <p style="margin-top:0">Falta ${esc(faltas.join(', '))}.</p>
+        ${(!estado.fuentes.programacion || !estado.fuentes.inventario) ? `
+          <div class="aviso faltante" style="margin-bottom:12px">
+            <div class="t">La programación y el inventario son de todas las marcas</div>
+            <div class="d">Se cargan una sola vez y sirven para Tosh, Doria y las que agregue:
+              el Excel de programación trae todas las marcas juntas y el inventario es el saldo
+              de la bodega. Se cargan o se reemplazan en <b>Fuentes</b>.</div>
+            <div class="acciones" style="margin-top:10px">
+              <button data-ir-fuentes>Ir a Fuentes y cargarlos</button>
+            </div>
+          </div>` : ''}
         ${!racionalListo(m.id) ? `
           <div class="suelta" data-zona-marca>
             <div class="titulo">Cargar el racional de ${esc(m.marca)}</div>
@@ -3437,11 +3739,21 @@ function pintarPuertaMarca (m) {
         ${m.lineas.some(l => l.refs.some(r => r.codigo === 'CRD000000')) ? `
           <div class="aviso faltante" style="margin-top:12px">
             <div class="t">Las líneas todavía son de ejemplo</div>
-            <div class="d">Edite <code>app/js/marcas.js</code> con las líneas, los contactos por
-              día y las referencias CRD de esta marca, y reconstruya la aplicación. Mientras
-              tanto el cálculo saldría con códigos que no existen.</div></div>` : ''}
+            <div class="d">Defina las líneas de ${esc(m.marca)} —cómo se calcula cada una y
+              con qué referencias— eligiéndolas del inventario que ya está cargado.
+              Mientras tanto el cálculo saldría con códigos que no existen.</div>
+            <div class="acciones" style="margin-top:12px">
+              <button data-editar-lineas>Definir las líneas de esta marca</button>
+            </div>
+          </div>` : ''}
       </div>
     </div>`;
+
+  const btnFuentes = $('[data-ir-fuentes]');
+  if (btnFuentes) btnFuentes.addEventListener('click', () => { pintarEmbudo(); irA('embudo'); });
+
+  const btnLineas = $('[data-editar-lineas]');
+  if (btnLineas) btnLineas.addEventListener('click', () => abrirEditorLineas(m.id));
 
   const zona = $('[data-zona-marca]');
   if (zona) {
@@ -3461,6 +3773,11 @@ function pintarPuertaMarca (m) {
 }
 
 function pintarLineasMarca (m) {
+  const btnEditar = $('#btn-editar-lineas');
+  if (btnEditar) btnEditar.replaceWith(btnEditar.cloneNode(true));
+  const btn2 = $('#btn-editar-lineas');
+  if (btn2) btn2.addEventListener('click', () => abrirEditorLineas(m.id));
+
   $('#modulo-lineas').innerHTML = `
     <table>
       <thead><tr><th>Línea</th><th>Modo</th><th class="num">Contactos/día</th><th>Días</th><th>Referencias</th></tr></thead>
@@ -4498,6 +4815,19 @@ async function sincronizarConNube () {
     cambio = true;
   }
 
+  // Las marcas dadas de alta por el equipo. Sin esto, quien crea una marca en su
+  // equipo es el único que la ve, y replicar el MVP no sirve de nada.
+  if (Array.isArray(d.marcas) && d.marcas.length) {
+    const propias = new Map(marcasDeUsuario().map(m => [m.id, m]));
+    let nuevas = false;
+    for (const m of d.marcas) if (!propias.has(m.id)) { propias.set(m.id, m); nuevas = true; }
+    if (nuevas) {
+      ponerMarcasDeUsuario([...propias.values()]);
+      estado.marcas = cargarMarcas();
+      cambio = true;
+    }
+  }
+
   if (d.pedidos && Object.keys(d.pedidos).length) {
     estado.pedidos = { ...d.pedidos, ...estado.pedidos };
     cambio = true;
@@ -4509,7 +4839,7 @@ async function sincronizarConNube () {
   }
 
   // Lo que acaba de bajar ya vive en la nube: marcarlo evita devolverlo entero.
-  marcarSincronizado(estado.fuentes);
+  marcarSincronizado(estado.fuentes, marcasDeUsuario());
 
   if (!cambio) return;
 
