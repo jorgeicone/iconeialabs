@@ -304,6 +304,11 @@ code { font: 12.5px ui-monospace, "Cascadia Mono", Consolas, monospace; color: v
 
 /* ── Avisos ─────────────────────────────────────────────────── */
 
+/* Estado de la sincronizacion, en la barra superior. */
+.estado-nube { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+.estado-nube .insignia { background: rgba(255,255,255,.14); color: #fff; border: 0; }
+.estado-nube .insignia.borrador { background: var(--ambar); color: var(--carbon); }
+
 .aviso { border-radius: 10px; padding: 12px 15px; margin-bottom: 9px; border-left: 4px solid; font-size: 13.5px; }
 .aviso .t { font-weight: 700; }
 .aviso .d { color: var(--carbon-2); margin-top: 2px; }
@@ -490,6 +495,7 @@ details.sub > summary {
     </div>
   </div>
   <nav class="migas" id="migas"></nav>
+  <div class="estado-nube" id="estado-nube"></div>
   <button class="secundario chico" id="btn-reiniciar" title="Borra las fuentes y los pedidos guardados">Reiniciar</button>
 </header>
 
@@ -2198,6 +2204,227 @@ function anchos (filas, columnas) {
 }
 
 
+/* ── js/nube.js ─────────────────────────────── */
+/*!
+ * Constructor de pedidos para PDV — Sincronización con Supabase
+ * © 2026 Ing. Jorge Hugo Pérez Gaona / ICONE ialabs · Todos los derechos reservados.
+ * Licenciamiento: jorgehugoperez@iconeialabs.com
+ */
+
+/**
+ * Por qué existe este módulo.
+ *
+ * El estado vivía solo en `localStorage`, es decir en **un navegador**. Quien
+ * armaba el pedido en el PC no lo veía en el celular, y si el navegador limpiaba
+ * sus datos el trabajo desaparecía sin dejar rastro. Ahora la fuente de verdad
+ * está en Supabase y el navegador queda como **caché**: si no hay señal en el
+ * CEDI se sigue trabajando, y al recuperar conexión se sube.
+ *
+ * **Los datos personales no salen del equipo.** El nombre y el teléfono de cada
+ * asesora se separan antes de subir y se guardan solo en este navegador. A la
+ * nube viaja el SAP del punto de venta, que no identifica a nadie. El archivo del
+ * ERP sí los necesita —`Observaciones` y `Telefono_entregar_en`—, así que se
+ * vuelven a unir al calcular, en local.
+ *
+ * **Por qué se entra por funciones y no por las tablas.** La clave publicable de
+ * este proyecto está incrustada en páginas públicas de iconeialabs.com: cualquiera
+ * puede copiarla. Las tablas `pdv_*` deniegan todo acceso directo; solo responden
+ * funciones que exigen la clave de equipo, que vive aquí dentro, detrás de
+ * Cloudflare Access.
+ */
+
+const URL_NUBE = 'https://nvgkhdrrxqdgxktfkioa.supabase.co';
+const CLAVE_PUB = 'sb_publishable_d1RrtE7S-9a8e8mGKRRjxQ_4HU_nkDl';
+const CLAVE_EQUIPO = 'pdv_ZYpg54XS3_6pU3HUrLSi9ZuoJhrhGuF4';
+
+/** Nombres y teléfonos: se quedan acá, nunca suben. */
+const CLAVE_PERSONALES = 'cppdv_personales_v1';
+const nube = {
+  disponible: null,      // null = todavía sin probar
+  ultimoError: null,
+  sincronizadoEl: null,
+  quien: null
+};
+
+/* ------------------------------------------------------------------ *
+ *  Identidad — la da Cloudflare Access, sin pedir otro login          *
+ * ------------------------------------------------------------------ */
+
+/**
+ * Access ya sabe quién entró: expone el correo en `/cdn-cgi/access/get-identity`.
+ * Sirve para dejar rastro de quién tocó qué. Abriendo el archivo local no hay
+ * Access y queda en null, que es lo correcto.
+ */
+async function identidad () {
+  if (nube.quien) return nube.quien;
+  try {
+    const r = await fetch('/cdn-cgi/access/get-identity', { credentials: 'include' });
+    if (!r.ok) return null;
+    const d = await r.json();
+    nube.quien = d.email || d.name || null;
+  } catch { nube.quien = null; }
+  return nube.quien;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Llamada a las funciones                                            *
+ * ------------------------------------------------------------------ */
+
+async function rpc (funcion, cuerpo = {}) {
+  const r = await fetch(URL_NUBE + '/rest/v1/rpc/' + funcion, {
+    method: 'POST',
+    headers: {
+      apikey: CLAVE_PUB,
+      Authorization: 'Bearer ' + CLAVE_PUB,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ p_clave: CLAVE_EQUIPO, ...cuerpo })
+  });
+  if (!r.ok) {
+    let detalle = '';
+    try { detalle = (await r.json()).message || ''; } catch { /* sin cuerpo */ }
+    throw new Error(detalle || ('la nube respondió ' + r.status));
+  }
+  return r.json();
+}
+
+/* ------------------------------------------------------------------ *
+ *  Separar y volver a unir los datos personales                       *
+ * ------------------------------------------------------------------ */
+
+const llave = f => (f.sap || '') + '|' + String(f.pdv || '').trim().toLowerCase();
+
+function almacen () {
+  try { return globalThis.localStorage || null; } catch { return null; }
+}
+
+/** Aparta nombre y teléfono, los guarda en este equipo y devuelve las filas limpias. */
+function separarPersonales (filas) {
+  const personales = {};
+  const limpias = (filas || []).map(f => {
+    if (f.asesora || f.telefono) {
+      personales[llave(f)] = { asesora: f.asesora || '', telefono: f.telefono || '' };
+    }
+    const { asesora, telefono, ...resto } = f;
+    return resto;
+  });
+  const a = almacen();
+  if (a) {
+    // Se acumulan: quien cargó el Excel conserva lo suyo aunque otro suba otra versión.
+    let previos = {};
+    try { previos = JSON.parse(a.getItem(CLAVE_PERSONALES) || '{}'); } catch { previos = {}; }
+    try { a.setItem(CLAVE_PERSONALES, JSON.stringify({ ...previos, ...personales })); }
+    catch { /* sin espacio: el pedido saldría sin asesora, y la interfaz lo dice */ }
+  }
+  return limpias;
+}
+
+/** Vuelve a pegar nombre y teléfono a las filas que bajaron de la nube. */
+function unirPersonales (filas) {
+  const a = almacen();
+  let personales = {};
+  if (a) {
+    try { personales = JSON.parse(a.getItem(CLAVE_PERSONALES) || '{}'); } catch { personales = {}; }
+  }
+  let sinDatos = 0;
+  const unidas = (filas || []).map(f => {
+    const p = personales[llave(f)];
+    if (!p && f.sap) sinDatos++;
+    return { ...f, asesora: (p && p.asesora) || '', telefono: (p && p.telefono) || '' };
+  });
+  return { filas: unidas, sinDatos };
+}
+
+/** Cuántos puntos de venta tienen asesora conocida en ESTE equipo. */
+function cuantosPersonales () {
+  const a = almacen();
+  if (!a) return 0;
+  try { return Object.keys(JSON.parse(a.getItem(CLAVE_PERSONALES) || '{}')).length; }
+  catch { return 0; }
+}
+function olvidarPersonales () {
+  const a = almacen();
+  if (a) a.removeItem(CLAVE_PERSONALES);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Operaciones                                                        *
+ * ------------------------------------------------------------------ */
+async function leerDeNube () {
+  try {
+    const d = await rpc('pdv_leer');
+    nube.disponible = true;
+    nube.ultimoError = null;
+    nube.sincronizadoEl = new Date().toISOString();
+    return d;
+  } catch (e) {
+    nube.disponible = false;
+    nube.ultimoError = e.message;
+    return null;
+  }
+}
+async function subirFuentes (fuentes) {
+  try {
+    const quien = await identidad();
+    const prog = fuentes.programacion && {
+      filas: separarPersonales(fuentes.programacion.filas),
+      resumenes: fuentes.programacion.resumenes,
+      cargadoEl: fuentes.programacion.cargadoEl
+    };
+    const inv = fuentes.inventario && {
+      saldos: [...fuentes.inventario.saldos.entries()],
+      catalogo: [...fuentes.inventario.catalogo.entries()],
+      resumen: fuentes.inventario.resumen,
+      cargadoEl: fuentes.inventario.cargadoEl
+    };
+    await rpc('pdv_guardar_fuentes', {
+      p_racional: fuentes.racional || {},
+      p_programacion: prog || null,
+      p_inventario: inv || null,
+      p_quien: quien
+    });
+    nube.disponible = true;
+    nube.ultimoError = null;
+    nube.sincronizadoEl = new Date().toISOString();
+    return { ok: true };
+  } catch (e) {
+    nube.disponible = false;
+    nube.ultimoError = e.message;
+    return { ok: false, motivo: e.message };
+  }
+}
+async function subirPedidos (pedidos) {
+  try {
+    await rpc('pdv_guardar_pedidos', { p_pedidos: pedidos || {}, p_quien: await identidad() });
+    nube.disponible = true;
+    nube.ultimoError = null;
+    nube.sincronizadoEl = new Date().toISOString();
+    return { ok: true };
+  } catch (e) {
+    nube.disponible = false;
+    nube.ultimoError = e.message;
+    return { ok: false, motivo: e.message };
+  }
+}
+async function subirHistorial (registro) {
+  try {
+    await rpc('pdv_anotar_historial', { p_registro: registro, p_quien: await identidad() });
+    return { ok: true };
+  } catch (e) {
+    nube.ultimoError = e.message;
+    return { ok: false, motivo: e.message };
+  }
+}
+async function borrarHistorialNube () {
+  try { await rpc('pdv_borrar_historial'); return { ok: true }; }
+  catch (e) { return { ok: false, motivo: e.message }; }
+}
+async function olvidarTodoNube () {
+  try { await rpc('pdv_olvidar_todo'); olvidarPersonales(); return { ok: true }; }
+  catch (e) { return { ok: false, motivo: e.message }; }
+}
+
+
 /* ── js/estado.js ─────────────────────────────── */
 /*!
  * Constructor de pedidos para PDV — Estado y persistencia
@@ -2216,7 +2443,6 @@ function anchos (filas, columnas) {
  * cuesta menos de un segundo y evita que un resultado viejo sobreviva a un
  * cambio de inventario sin que nadie se entere.
  */
-
 const CLAVE_FUENTES = 'cppdv_fuentes_v1';
 const CLAVE_PEDIDOS = 'cppdv_pedidos_v1';
 const CLAVE_HISTORIAL = 'cppdv_historial_v1';
@@ -2299,6 +2525,10 @@ function almacen () {
   };
   try {
     a.setItem(CLAVE_FUENTES, JSON.stringify(paquete));
+    // La nube va sin await a proposito: el navegador ya guardo, y si no hay
+    // senal en el CEDI la interfaz no se puede quedar esperando. Lo que falle
+    // queda registrado en `nube.ultimoError` y se ve en pantalla.
+    subirFuentes(estado.fuentes);
     return { ok: true };
   } catch (e) {
     // Cuota llena: se avisa en vez de fingir que quedó guardado.
@@ -2362,6 +2592,7 @@ function rehidratarFila (f) {
   if (!a) return { ok: false, motivo: 'sin almacenamiento' };
   try {
     a.setItem(CLAVE_PEDIDOS, JSON.stringify(estado.pedidos));
+    subirPedidos(estado.pedidos);
     return { ok: true };
   } catch (e) {
     anotarFallo('el pedido', e);
@@ -2464,7 +2695,9 @@ function anotarFallo (que, e) {
  * volver a bajarlo tal cual: el inventario de la semana siguiente será otro y
  * recalcular daría un resultado distinto al que realmente se despachó.
  */function anotarEnHistorial (registro) {
-  estado.historial.unshift({ id: 'h' + Date.now().toString(36), fecha: ahora(), ...registro });
+  const nuevo = { id: 'h' + Date.now().toString(36), fecha: ahora(), ...registro };
+  subirHistorial(nuevo);
+  estado.historial.unshift(nuevo);
   estado.historial = estado.historial.slice(0, MAX_HISTORIAL);
   const a = almacen();
   if (!a) return { ok: false };
@@ -3922,6 +4155,99 @@ function pintarAlmacen () {
     </details>`;
 }
 
+/**
+ * Trae de la nube lo que otro equipo haya dejado.
+ *
+ * El orden importa: primero se pinta con lo que hay en el navegador —instantáneo,
+ * y lo único que existe si no hay señal— y solo después se consulta la nube. Si
+ * trae algo más reciente, se reemplaza y se vuelve a pintar. Nunca al revés: una
+ * pantalla en blanco esperando a la red, en un CEDI con mala cobertura, es peor
+ * que un dato de hace un rato.
+ */
+async function sincronizarConNube () {
+  const d = await leerDeNube();
+  pintarEstadoNube();
+  if (!d) return;
+
+  let cambio = false;
+  const f = d.fuentes || {};
+
+  // Las fuentes de la nube mandan si son más recientes que las de este equipo.
+  const masNueva = (a, b) => !b ? false : (!a ? true : new Date(b) > new Date(a));
+
+  if (f.programacion && masNueva(estado.fuentes.programacion?.cargadoEl, f.programacion.cargadoEl)) {
+    // Los nombres y teléfonos no viajaron: se vuelven a pegar desde este equipo.
+    const { filas, sinDatos } = unirPersonales(f.programacion.filas || []);
+    estado.fuentes.programacion = {
+      filas: filas.map(x => ({
+        ...x,
+        desde: x.desde ? new Date(x.desde) : null,
+        hasta: x.hasta ? new Date(x.hasta) : null,
+        desdePdv: x.desdePdv ? new Date(x.desdePdv) : null,
+        hastaPdv: x.hastaPdv ? new Date(x.hastaPdv) : null
+      })),
+      resumenes: f.programacion.resumenes || [],
+      cargadoEl: f.programacion.cargadoEl
+    };
+    estado.faltanPersonales = sinDatos;
+    cambio = true;
+  }
+
+  if (f.inventario && masNueva(estado.fuentes.inventario?.cargadoEl, f.inventario.cargadoEl)) {
+    estado.fuentes.inventario = {
+      saldos: new Map(f.inventario.saldos || []),
+      catalogo: new Map(f.inventario.catalogo || []),
+      resumen: f.inventario.resumen,
+      cargadoEl: f.inventario.cargadoEl
+    };
+    cambio = true;
+  }
+
+  if (f.racional && Object.keys(f.racional).length) {
+    estado.fuentes.racional = { ...f.racional, ...estado.fuentes.racional };
+    cambio = true;
+  }
+
+  if (d.pedidos && Object.keys(d.pedidos).length) {
+    estado.pedidos = { ...d.pedidos, ...estado.pedidos };
+    cambio = true;
+  }
+
+  if (Array.isArray(d.historial) && d.historial.length > (estado.historial || []).length) {
+    estado.historial = d.historial;
+    cambio = true;
+  }
+
+  if (!cambio) return;
+
+  pintarEmbudo();
+  const listo = fuentesGlobalesListas();
+  if (listo && estado.vista === 'embudo') { pintarMarcas(); irA('marcas'); }
+  else if (listo) { recalcularTodos(); pintarMarcas(); }
+  pintarEstadoNube();
+}
+
+/** Una línea fija que dice si lo que ve está guardado fuera de este navegador. */
+function pintarEstadoNube () {
+  const caja = $('#estado-nube');
+  if (!caja) return;
+  const faltan = estado.faltanPersonales || 0;
+
+  if (nube.disponible === null) {
+    caja.innerHTML = '<span class="insignia">conectando…</span>';
+    return;
+  }
+  if (!nube.disponible) {
+    caja.innerHTML = `<span class="insignia borrador" title="${esc(nube.ultimoError || '')}">
+      sin conexión — se guarda solo en este equipo</span>`;
+    return;
+  }
+  caja.innerHTML = `<span class="insignia">guardado en la nube${
+    nube.sincronizadoEl ? ' · ' + esc(haceCuanto(nube.sincronizadoEl)) : ''}</span>` +
+    (faltan ? `<span class="insignia borrador" title="Los nombres y teléfonos no se suben: se quedan en el equipo que cargó el Excel">
+       ${faltan} punto(s) sin asesora en este equipo</span>` : '');
+}
+
 function avisoCaducidad () {
   const partes = [];
   if (caducado.programacion) {
@@ -3951,6 +4277,8 @@ function avisoCaducidad () {
   pintarEmbudo();
   const aviso = avisoCaducidad() + pintarAlmacen();
   if (aviso) $('#embudo').insertAdjacentHTML('beforebegin', aviso);
+  // La nube se consulta después de pintar, nunca antes.
+  sincronizarConNube();
   const listo = fuentesGlobalesListas();
   irA(listo ? 'marcas' : 'embudo');
   if (listo) pintarMarcas();
