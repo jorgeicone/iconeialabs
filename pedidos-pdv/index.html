@@ -671,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1146</b> &middot;
+    Versión <b id="sello-version">20260826-1204</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -907,6 +907,128 @@ const RUTA_IMAGEN = {
       }
     ],
     // Cabecera fija del archivo para el ERP.
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
+  },
+
+  /**
+   * Doria — Especialidades 2026.
+   *
+   * Sale del racional de la operación (39 láminas, resumen del 26-08-2026):
+   * 20 impulsadoras en 9 ciudades, del 14 de agosto al 22 de noviembre, con foco
+   * en la línea sin gluten y las saborizadas.
+   *
+   * **La receta manda, y su cuello de botella es el tallarín.** La meta es de 50
+   * contactos al día —dos preparaciones de 25—, pero cada insumo rinde distinto:
+   * un tallarín da para 20 contactos, el ajonjolí para 115, el aceite para 140 y
+   * el jengibre para 420. Por eso cada insumo es su propia línea con su propio
+   * rendimiento: pedir todos al ritmo del tallarín sobraría aceite para meses.
+   *
+   * Se modela con `rindeContactos` = contactos que rinde **un paquete**, y
+   * `consumoReceta` y `unidadesPorPaquete` en 1: así `paquetes = ceil(contactos /
+   * rendimiento)`, que es exactamente lo que dice el racional.
+   *
+   * La soya del racional no está en el maestro de artículos y por eso no aparece.
+   */
+  {
+    id: 'doria',
+    marca: 'Doria',
+    evento: 'Especialidades Doria',
+    imagen: 'pastas',
+    patronMarcaProgramacion: 'doria',
+    // Única iniciativa de Doria en la programación: 73 filas, sin ambigüedad.
+    patronIniciativaProgramacion: 'especialidades doria',
+    vigencia: { desde: '2026-08-14', hasta: '2026-11-22' },
+    contactosDiaTotal: 50,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'tallarin',
+        nombre: 'Tallarín de arroz — el cuello de botella',
+        modo: 'preparada',
+        contactosDia: 50,
+        dias: 'todos',
+        rindeContactos: 20,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        sustitutos: [],
+        refs: [
+          { codigo: 'CRD029959', alias: 'Tallarín Doria sin gluten arroz x400 g' }
+        ]
+      },
+      {
+        id: 'ajonjoli',
+        nombre: 'Ajonjolí de la receta',
+        modo: 'preparada',
+        contactosDia: 50,
+        dias: 'todos',
+        rindeContactos: 115,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD033375', alias: 'Ajonjolí en grano Tosh x180 g' }
+        ]
+      },
+      {
+        id: 'aceite',
+        nombre: 'Aceite de oliva',
+        modo: 'preparada',
+        contactosDia: 50,
+        dias: 'todos',
+        rindeContactos: 140,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD026673', alias: 'Aceite de oliva Monticello x250 ml' }
+        ]
+      },
+      {
+        id: 'jengibre',
+        nombre: 'Jengibre',
+        modo: 'preparada',
+        contactosDia: 50,
+        dias: 'todos',
+        rindeContactos: 420,
+        consumoReceta: 1,
+        unidadesPorPaquete: 1,
+        refs: [
+          { codigo: 'CRD031090', alias: 'Jengibre molido Badía 42,5 g' }
+        ]
+      },
+      {
+        id: 'servicio',
+        nombre: 'Para servir la degustación',
+        modo: 'fija',
+        dias: 'todos',
+        refs: [
+          { codigo: 'CRD029600', alias: 'Plato cuadrado cartón Doria x30', cantidadPorPdv: 1 },
+          { codigo: 'CRD020361', alias: 'Vaso degustación Doria 4 oz x50', cantidadPorPdv: 1 }
+        ]
+      },
+      {
+        // El racional habla de 4.300 folletos para todo el evento, no por semana.
+        // Repartidos entre 20 cupos y las ~14 semanas de vigencia salen ~15 por
+        // cupo y semana. Es una estimación: confirmar con la operación.
+        id: 'folletos',
+        nombre: 'Folletos de la receta',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'Los 15 folletos por cupo salen de repartir los 4.300 del racional entre ' +
+              '20 cupos y las semanas de vigencia. Confirme el número con la operación.',
+        refs: [
+          { codigo: 'CRD029958', alias: 'Folleto pasta oriental', cantidadPorPdv: 15 }
+        ]
+      }
+    ],
     erp: {
       vendedor: 'NUTRESA',
       proveedor: 'NUTRESA',
