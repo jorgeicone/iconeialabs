@@ -2220,7 +2220,37 @@ function anchos (filas, columnas) {
 const CLAVE_FUENTES = 'cppdv_fuentes_v1';
 const CLAVE_PEDIDOS = 'cppdv_pedidos_v1';
 const CLAVE_HISTORIAL = 'cppdv_historial_v1';
-const MAX_HISTORIAL = 40;const estado = {
+const MAX_HISTORIAL = 40;
+
+/**
+ * Caducidad de las fuentes guardadas.
+ *
+ * La programación no es una tabla cualquiera: lleva **nombre y teléfono de cada
+ * asesora**. Guardarla sin fecha de vencimiento significa que esos datos quedan en
+ * claro, indefinidamente, en el navegador de cualquier equipo que abrió la
+ * herramienta — un PC compartido de CEDI, el portátil de alguien que ya no está en
+ * el proyecto. Es tratamiento de datos personales, y la Ley 1581 de 2012 pide
+ * conservarlos solo mientras hagan falta.
+ *
+ * No se pueden simplemente no guardar: el teléfono va al ERP en
+ * `Telefono_entregar_en` y el nombre en `Observaciones`. Lo que sí se puede es que
+ * dejen de sobrevivir a su utilidad. Se borran solas al abrir, y se avisa.
+ *
+ * El inventario caduca antes porque rota más: un corte de hace una semana ya no
+ * sirve para calcular nada, y la aplicación además avisa si no es de hoy.
+ */
+const DIAS_CADUCA_PROGRAMACION = 30;
+const DIAS_CADUCA_INVENTARIO = 7;
+
+/** Días transcurridos desde una marca de tiempo ISO. Infinity si no la hay. */
+function diasDesde (iso) {
+  if (!iso) return Infinity;
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return Infinity;
+  return (Date.now() - t) / 86400000;
+}
+
+/** Lo que se purgó en el último arranque, para que la interfaz pueda decirlo. */const caducado = { programacion: null, inventario: null };const estado = {
   marcas: [],
   marcaId: null,
   vista: 'embudo',
@@ -2286,21 +2316,40 @@ function almacen () {
   estado.fuentes.racional = (p.racional && typeof p.racional === 'object' && !p.racional.confirmadoEl)
     ? p.racional
     : {};
+  // Las fuentes vencidas no se cargan: se borran del almacenamiento y se reportan.
+  let purgado = false;
+
   if (p.programacion) {
-    estado.fuentes.programacion = {
-      filas: (p.programacion.filas || []).map(rehidratarFila),
-      resumenes: p.programacion.resumenes || [],
-      cargadoEl: p.programacion.cargadoEl
-    };
+    const dias = diasDesde(p.programacion.cargadoEl);
+    if (dias > DIAS_CADUCA_PROGRAMACION) {
+      caducado.programacion = { dias: Math.floor(dias), limite: DIAS_CADUCA_PROGRAMACION };
+      purgado = true;
+    } else {
+      estado.fuentes.programacion = {
+        filas: (p.programacion.filas || []).map(rehidratarFila),
+        resumenes: p.programacion.resumenes || [],
+        cargadoEl: p.programacion.cargadoEl
+      };
+    }
   }
+
   if (p.inventario) {
-    estado.fuentes.inventario = {
-      saldos: new Map(p.inventario.saldos || []),
-      catalogo: new Map(p.inventario.catalogo || []),
-      resumen: p.inventario.resumen,
-      cargadoEl: p.inventario.cargadoEl
-    };
+    const dias = diasDesde(p.inventario.cargadoEl);
+    if (dias > DIAS_CADUCA_INVENTARIO) {
+      caducado.inventario = { dias: Math.floor(dias), limite: DIAS_CADUCA_INVENTARIO };
+      purgado = true;
+    } else {
+      estado.fuentes.inventario = {
+        saldos: new Map(p.inventario.saldos || []),
+        catalogo: new Map(p.inventario.catalogo || []),
+        resumen: p.inventario.resumen,
+        cargadoEl: p.inventario.cargadoEl
+      };
+    }
   }
+
+  // Reescribir deja fuera del disco lo caducado, no solo fuera de memoria.
+  if (purgado) guardarFuentes();
 }
 
 /** JSON convierte las fechas en texto; hay que devolverlas a Date. */
@@ -3728,6 +3777,34 @@ function blindarPrototipos () {
     Object.freeze(Object.prototype);
     Object.freeze(Array.prototype);
   } catch { /* si el navegador no deja, se sigue: es una defensa, no un requisito */ }
+}
+
+/**
+ * Lo que se borró solo por caducidad, dicho en la pantalla de arranque.
+ *
+ * Purgar en silencio sería peor que no purgar: alguien respondería 'sí, la
+ * programación sigue vigente' sobre unos datos que ya no están y creería que
+ * calculó con ellos.
+ */
+function avisoCaducidad () {
+  const partes = [];
+  if (caducado.programacion) {
+    partes.push(`la programación, cargada hace ${caducado.programacion.dias} días ` +
+                `(el límite son ${caducado.programacion.limite})`);
+  }
+  if (caducado.inventario) {
+    partes.push(`el inventario, del corte de hace ${caducado.inventario.dias} días ` +
+                `(el límite son ${caducado.inventario.limite})`);
+  }
+  if (!partes.length) return '';
+  return `
+    <div class="aviso ajustado" style="margin-bottom:14px">
+      <div class="t">Se borró ${partes.length === 1 ? 'una fuente vencida' : 'lo vencido'}</div>
+      <div class="d">Este equipo ya no guarda ${partes.join(' ni ')}.
+        Se borra sola porque la programación lleva el nombre y el teléfono de cada asesora,
+        y esos datos no deben quedarse en un navegador más de lo necesario.
+        Vuelva a cargar el archivo para continuar.</div>
+    </div>`;
 }function iniciar () {
   blindarPrototipos();
   estado.marcas = cargarMarcas();
@@ -3736,6 +3813,8 @@ function blindarPrototipos () {
   cargarHistorial();
 
   pintarEmbudo();
+  const aviso = avisoCaducidad();
+  if (aviso) $('#embudo').insertAdjacentHTML('beforebegin', aviso);
   const listo = fuentesGlobalesListas();
   irA(listo ? 'marcas' : 'embudo');
   if (listo) pintarMarcas();
