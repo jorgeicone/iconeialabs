@@ -671,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1214</b> &middot;
+    Versión <b id="sello-version">20260826-1220</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1244,6 +1244,96 @@ const RUTA_IMAGEN = {
       documento1: 'GENERICO',
       documento2: 'BPO'
     }
+  },
+
+  /**
+   * Bénet y Haka.
+   *
+   * Sale del racional del pedido de agosto (157 líneas, 15 destinos, 1.519
+   * unidades): producto de degustación y menaje de Bénet —gomas, kola granulada,
+   * bebida lista— junto con Haka —gomas melena de león, cocoa, vinagre—.
+   *
+   * Todo es cantidad fija: es una canasta, no depende de contactos.
+   *
+   * **Las gomas Melena de León son el 69% del pedido** —1.050 sobres de 1.519, a
+   * 70 por destino—. Es el muestreo masivo y el primero que se agota.
+   *
+   * El `CRD033643` va **consolidado en 6**. En el pedido real aparecía partido en
+   * dos líneas del mismo destino, una de 2 y otra de 4, con dos descripciones
+   * distintas para el mismo código; el racional avisa de que así el sistema puede
+   * rechazarlo o despachar doble.
+   *
+   * Aparece con tres nombres en la columna `Marca` —`Bénet`, `Bénet y Haka` y
+   * `Haka`—, de ahí la lista de patrones.
+   */
+  {
+    id: 'benet-haka',
+    marca: 'Bénet y Haka',
+    evento: 'Bénet y Haka',
+    imagen: 'bebidas',
+    patronMarcaProgramacion: ['benet', 'haka'],
+    patronIniciativaProgramacion: ['benet', 'haka'],
+    vigencia: { desde: '', hasta: '' },
+    contactosDiaTotal: null,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'muestreo-masivo',
+        nombre: 'Gomas Melena de León — el 69% del pedido',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'Es el producto de muestreo masivo y el primero que se agota: vigile su saldo ' +
+              'antes que el de ningún otro.',
+        refs: [
+          { codigo: 'CRD033333', alias: 'Sobre gomas Melena de León 9 g', cantidadPorPdv: 70 }
+        ]
+      },
+      {
+        id: 'producto-benet',
+        nombre: 'Producto Bénet',
+        modo: 'fija',
+        dias: 'todos',
+        refs: [
+          { codigo: 'CRD028383', alias: 'Bebida lista Bénet vainilla banano 250 ml', cantidadPorPdv: 10 },
+          { codigo: 'CRD033607', alias: 'Tarro gomas Bénet colágeno x96', cantidadPorPdv: 4 },
+          { codigo: 'CRD033608', alias: 'Tarro gomas Bénet vitamina C x96', cantidadPorPdv: 4 },
+          { codigo: 'CRD032454', alias: 'Kola granulada Bénet fresa 300 g', cantidadPorPdv: 1 }
+        ]
+      },
+      {
+        id: 'producto-haka',
+        nombre: 'Producto Haka',
+        modo: 'fija',
+        dias: 'todos',
+        refs: [
+          { codigo: 'CRD030820', alias: 'Vinagre de manzana Haka 500 ml', cantidadPorPdv: 1 }
+        ]
+      },
+      {
+        id: 'vasos-menaje',
+        nombre: 'Vasos y papel',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'Hay vaso de sobra frente a la bebida lista —300 Bénet y 300 Haka contra 10 ' +
+              'bebidas—, así que el vaso sirve también para la kola granulada preparada.',
+        refs: [
+          { codigo: 'CRD033643', alias: 'Vaso 4 oz Bénet Haka x50', cantidadPorPdv: 6 },
+          { codigo: 'CRD032783', alias: 'Vaso azul 4 oz Bénet x50', cantidadPorPdv: 4 },
+          { codigo: 'CRD020501', alias: 'Rollo de papel de cocina', cantidadPorPdv: 1 }
+        ]
+      }
+    ],
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
   }
 ];
 
@@ -1670,13 +1760,26 @@ function truncar (d) {
  * ciudad por ciudad, dos pedidos que comparten CEDI se repartirían el mismo
  * saldo sin saberlo y se pediría más de lo que hay.
  */function puntosDeVenta ({ programacion, marcaCfg, cedi, inicioCiclo, diasCiclo }) {
-  const patron = normalizar(marcaCfg.patronMarcaProgramacion || marcaCfg.marca);
+  /**
+   * Una marca puede aparecer con varios nombres en la columna `Marca`: Bénet
+   * figura como 'Bénet', 'Bénet y Haka' y 'Haka' según la fila, y Saltín como
+   * 'Saltín Noel', 'Saltín y Ducales' y 'Saltín'. Por eso el patrón admite una
+   * lista además de un texto suelto: basta con que la fila case con cualquiera.
+   */
+  const enLista = (v, patrones) => patrones.some(p => p && v.includes(p));
+  const patrones = []
+    .concat(marcaCfg.patronMarcaProgramacion || marcaCfg.marca)
+    .map(normalizar)
+    .filter(Boolean);
   // La columna "Marca" no alcanza: una misma marca corre en varios eventos a la vez
   // ("Impulso Tosh", "Multimarca Eventos", "Multimarca Eventos Ocasionales") y sin
   // acotar la campaña el pedido mezcla temporadas segun que semana se pida. El nombre
   // de la campana vive en "Iniciativa Comercial", no en "Evento Contratado".
   // Si la marca no declara patron, no se filtra: una marca nueva no se queda en cero.
-  const patronIni = normalizar(marcaCfg.patronIniciativaProgramacion || '');
+  const patronesIni = []
+    .concat(marcaCfg.patronIniciativaProgramacion || [])
+    .map(normalizar)
+    .filter(Boolean);
   const iniCiclo = aFecha(inicioCiclo);
   const finCiclo = new Date(iniCiclo.getTime() + (diasCiclo - 1) * DIA_MS);
 
@@ -1687,8 +1790,8 @@ function truncar (d) {
   const puntos = [];
 
   for (const f of programacion) {
-    if (!normalizar(f.marca).includes(patron)) { descartados.otraMarca++; continue; }
-    if (patronIni && !normalizar(f.iniciativa).includes(patronIni)) {
+    if (!enLista(normalizar(f.marca), patrones)) { descartados.otraMarca++; continue; }
+    if (patronesIni.length && !enLista(normalizar(f.iniciativa), patronesIni)) {
       descartados.otraIniciativa++; continue;
     }
 
