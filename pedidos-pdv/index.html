@@ -668,7 +668,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-0955</b> &middot;
+    Versión <b id="sello-version">20260826-1032</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -3546,7 +3546,8 @@ function calcular () {
     estado.pedidos[m.id].confirmadoEl = previo.confirmadoEl || ahora();
   }
   guardarPedidos();
-  pintarResultado(r);
+  try { pintarResultado(r); }
+  catch (e) { mostrarFallo('al mostrar el pre-pedido', e); }
 }
 
 function pintarResultado (r) {
@@ -4312,6 +4313,39 @@ function pintarHistorial () {
  * la pestaña de quien abrió el archivo: no hay servidor que tumbar ni datos de nadie
  * más en juego.
  */
+/**
+ * Muestra los fallos en la propia pantalla.
+ *
+ * Sin esto, un error de JavaScript deja la interfaz muda: se pulsa un botón y no
+ * pasa nada, y desde un celular no hay consola donde mirar. Diagnosticar así
+ * cuesta días. El error se ve donde ocurre y se puede copiar tal cual.
+ */
+function mostrarFallo (donde, e) {
+  const linea = e && e.stack
+    ? String(e.stack).split('\n').slice(0, 3).join(' · ').replace(/https?:\/\/[^\s)]+\//g, '')
+    : '';
+  const caja = document.createElement('div');
+  caja.className = 'aviso error';
+  caja.style.cssText = 'margin:14px 0; position:relative';
+  caja.innerHTML = `
+    <div class="t">Algo falló ${esc(donde)}</div>
+    <div class="d">
+      <b>${esc((e && e.message) || String(e))}</b>
+      ${linea ? `<br><code style="font-size:11px;word-break:break-all">${esc(linea)}</code>` : ''}
+      <br>Mándele esta pantalla a quien mantiene la aplicación.
+    </div>`;
+  const destino = $('#resultado') || $('#vista-modulo') || document.body;
+  if (destino.classList) destino.classList.remove('oculto');
+  destino.insertBefore(caja, destino.firstChild);
+}
+
+function vigilarErrores () {
+  addEventListener('error', e => {
+    if (e.message) mostrarFallo('en la aplicación', e.error || { message: e.message });
+  });
+  addEventListener('unhandledrejection', e => mostrarFallo('en una tarea de fondo', e.reason || {}));
+}
+
 function blindarPrototipos () {
   try {
     Object.freeze(Object.prototype);
@@ -4497,6 +4531,7 @@ function avisoCaducidad () {
         Vuelva a cargar el archivo para continuar.</div>
     </div>`;
 }function iniciar () {
+  vigilarErrores();
   blindarPrototipos();
   estado.marcas = cargarMarcas();
   cargarFuentes();
