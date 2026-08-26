@@ -2302,6 +2302,7 @@ function almacen () {
     return { ok: true };
   } catch (e) {
     // Cuota llena: se avisa en vez de fingir que quedó guardado.
+    anotarFallo('los archivos cargados', e);
     return { ok: false, motivo: e.name === 'QuotaExceededError'
       ? 'los archivos superan el espacio del navegador' : e.message };
   }
@@ -2358,8 +2359,14 @@ function rehidratarFila (f) {
   return { ...f, desde: d(f.desde), hasta: d(f.hasta), desdePdv: d(f.desdePdv), hastaPdv: d(f.hastaPdv) };
 }function guardarPedidos () {
   const a = almacen();
-  if (!a) return;
-  try { a.setItem(CLAVE_PEDIDOS, JSON.stringify(estado.pedidos)); } catch { /* sin espacio */ }
+  if (!a) return { ok: false, motivo: 'sin almacenamiento' };
+  try {
+    a.setItem(CLAVE_PEDIDOS, JSON.stringify(estado.pedidos));
+    return { ok: true };
+  } catch (e) {
+    anotarFallo('el pedido', e);
+    return { ok: false, motivo: ultimoFallo.motivo };
+  }
 }function cargarPedidos () {
   const a = almacen();
   if (!a) return;
@@ -2370,6 +2377,77 @@ function rehidratarFila (f) {
   estado.fuentes = { racional: {}, programacion: null, inventario: null };
   estado.pedidos = {};
   estado.resultados = {};
+}
+
+/* ------------------------------------------------------------------ *
+ *  Diagnóstico del almacenamiento                                     *
+ * ------------------------------------------------------------------ */
+
+/**
+ * Último fallo de guardado, si lo hubo.
+ *
+ * Antes, `guardarPedidos()` tragaba el error en un `catch` vacío: si el navegador
+ * rechazaba el `setItem`, el pedido no quedaba guardado y **nadie se enteraba**.
+ * Al reabrir, la aplicación aparecía como recién instalada sin una sola pista.
+ * Guardar puede fallar —cuota llena, modo privado, permisos—, pero fallar en
+ * silencio no es una opción.
+ */const ultimoFallo = { que: null, motivo: null, cuando: null };
+
+function anotarFallo (que, e) {
+  ultimoFallo.que = que;
+  ultimoFallo.motivo = e && e.name === 'QuotaExceededError'
+    ? 'no cabe: el almacenamiento del navegador está lleno'
+    : ((e && e.message) || 'el navegador rechazó guardar');
+  ultimoFallo.cuando = new Date().toISOString();
+}
+
+/**
+ * Estado real del almacenamiento, para poder responder "¿por qué no me guarda?"
+ * mirando en vez de suponiendo.
+ */function diagnosticoAlmacen () {
+  const d = {
+    disponible: false,
+    motivo: null,
+    claves: [],
+    bytes: 0,
+    fuentes: null,
+    fallo: ultimoFallo.que ? { ...ultimoFallo } : null
+  };
+
+  const a = almacen();
+  if (!a) { d.motivo = 'este navegador no permite almacenamiento local'; return d; }
+
+  // Que exista el objeto no basta: en modo privado algunos navegadores lo
+  // exponen y revientan al escribir. La única prueba es escribir de verdad.
+  try {
+    a.setItem('cppdv_prueba', '1');
+    a.removeItem('cppdv_prueba');
+    d.disponible = true;
+  } catch (e) {
+    d.motivo = e && e.name === 'QuotaExceededError'
+      ? 'el almacenamiento está lleno'
+      : 'el navegador bloquea el almacenamiento (¿ventana privada?)';
+    return d;
+  }
+
+  for (const clave of [CLAVE_FUENTES, CLAVE_PEDIDOS, CLAVE_HISTORIAL]) {
+    const v = a.getItem(clave);
+    if (v == null) continue;
+    d.claves.push({ clave, bytes: v.length });
+    d.bytes += v.length;
+  }
+
+  const f = estado.fuentes;
+  d.fuentes = {
+    programacion: f.programacion ? f.programacion.cargadoEl : null,
+    inventario: f.inventario ? f.inventario.cargadoEl : null,
+    marcasConRacional: Object.keys(f.racional || {}).length,
+    pedidos: Object.keys(estado.pedidos || {}).length,
+    historial: (estado.historial || []).length,
+    caducaProgramacion: DIAS_CADUCA_PROGRAMACION,
+    caducaInventario: DIAS_CADUCA_INVENTARIO
+  };
+  return d;
 }
 
 /* ------------------------------------------------------------------ *
@@ -3786,6 +3864,64 @@ function blindarPrototipos () {
  * programación sigue vigente' sobre unos datos que ya no están y creería que
  * calculó con ellos.
  */
+/**
+ * Estado del almacenamiento, a la vista.
+ *
+ * "No me guarda la información" es imposible de diagnosticar a ciegas: puede ser
+ * la cuota, una ventana privada, el navegador borrando al cerrar, o datos que
+ * caducaron. En vez de suponer, la aplicación lo dice.
+ */
+function pintarAlmacen () {
+  const d = diagnosticoAlmacen();
+  const kb = n => (n / 1024).toFixed(0) + ' KB';
+  const cuando = iso => iso ? `${fechaCorta(iso)} · ${haceCuanto(iso)}` : 'no cargado';
+
+  if (!d.disponible) {
+    return `
+      <div class="aviso error">
+        <div class="t">Este navegador no está guardando nada</div>
+        <div class="d">${esc(d.motivo)}. Todo lo que cargue se pierde al cerrar la pestaña.
+          Si está en una ventana de incógnito, ábrala en una normal.</div>
+      </div>`;
+  }
+
+  const f = d.fuentes || {};
+  return `
+    ${d.fallo ? `
+      <div class="aviso error">
+        <div class="t">El último intento de guardar falló</div>
+        <div class="d">No se pudo guardar ${esc(d.fallo.que)}: ${esc(d.fallo.motivo)}.
+          Lo que ve en pantalla es correcto, pero <b>no sobrevivirá al cerrar</b>.
+          Si el almacenamiento está lleno, vacíe el historial de pedidos.</div>
+      </div>` : ''}
+    <details class="linea">
+      <summary>
+        <span class="nombre">Estado del almacenamiento</span>
+        <span class="col">Ocupado <b>${kb(d.bytes)}</b></span>
+        <span class="col">${d.fallo ? 'con fallos' : 'guardando bien'}</span>
+      </summary>
+      <div class="punto-cuerpo">
+        <table>
+          <tbody>
+            <tr><td>Programación</td><td>${esc(cuando(f.programacion))}</td>
+                <td class="num">caduca a los ${f.caducaProgramacion} días</td></tr>
+            <tr><td>Inventario</td><td>${esc(cuando(f.inventario))}</td>
+                <td class="num">caduca a los ${f.caducaInventario} días</td></tr>
+            <tr><td>Marcas con racional</td><td>${f.marcasConRacional}</td><td></td></tr>
+            <tr><td>Pedidos guardados</td><td>${f.pedidos}</td><td></td></tr>
+            <tr><td>Pedidos en historial</td><td>${f.historial}</td>
+                <td class="num">${d.claves.find(c => c.clave.includes('historial'))
+                  ? kb(d.claves.find(c => c.clave.includes('historial')).bytes) : '—'}</td></tr>
+          </tbody>
+        </table>
+        <p class="formula">El navegador guarda unos 5 MB por sitio, y el historial es lo que más
+          ocupa. Si algo deja de guardarse, vaciarlo libera espacio.
+          Estos datos viven <b>solo en este navegador</b>: en otro equipo, o en otro navegador
+          del mismo equipo, la aplicación empieza vacía.</p>
+      </div>
+    </details>`;
+}
+
 function avisoCaducidad () {
   const partes = [];
   if (caducado.programacion) {
@@ -3813,7 +3949,7 @@ function avisoCaducidad () {
   cargarHistorial();
 
   pintarEmbudo();
-  const aviso = avisoCaducidad();
+  const aviso = avisoCaducidad() + pintarAlmacen();
   if (aviso) $('#embudo').insertAdjacentHTML('beforebegin', aviso);
   const listo = fuentesGlobalesListas();
   irA(listo ? 'marcas' : 'embudo');
