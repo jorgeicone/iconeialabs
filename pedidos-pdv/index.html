@@ -573,7 +573,8 @@ details.sub > summary {
 
     <div class="tarjeta">
       <h3 class="th">Necesidad por línea</h3>
-      <div class="cuerpo"><div class="desplaza" id="tabla-lineas"></div></div>
+      <div class="cuerpo"><div class="desplaza" id="tabla-lineas"></div>
+        <div id="extras" style="margin-top:14px"></div></div>
     </div>
 
     <div class="tarjeta">
@@ -886,7 +887,16 @@ const RUTA_IMAGEN = {
           // Para servir y revolver. El parfait se come con algo, y la infusión
           // se prepara en jarra y se reparte: sin mezclador no se revuelve.
           { codigo: 'CRD001841', alias: 'Tenedor desechable x100', cantidadPorPdv: 1 },
-          { codigo: 'CRD025973', alias: 'Mezcladores de madera x500', cantidadPorPdv: 1 }
+          { codigo: 'CRD025973', alias: 'Mezcladores de madera x500', cantidadPorPdv: 1 },
+          // Para servir la porción: plato y capacillo.
+          { codigo: 'CRD027439', alias: 'Plato cuadrado de cartón x25', cantidadPorPdv: 1 },
+          { codigo: 'CRD012167', alias: 'Capacillos n.º 2 x1000', cantidadPorPdv: 1 },
+          // Segundo vaso Tosh de 4 oz. El blanco tradicional (CRD031951) escasea
+          // —25 en BGTA— y este tiene 70 en BGTA y 1.636 en los cuatro CEDI.
+          { codigo: 'CRD026299', alias: 'Vaso Tosh 4 oz x50', cantidadPorPdv: 1 },
+          // Para endulzar la infusión.
+          { codigo: 'CRD000129', alias: 'Azúcar x200 sobres', cantidadPorPdv: 1 },
+          { codigo: 'CRD013200', alias: 'Endulzante Sucra Ladiet x500 sobres', cantidadPorPdv: 1 }
         ]
       }
     ],
@@ -1391,9 +1401,11 @@ function truncar (d) {
  * consume el doble de producto, y una asesora a media jornada (cupo 0.5) hace la
  * mitad. Ignorar el cupo despachaba de más a unos puntos y de menos a otros.
  *
- * Las líneas de modo `fija` son la excepción deliberada: la dotación —servilletas,
- * vasos, termos, cuadernos, loncheras— va **por punto de venta**, no por asesora.
- * Media jornada no necesita medio rollo de papel de cocina.
+ * **También la dotación va por cupo.** Se decidió al revés al principio —un termo por
+ * punto, no por asesora— y la operación lo corrigió: el racional se pide por cupo,
+ * porque cada asesora necesita sus propios guantes, su tapabocas y su vaso. Un punto
+ * con dos cupos lleva doble; uno a media jornada, la mitad, redondeando hacia arriba
+ * para no dejar a nadie sin lo suyo.
  *
  * `cantidades` permite sobreescribir a mano la cantidad por PDV de una
  * referencia de modo fijo, sin tocar la configuración de la marca: el racional
@@ -1407,13 +1419,15 @@ function truncar (d) {
     // la suya — no es lo mismo un paquete de servilletas que tres de vasos.
     const porRef = {};
     for (const ref of linea.refs) {
-      porRef[ref.codigo] = cantidades[ref.codigo] ?? ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
+      const base = cantidades[ref.codigo] ?? ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
+      // Hacia arriba: medio guante no existe, y quedarse corto deja a alguien sin.
+      porRef[ref.codigo] = Math.max(base > 0 ? 1 : 0, Math.ceil(base * cupo));
     }
     return {
       modo: 'fija',
       dias,
-      cupo,                 // se informa, pero la dotación NO se multiplica por cupo
-      cupoAplica: false,
+      cupo,
+      cupoAplica: true,
       contactos: 0,
       preparaciones: 0,
       paquetes: Object.values(porRef).reduce((a, b) => a + b, 0),
@@ -1549,7 +1563,7 @@ function fraseCandidatos (cands, linea) {
  *  - La cantidad nunca se recorta en silencio: todo faltante queda en `avisos`.
  */function calcularPedido ({
   programacion, inventario, marcaCfg, cedi: cediPedido, ciudad, inicioCiclo, diasCiclo,
-  cantidades = {}, comprometido = null, sustituciones = null
+  cantidades = {}, comprometido = null, sustituciones = null, extras = null
 }) {
   // Se calcula contra lo que queda, no contra el saldo bruto del corte.
   const disponibles = saldosEfectivos(inventario, comprometido);
@@ -1590,10 +1604,33 @@ function fraseCandidatos (cands, linea) {
     });
   }
 
+  /**
+   * Las líneas del racional más lo que alguien haya agregado a mano desde el
+   * inventario. Se tratan como una línea fija más —van por cupo, como el resto
+   * de la dotación— y así heredan el reparto, los avisos de faltante y el
+   * archivo del ERP sin ningún caso especial.
+   *
+   * Vive en el pedido, no en la marca: es lo que se pidió **esta semana**, y no
+   * debe convertirse en racional permanente sin que alguien lo decida.
+   */
+  const lineasEfectivas = (extras && extras.length)
+    ? [...marcaCfg.lineas, {
+        id: '__extras__',
+        nombre: 'Agregados del inventario',
+        modo: 'fija',
+        dias: 'todos',
+        refs: extras.map(e => ({
+          codigo: e.codigo,
+          alias: e.alias || e.codigo,
+          cantidadPorPdv: Number(e.cantidad) > 0 ? Number(e.cantidad) : 1
+        }))
+      }]
+    : marcaCfg.lineas;
+
   // requerido[codigo][sapPdv] = paquetes
   const requerido = new Map();
 
-  for (const linea of marcaCfg.lineas) {
+  for (const linea of lineasEfectivas) {
     const detallePuntos = puntos.map(p => ({ pdv: p, nec: necesidadLinea(linea, p, cantidades) }));
     const totalPaquetes = detallePuntos.reduce((a, d) => a + d.nec.paquetes, 0);
 
@@ -1693,7 +1730,7 @@ function fraseCandidatos (cands, linea) {
   }
 
   // Verificación de las referencias de cantidad fija contra el saldo.
-  for (const linea of marcaCfg.lineas.filter(l => l.modo === 'fija')) {
+  for (const linea of lineasEfectivas.filter(l => l.modo === 'fija')) {
     for (const ref of linea.refs) {
       const pedido = [...(requerido.get(ref.codigo)?.values() || [])].reduce((a, b) => a + b, 0);
       const saldo = cedi ? saldoDe(disponibles, cedi, ref.codigo) : 0;
@@ -1758,7 +1795,7 @@ function fraseCandidatos (cands, linea) {
   // sería ruido que tapa lo que sí importa. Aprieta cuando la referencia quedó sin
   // saldo, o cuando esta marca se llevó hasta el último paquete de lo que quedaba.
   if (comprometido && comprometido.size && cedi) {
-    const propias = new Set(marcaCfg.lineas.flatMap(l => l.refs.map(r => r.codigo)));
+    const propias = new Set(lineasEfectivas.flatMap(l => l.refs.map(r => r.codigo)));
     const apretadas = [];
     for (const codigo of propias) {
       const apartado = comprometido.get(`${cedi}|${codigo}`) || 0;
@@ -3146,6 +3183,7 @@ function recalcular (marcaId) {
     diasCiclo: p.dias,
     cantidades: p.cantidades || {},
     sustituciones: p.sustituciones || null,
+    extras: p.extras || null,
     comprometido: comprometidoPara(marcaId)
   });
   r.horaEnvio = p.hora;
@@ -3493,6 +3531,8 @@ function pintarResultado (r) {
 
   pintarPuntos(r, cat);
 
+  pintarExtras(r);
+
   const n = r.avisos.length;
   const cuantos = n === 0 ? 'No hay avisos de inventario'
     : n === 1 ? 'Revisé el aviso de inventario' : `Revisé los ${n} avisos de inventario`;
@@ -3534,8 +3574,9 @@ function formulaLinea (l, m) {
     ? `<code>${cantidades[0]} paquete${cantidades[0] === 1 ? '' : 's'} de cada referencia por punto de venta</code>`
     : '<code>' + cfg.refs.map((x, i) => `${cantidades[i]} × ${x.codigo}`).join(' · ') + '</code>';
 
-  return `${detalle} — no depende de los contactos <b>ni del cupo</b>: la dotación va por punto ` +
-         'de venta, no por asesora.' +
+  return `${detalle} — <b>por cupo</b>, no por punto de venta: cada asesora necesita lo suyo. ` +
+         'Un punto con dos cupos lleva el doble; uno a media jornada, la mitad, redondeando ' +
+         'hacia arriba. No depende de los contactos.' +
          (cfg.dias === 'finde' ? ' Solo va a los puntos que trabajan de viernes a domingo.' : '');
 }
 
@@ -3692,6 +3733,141 @@ function conectarSustitutos () {
     const [id, codigo] = b.dataset.quitarSust.split('|');
     cambiar(id, codigo, false);
   }));
+}
+
+/**
+ * Agregar referencias del inventario a mano.
+ *
+ * El racional cubre lo que se pide **siempre**. Pero cada semana aparece algo que
+ * no estaba —un utensilio nuevo en bodega, un empaque de temporada— y hasta ahora
+ * la única salida era tocar el código. Este panel busca sobre el inventario que ya
+ * está cargado, así que sirve para lo que hay hoy y para lo que llegue.
+ *
+ * Lo agregado vive en el pedido de la semana, **no en el racional**: se despacha,
+ * queda en el archivo del ERP, y no se convierte en permanente sin que alguien lo
+ * decida. Va por cupo, como el resto de la dotación.
+ */
+function pintarExtras (r) {
+  const caja = $('#extras');
+  if (!caja) return;
+  const p = estado.pedidos[r.marcaId] || {};
+  const extras = p.extras || [];
+  const cat = estado.fuentes.inventario.catalogo;
+
+  caja.innerHTML = `
+    <details class="linea" ${extras.length ? 'open' : ''}>
+      <summary>
+        <span class="nombre">Agregar del inventario</span>
+        <span class="col">${extras.length
+          ? `<b>${extras.length}</b> agregada(s)` : 'nada agregado'}</span>
+        <span class="col" style="color:var(--tenue)">fuera del racional</span>
+      </summary>
+      <div class="punto-cuerpo">
+        ${extras.length ? `
+          <table>
+            <thead><tr><th>Referencia</th><th>Descripción</th>
+              <th class="num">En ${esc(r.cedi)}</th><th class="num">Por cupo</th><th></th></tr></thead>
+            <tbody>${extras.map(e => {
+              const disp = saldoDeCedi(r, e.codigo);
+              return `<tr>
+                <td><code>${esc(e.codigo)}</code></td>
+                <td>${esc(cat.get(e.codigo)?.nombre || e.alias || '')}</td>
+                <td class="num ${disp === 0 ? 'mal' : ''}">${num(disp)}</td>
+                <td class="num"><input type="number" min="1" max="9999" value="${e.cantidad || 1}"
+                       data-extra-cant="${esc(e.codigo)}" style="width:70px"></td>
+                <td><button class="secundario" data-quitar-extra="${esc(e.codigo)}">Quitar</button></td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table>` : ''}
+
+        <div class="ajuste" style="margin-top:${extras.length ? '14px' : '0'}">
+          <label class="campo">Buscar en el inventario cargado — por código o por nombre</label>
+          <div class="ajuste-fila">
+            <input type="text" id="buscar-extra" autocomplete="off"
+                   placeholder="vaso · bandeja · CRD027439 · lo que haya en bodega">
+          </div>
+          <div id="resultado-extra"></div>
+          <p class="formula" style="margin-top:10px">Solo aparece lo que tiene saldo en
+            ${esc(r.cedi)}. Lo que agregue va <b>por cupo</b> y se despacha esta semana;
+            el racional de la marca no cambia.</p>
+        </div>
+      </div>
+    </details>`;
+
+  conectarExtras(r);
+}
+
+function conectarExtras (r) {
+  const p = estado.pedidos[r.marcaId];
+  const cat = estado.fuentes.inventario.catalogo;
+
+  const guardar = () => {
+    p.confirmado = false;   // agregar material es cambiar el despacho
+    guardarPedidos();
+    pintarResultado(recalcular(estado.marcaId));
+  };
+
+  const campo = $('#buscar-extra');
+  const salida = $('#resultado-extra');
+
+  if (campo && salida) {
+    const buscar = () => {
+      const q = normalizarBusqueda(campo.value);
+      if (q.length < 2) { salida.innerHTML = ''; return; }
+      const yaEstan = new Set([
+        ...(p.extras || []).map(e => e.codigo),
+        ...(marcaPorId(r.marcaId)?.lineas || []).flatMap(l => l.refs.map(x => x.codigo))
+      ]);
+      const hits = [];
+      for (const [codigo, c] of cat) {
+        if (yaEstan.has(codigo)) continue;
+        if (!normalizarBusqueda(codigo + ' ' + (c.nombre || '')).includes(q)) continue;
+        const disp = saldoDeCedi(r, codigo);
+        if (disp <= 0) continue;          // sin saldo no se ofrece: no sirve de nada
+        hits.push({ codigo, nombre: c.nombre, disp });
+        if (hits.length >= 40) break;
+      }
+      hits.sort((a, b) => b.disp - a.disp);
+      salida.innerHTML = hits.length
+        ? `<table style="margin-top:10px"><tbody>${hits.slice(0, 12).map(h => `
+            <tr>
+              <td><code>${esc(h.codigo)}</code></td>
+              <td>${esc(h.nombre || '')}</td>
+              <td class="num">${num(h.disp)}</td>
+              <td><button class="secundario" data-agregar-extra="${esc(h.codigo)}">Agregar</button></td>
+            </tr>`).join('')}</tbody></table>
+            ${hits.length > 12 ? `<p class="formula">y ${hits.length - 12} más — afine la búsqueda.</p>` : ''}`
+        : '<p class="formula" style="margin-top:10px">Nada con saldo en este CEDI para esa búsqueda.</p>';
+
+      $('[data-agregar-extra]').forEach(b => b.addEventListener('click', () => {
+        const codigo = b.dataset.agregarExtra;
+        p.extras = p.extras || [];
+        if (!p.extras.some(e => e.codigo === codigo)) {
+          p.extras.push({ codigo, alias: cat.get(codigo)?.nombre || codigo, cantidad: 1 });
+        }
+        guardar();
+      }));
+    };
+    campo.addEventListener('input', buscar);
+  }
+
+  $('[data-quitar-extra]').forEach(b => b.addEventListener('click', () => {
+    p.extras = (p.extras || []).filter(e => e.codigo !== b.dataset.quitarExtra);
+    if (!p.extras.length) delete p.extras;
+    guardar();
+  }));
+
+  $('[data-extra-cant]').forEach(i => i.addEventListener('change', () => {
+    const e = (p.extras || []).find(x => x.codigo === i.dataset.extraCant);
+    if (!e) return;
+    e.cantidad = Math.max(1, parseInt(i.value, 10) || 1);
+    guardar();
+  }));
+}
+
+/** Búsqueda sin tildes ni mayúsculas, como el resto de la aplicación. */
+function normalizarBusqueda (v) {
+  return String(v ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
 }
 
 function saldoDeCedi (r, codigo) {
