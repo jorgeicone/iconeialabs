@@ -671,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1204</b> &middot;
+    Versión <b id="sello-version">20260826-1208</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1026,6 +1026,84 @@ const RUTA_IMAGEN = {
               '20 cupos y las semanas de vigencia. Confirme el número con la operación.',
         refs: [
           { codigo: 'CRD029958', alias: 'Folleto pasta oriental', cantidadPorPdv: 15 }
+        ]
+      }
+    ],
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
+  },
+
+  /**
+   * Multimarca Café — Colcafé · Matiz · Chocolisto.
+   *
+   * Sale del racional del pedido de Bogotá con entrega del 18 de agosto (100
+   * líneas, 10 puntos, 418 unidades). **No es un pedido de producto para venta:
+   * es la canasta de insumos** con la que la asesora prepara café con leche y lo
+   * acompaña con galleta.
+   *
+   * Por eso todas las líneas son de cantidad fija: la canasta es la misma para
+   * cada cupo, y no depende de cuántos contactos se hagan. Las cantidades son
+   * literalmente las del racional.
+   *
+   * Se separan en dos líneas porque el propio racional distingue qué se agota y
+   * qué no: *"los insumos de 1 unidad por punto rinden todo el ciclo; los de
+   * rotación alta son leche, galleta y cappuccino"*. Y avisa de cuál es el
+   * cuello de botella: **la leche**, 15 bolsas contra 250 vasos — la preparación
+   * se queda sin leche mucho antes que sin vaso.
+   *
+   * En la programación estos puntos están bajo la marca `Colcafé - Matiz -
+   * Chocolisto` (y su variante larga con Corona y Lyne), repartidos en varias
+   * iniciativas «Multimarca …», por eso el patrón de iniciativa es genérico.
+   */
+  {
+    id: 'multimarca-cafe',
+    marca: 'Multimarca Café',
+    evento: 'Multimarca Café y Chocolisto',
+    imagen: 'cafe',
+    // Cubre 'Colcafé - Matiz - Chocolisto' y 'Colcafé - Matiz - Chocolisto - Corona - Lyne'.
+    patronMarcaProgramacion: 'colcaf',
+    // Varias iniciativas distintas, todas «Multimarca …»: Café y El Migao,
+    // Café y Chocolisto BTS, Colcafé y Lyne, Matiz y Lyne, Colcafé y Corona…
+    patronIniciativaProgramacion: 'multimarca',
+    vigencia: { desde: '', hasta: '' },
+    contactosDiaTotal: null,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'preparacion',
+        nombre: 'Canasta de preparación — lo que rota',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'La leche es el cuello de botella: 15 bolsas contra 250 vasos. Es la primera ' +
+              'reposición a pedir.',
+        refs: [
+          { codigo: 'CRD010025', alias: 'Leche deslactosada Colanta 1.000 ml', cantidadPorPdv: 15 },
+          { codigo: 'CRD025124', alias: 'Gta. Noel Sultana Tc. x1', cantidadPorPdv: 9 },
+          { codigo: 'CRD033577', alias: 'Colcafé Cappuccino Copelia 180 g', cantidadPorPdv: 6 },
+          { codigo: 'CRD033464', alias: 'Vaso 4 oz Colcafé Matiz x50', cantidadPorPdv: 5 },
+          { codigo: 'CRD023179', alias: 'Chocolisto Choco x600 g', cantidadPorPdv: 2 }
+        ]
+      },
+      {
+        id: 'consumibles',
+        nombre: 'Consumibles del puesto — rinden el ciclo',
+        modo: 'fija',
+        dias: 'todos',
+        refs: [
+          { codigo: 'CRD030492', alias: 'Colcafé Liofilizado 170 g', cantidadPorPdv: 1 },
+          { codigo: 'CRD005022', alias: 'Servilletas ecológicas x200', cantidadPorPdv: 1 },
+          { codigo: 'CRD000129', alias: 'Azúcar bolsa x200 sobres', cantidadPorPdv: 1 },
+          { codigo: 'CRD025973', alias: 'Mezcladores de madera x500', cantidadPorPdv: 1 },
+          { codigo: 'CRD020501', alias: 'Rollo de papel de cocina', cantidadPorPdv: 1 }
         ]
       }
     ],
