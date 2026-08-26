@@ -671,7 +671,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1220</b> &middot;
+    Versión <b id="sello-version">20260826-1253</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1501,6 +1501,148 @@ function col (cabecera, ...nombres) {
  *  PROGRAMACIÓN                                                       *
  * ------------------------------------------------------------------ */
 
+/* ---- Formato "asesora estratégica" -------------------------------- *
+ *
+ * Hay marcas cuya programación no viene en el formato de Impulso sino como la
+ * agenda diaria de una o dos asesoras: una fila por día, con el tipo de
+ * actividad y el sitio donde se hace. Bénet y Haka trabaja así.
+ *
+ * La diferencia de fondo es que aquí **no hay ventana de fechas**: hay una
+ * lista de días sueltos. Por eso estas filas llevan `fechas`, y el motor cuenta
+ * los días del ciclo cruzando esa lista en vez de recorrer el rango.
+ */
+
+/** Días que no son servicio en punto: no hay a quién despachar producto. */
+const ACTIVIDADES_INTERNAS = ['fdf eficacia', 'alineacion con neg'];
+
+/**
+ * La hoja "Servicio" del mismo libro: dice de qué marca es la agenda, desde
+ * cuándo hasta cuándo y cuántos cupos hay en cada ciudad. Sin ella no se sabe
+ * a qué marca pertenecen las hojas de días.
+ */
+function leerHojaServicio (libro, XLSX) {
+  for (const nombreHoja of libro.SheetNames) {
+    const matriz = XLSX.utils.sheet_to_json(libro.Sheets[nombreHoja], {
+      header: 1, raw: true, defval: null, blankrows: false
+    });
+    if (matriz.length < 4) continue;
+    const cabecera = (matriz[2] || []).map(c => String(c ?? ''));
+    const iMarca = col(cabecera, 'Marca');
+    const iEvento = col(cabecera, 'Evento');
+    const iCiudad = col(cabecera, 'Ciudad labor');
+    if (iMarca < 0 || iEvento < 0 || iCiudad < 0) continue;
+    if (col(cabecera, 'Tipo de actividad') >= 0) continue;   // esa es una hoja de días
+
+    const idx = {
+      desde: col(cabecera, 'Fecha de inicio'),
+      hasta: col(cabecera, 'Fecha de finalizacion', 'Fecha de finalización'),
+      cupos: col(cabecera, 'Cupos')
+    };
+    const porCiudad = new Map();
+    for (let r = 3; r < matriz.length; r++) {
+      const f = matriz[r] || [];
+      const ciudad = String(f[iCiudad] ?? '').trim();
+      const marca = String(f[iMarca] ?? '').trim();
+      if (!ciudad || !marca) continue;
+      porCiudad.set(normalizar(ciudad), {
+        marca,
+        evento: String(f[iEvento] ?? '').trim() || 'Asesora estratégica',
+        desde: aFecha(f[idx.desde]),
+        hasta: aFecha(f[idx.hasta]),
+        cupos: aNumero(f[idx.cupos]) ?? 1
+      });
+    }
+    if (porCiudad.size) return porCiudad;
+  }
+  return null;
+}
+
+/**
+ * Una hoja de días. Devuelve una fila por asesora × destino, con la lista de
+ * fechas en que esa asesora estuvo ahí dentro del mes programado.
+ *
+ * Se agrupa —en vez de emitir una fila por día— porque el destino recibe una
+ * canasta, no una canasta por visita. Los días importan para las líneas que se
+ * calculan por contactos; el destino, para saber a cuántas partes se despacha.
+ */
+function leerHojaAgenda (matriz, cabecera, { nombreArchivo, nombreHoja, servicio }) {
+  const idx = {
+    ciudad: col(cabecera, 'Ciudad labor'),
+    regional: col(cabecera, 'Regional'),
+    fecha: col(cabecera, 'Fecha'),
+    tipo: col(cabecera, 'Tipo de actividad'),
+    sap: col(cabecera, 'SAP CLIENTE', 'SAP'),
+    pdv: col(cabecera, 'Nombre PdV'),
+    asesora: col(cabecera, 'ASESORA'),
+    jornada: col(cabecera, 'Jornada')
+  };
+
+  const grupos = new Map();
+  let sinDestino = 0;
+
+  for (let r = 3; r < matriz.length; r++) {
+    const f = matriz[r] || [];
+    const tipo = String(f[idx.tipo] ?? '').trim();
+    if (!tipo) continue;                                       // día sin programar
+    if (ACTIVIDADES_INTERNAS.some(a => normalizar(tipo).startsWith(a))) continue;
+
+    const fecha = aFecha(f[idx.fecha]);
+    if (!fecha) continue;
+
+    const pdv = String(f[idx.pdv] ?? '').trim();
+    const sap = f[idx.sap] == null ? '' : String(f[idx.sap]).replace(/\.0+$/, '').trim();
+    if (!pdv && !sap) { sinDestino++; continue; }               // no hay a dónde despachar
+
+    const ciudad = String(f[idx.ciudad] ?? '').trim();
+    const asesora = String(f[idx.asesora] ?? '').trim();
+    const srv = servicio.get(normalizar(ciudad)) || [...servicio.values()][0] || {};
+    const clave = `${normalizar(asesora)}|${sap || normalizar(pdv)}`;
+
+    let g = grupos.get(clave);
+    if (!g) {
+      g = {
+        archivo: nombreArchivo,
+        hoja: nombreHoja,
+        evento: srv.evento || 'Asesora estratégica',
+        marca: srv.marca || '',
+        // El motor filtra también por iniciativa y los patrones de marca miran
+        // este texto: se compone con el nombre de la marca para que case.
+        iniciativa: `${srv.marca || ''} — ${srv.evento || 'Asesora estratégica'}`.trim(),
+        desde: srv.desde || null,
+        hasta: srv.hasta || null,
+        ciudad,
+        regional: String(f[idx.regional] ?? '').trim(),
+        cupos: srv.cupos ?? 1,
+        cuposGrupo: srv.cupos ?? 1,
+        sap: sap || null,
+        pdv: pdv || '(sin nombre)',
+        formato: String(f[idx.jornada] ?? '').trim(),
+        asesora,
+        telefono: '',
+        desdePdv: null,
+        hastaPdv: null,
+        fechas: [],
+        actividades: new Set()
+      };
+      grupos.set(clave, g);
+    }
+    if (!g.fechas.some(d => d.getTime() === fecha.getTime())) g.fechas.push(fecha);
+    g.actividades.add(tipo);
+  }
+
+  const filas = [...grupos.values()].map(g => {
+    g.fechas.sort((a, b) => a - b);
+    // La ventana del destino son sus propios días: así los descartes por
+    // "fuera de ventana" siguen funcionando igual que en el otro formato.
+    g.desdePdv = g.fechas[0] || null;
+    g.hastaPdv = g.fechas[g.fechas.length - 1] || null;
+    g.actividades = [...g.actividades].sort().join(', ');
+    return g;
+  });
+
+  return { filas, sinDestino };
+}
+
 /**
  * Lee un libro de programación. Devuelve { filas, resumen, errores }.
  * Cada fila = una asignación asesora × PDV × evento × ventana de fechas.
@@ -1509,6 +1651,8 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
   const filas = [];
   const errores = [];
   const hojasLeidas = [];
+  const servicio = leerHojaServicio(libro, XLSX);
+  let sinDestino = 0;
 
   for (const nombreHoja of libro.SheetNames) {
     const t = normalizar(nombreHoja);
@@ -1523,6 +1667,18 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
     // La cabecera está en la fila 3 (índice 2).
     const cabecera = (matriz[2] || []).map(c => String(c ?? ''));
     const iEvento = col(cabecera, 'Evento Contratado');
+
+    // Agenda de asesora estratégica: otro formato, mismo destino final.
+    if (iEvento < 0 && servicio && col(cabecera, 'Tipo de actividad') >= 0) {
+      const r = leerHojaAgenda(matriz, cabecera, { nombreArchivo, nombreHoja, servicio });
+      sinDestino += r.sinDestino;
+      if (r.filas.length) {
+        filas.push(...r.filas);
+        hojasLeidas.push({ hoja: nombreHoja, filas: r.filas.length });
+      }
+      continue;
+    }
+
     if (iEvento < 0) continue;
 
     const idx = {
@@ -1582,7 +1738,12 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
 
   if (!filas.length) {
     errores.push('No se encontró ninguna hoja con la cabecera esperada en la fila 3 ' +
-                 '(se busca la columna "Evento Contratado").');
+                 '(se busca "Evento Contratado", o "Tipo de actividad" junto a una hoja ' +
+                 '"Servicio" que diga de qué marca es la agenda).');
+  }
+  if (sinDestino) {
+    errores.push(`${sinDestino} día(s) de agenda tienen actividad pero no dicen a qué punto ` +
+                 'de venta: quedan fuera del pedido porque no hay a dónde despachar.');
   }
 
   return {
@@ -1743,6 +1904,29 @@ const DIA_MS = 86400000;
   return { todos, finde, fechas };
 }
 
+/**
+ * Igual que `diasDelCiclo`, pero contando una **lista de fechas sueltas** en vez
+ * de un rango. La agenda de una asesora estratégica no es una ventana continua:
+ * trabaja el lunes y el jueves, y el martes no. Contar el rango completo
+ * despacharía producto para días que nadie programó.
+ */function diasDeLista (fechas, inicioCiclo, diasCiclo) {
+  const ini = aFecha(inicioCiclo);
+  const fin = new Date(ini.getTime() + (diasCiclo - 1) * DIA_MS);
+  let todos = 0, finde = 0;
+  const dentro = [];
+
+  for (const cruda of fechas || []) {
+    const d = aFecha(cruda);
+    if (!d || d < ini || d > fin) continue;
+    if (dentro.some(x => x.getTime() === d.getTime())) continue;
+    dentro.push(d);
+    const dow = d.getDay();
+    todos++;
+    if (dow === 5 || dow === 6 || dow === 0) finde++;
+  }
+  return { todos, finde, fechas: dentro.map(d => ({ fecha: d, esFinde: [5, 6, 0].includes(d.getDay()) })) };
+}
+
 function truncar (d) {
   return aFecha(d);
 }
@@ -1812,7 +1996,10 @@ function truncar (d) {
 
     if (!f.sap && !f.pdv) { descartados.sinPdv++; continue; }
 
-    const dias = diasDelCiclo(inicioCiclo, diasCiclo, desde, hasta);
+    // Las filas de agenda traen sus días uno a uno; las de contrato, un rango.
+    const dias = f.fechas?.length
+      ? diasDeLista(f.fechas, inicioCiclo, diasCiclo)
+      : diasDelCiclo(inicioCiclo, diasCiclo, desde, hasta);
     if (dias.todos === 0) { descartados.fueraDeVentana++; continue; }
 
     puntos.push({
@@ -1827,6 +2014,7 @@ function truncar (d) {
       diasTodos: dias.todos,
       diasFinde: dias.finde,
       evento: f.evento,
+      actividades: f.actividades || '',
       origen: `${f.archivo} · ${f.hoja}`
     });
   }
@@ -2059,6 +2247,21 @@ function fraseCandidatos (cands, linea) {
                'material.'
     });
   }
+  // Los destinos que vienen de una agenda suelen ser nombres libres —"Sumart",
+  // "CEN Novaventa"— sin código de cliente. El pedido se calcula igual, pero la
+  // columna `Identificacion` del archivo ERP sale vacía y el sistema lo rechaza:
+  // hay que completarla antes de enviarlo, y por eso se dice aquí y no después.
+  const sinSap = puntos.filter(p => !p.sap);
+  if (sinSap.length) {
+    avisos.push({
+      nivel: 'faltante',
+      titulo: `${sinSap.length} destino(s) sin código SAP`,
+      detalle: `${sinSap.map(p => p.nombre).join(', ')}. Salen en el archivo con la columna ` +
+               'Identificacion vacía: hay que completarla a mano antes de subirlo, o el ' +
+               'sistema rechaza esas líneas.'
+    });
+  }
+
   if (!puntos.length) {
     avisos.push({
       nivel: 'error',
@@ -2119,7 +2322,10 @@ function fraseCandidatos (cands, linea) {
       const saldos = refs.map(r => (cedi ? saldoDe(disponibles, cedi, r.codigo) : 0));
       const saldoTotal = saldos.reduce((a, b) => a + b, 0);
 
-      if (saldoTotal === 0) {
+      // Si la línea no pide nada —porque esta marca no tiene puntos en este CEDI—
+      // avisar de que no hay saldo es ruido: dice "se requieren 0 paquetes" y
+      // suena a fallo. El aviso de que no hay puntos ya se dio antes.
+      if (saldoTotal === 0 && totalPaquetes > 0) {
         avisos.push({
           nivel: 'faltante',
           linea: linea.nombre,
@@ -3129,7 +3335,13 @@ function almacen () {
 /** JSON convierte las fechas en texto; hay que devolverlas a Date. */
 function rehidratarFila (f) {
   const d = v => (v ? new Date(v) : null);
-  return { ...f, desde: d(f.desde), hasta: d(f.hasta), desdePdv: d(f.desdePdv), hastaPdv: d(f.hastaPdv) };
+  return {
+    ...f,
+    desde: d(f.desde), hasta: d(f.hasta), desdePdv: d(f.desdePdv), hastaPdv: d(f.hastaPdv),
+    // Las filas de agenda llevan su lista de días; sin revivirla, el motor las
+    // cuenta como si no tuvieran ninguno y la marca sale con cero puntos.
+    fechas: Array.isArray(f.fechas) ? f.fechas.map(d).filter(Boolean) : undefined
+  };
 }function guardarPedidos () {
   const a = almacen();
   if (!a) return { ok: false, motivo: 'sin almacenamiento' };
@@ -4222,13 +4434,35 @@ function pintarLineasMarca (m) {
     </table>`;
 }
 
+/**
+ * Los patrones se comparan igual que en el motor: `normalizar()` —sin tildes ni
+ * mayúsculas— y admitiendo lista además de texto suelto.
+ *
+ * Compararlos con `.toLowerCase()` a secas dejaba dos marcas fuera del
+ * desplegable de CEDI y por tanto imposibles de armar desde la interfaz:
+ * «Saltín» no contiene «saltin», y `['benet','haka']` no tiene `.toLowerCase`,
+ * así que reventaba en silencio y el selector se quedaba con los CEDI de la
+ * marca anterior. El motor sí las calculaba bien; era la pantalla la que no
+ * las dejaba llegar hasta él.
+ */
+function patronesDe (valor, respaldo) {
+  return [].concat(valor || respaldo || []).map(normalizar).filter(Boolean);
+}
+
+function casaConMarca (f, m) {
+  const marca = patronesDe(m.patronMarcaProgramacion, m.marca);
+  if (marca.length && !marca.some(p => normalizar(f.marca).includes(p))) return false;
+  const ini = patronesDe(m.patronIniciativaProgramacion, null);
+  if (ini.length && !ini.some(p => normalizar(f.iniciativa).includes(p))) return false;
+  return true;
+}
+
 function refrescarCedis (m) {
-  const patron = (m.patronMarcaProgramacion || m.marca || '').toLowerCase();
   const porCedi = new Map();
   const huerfanas = new Set();
 
   for (const f of (estado.fuentes.programacion?.filas || [])) {
-    if (!f.marca.toLowerCase().includes(patron) || !f.ciudad) continue;
+    if (!casaConMarca(f, m) || !f.ciudad) continue;
     const cedi = cediDeCiudad(f.ciudad);
     if (!cedi) { huerfanas.add(f.ciudad); continue; }
     if (!porCedi.has(cedi)) porCedi.set(cedi, new Set());
@@ -4325,7 +4559,9 @@ function calcular () {
 
 function pintarResultado (r) {
   const cat = estado.fuentes.inventario.catalogo;
-  const hayError = r.avisos.some(a => a.nivel === 'error');
+  // Un pedido sin puntos de venta no es un pedido: sumarlo al consolidado solo
+  // añade una marca con la columna CEDI en blanco y cero paquetes.
+  const hayError = r.avisos.some(a => a.nivel === 'error') || !r.pedidos.length;
   const confirmado = !!estado.pedidos[r.marcaId]?.confirmado;
 
   $('#cifras').innerHTML = `
@@ -5220,7 +5456,9 @@ async function sincronizarConNube () {
         desde: x.desde ? new Date(x.desde) : null,
         hasta: x.hasta ? new Date(x.hasta) : null,
         desdePdv: x.desdePdv ? new Date(x.desdePdv) : null,
-        hastaPdv: x.hastaPdv ? new Date(x.hastaPdv) : null
+        hastaPdv: x.hastaPdv ? new Date(x.hastaPdv) : null,
+        // La agenda de una asesora estratégica viaja como lista de días.
+        fechas: Array.isArray(x.fechas) ? x.fechas.map(d => new Date(d)) : undefined
       })),
       resumenes: f.programacion.resumenes || [],
       cargadoEl: f.programacion.cargadoEl
