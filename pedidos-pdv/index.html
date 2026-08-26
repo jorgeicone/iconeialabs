@@ -3485,6 +3485,9 @@ function calcular () {
   // Sin marca abierta no hay nada que calcular, pero callarse deja al usuario
   // pulsando un botón que no responde.
   if (!m) {
+    // El panel de resultado nace oculto: sin destaparlo, el aviso no se ve y
+    // el botón sigue pareciendo que no hace nada.
+    $('#resultado').classList.remove('oculto');
     $('#avisos').innerHTML = `
       <div class="aviso error">
         <div class="t">No hay ninguna marca abierta</div>
@@ -3516,6 +3519,7 @@ function calcular () {
     const falta = [];
     if (!estado.fuentes.programacion) falta.push('la programación');
     if (!estado.fuentes.inventario) falta.push('el inventario');
+    $('#resultado').classList.remove('oculto');
     $('#cifras').innerHTML = '';
     $('#avisos').innerHTML = `
       <div class="aviso error">
