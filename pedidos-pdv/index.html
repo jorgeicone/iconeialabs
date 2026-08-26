@@ -668,8 +668,8 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Los archivos que carga se procesan por completo en este dispositivo y se guardan solo en
-    este navegador. No se envían a ningún servidor.
+    Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
+    el nombre y el teléfono de las asesoras no salen de este navegador.
   </div>
 </footer>
 
@@ -3482,7 +3482,16 @@ function lunesDeEstaSemana () {
 
 function calcular () {
   const m = marcaPorId(estado.marcaId);
-  if (!m) return;
+  // Sin marca abierta no hay nada que calcular, pero callarse deja al usuario
+  // pulsando un botón que no responde.
+  if (!m) {
+    $('#avisos').innerHTML = `
+      <div class="aviso error">
+        <div class="t">No hay ninguna marca abierta</div>
+        <div class="d">Vuelva a <b>Marcas</b> y entre a la que quiere armar.</div>
+      </div>`;
+    return;
+  }
 
   const previo = estado.pedidos[m.id];
   estado.pedidos[m.id] = {
@@ -3492,10 +3501,36 @@ function calcular () {
     hora: $('#hora').value.trim() || '10:00',
     ajustes: previo?.ajustes || {},
     cantidades: previo?.cantidades || {},
+    // Se conservan: son trabajo de la persona, no parámetros del formulario.
+    // Reconstruir el pedido sin ellos borraba los sustitutos activados y las
+    // referencias agregadas del inventario en cuanto se volvía a calcular.
+    sustituciones: previo?.sustituciones,
+    extras: previo?.extras,
     confirmado: false
   };
   const r = recalcular(m.id);
-  if (!r) return;
+
+  // Rendirse en silencio era lo peor que podía hacer acá: se pulsaba Calcular y
+  // no pasaba nada, sin una sola pista de por qué. Si no se puede calcular, se dice.
+  if (!r) {
+    const falta = [];
+    if (!estado.fuentes.programacion) falta.push('la programación');
+    if (!estado.fuentes.inventario) falta.push('el inventario');
+    $('#cifras').innerHTML = '';
+    $('#avisos').innerHTML = `
+      <div class="aviso error">
+        <div class="t">No se puede calcular todavía</div>
+        <div class="d">${falta.length
+          ? `Falta cargar ${falta.join(' y ')}. Se carga en <b>Fuentes</b>, arriba a la izquierda.`
+          : 'No hay parámetros de pedido para esta marca. Vuelva a las marcas y ábrala de nuevo.'}
+        </div>
+      </div>`;
+    $('#tabla-lineas').innerHTML = '';
+    $('#tabla-refs').innerHTML = '';
+    $('#tabla-pdv').innerHTML = '';
+    const ex = $('#extras'); if (ex) ex.innerHTML = '';
+    return;
+  }
 
   if (previo?.confirmado && ['cedi', 'semana', 'dias', 'hora']
       .every(k => previo[k] === estado.pedidos[m.id][k])) {
