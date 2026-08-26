@@ -3554,7 +3554,33 @@ function pintarHistorial () {
 
 /* ══════════════════════════════════════════════════════════════ *
  *  Arranque                                                       *
- * ══════════════════════════════════════════════════════════════ */function iniciar () {
+ * ══════════════════════════════════════════════════════════════ */
+
+/**
+ * Cierra la puerta del *prototype pollution* antes de tocar un archivo ajeno.
+ *
+ * La librería de Excel es `xlsx-js-style` 1.2.0-beta, que quedó anclada a SheetJS
+ * 0.18.5 (2022) y ya no se mantiene: arrastra CVE-2023-30533, que se dispara **al
+ * parsear** un .xlsx manipulado y permite escribir en `Object.prototype`. No se
+ * puede actualizar sin perder los estilos, y el color por punto de venta del archivo
+ * ERP es un requisito, no un adorno.
+ *
+ * Congelar los prototipos no parchea la librería: **cierra la clase entera de
+ * ataque**, que es lo que se puede hacer desde acá. La aplicación nunca necesita
+ * escribir en un prototipo, así que no cuesta nada. Verificado contra los Excel
+ * reales: lee, calcula y genera el archivo ERP con estilos, idéntico.
+ *
+ * Queda fuera CVE-2024-22363 (ReDoS al parsear). Ahí el peor caso es que se cuelgue
+ * la pestaña de quien abrió el archivo: no hay servidor que tumbar ni datos de nadie
+ * más en juego.
+ */
+function blindarPrototipos () {
+  try {
+    Object.freeze(Object.prototype);
+    Object.freeze(Array.prototype);
+  } catch { /* si el navegador no deja, se sigue: es una defensa, no un requisito */ }
+}function iniciar () {
+  blindarPrototipos();
   estado.marcas = cargarMarcas();
   cargarFuentes();
   cargarPedidos();
