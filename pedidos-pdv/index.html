@@ -699,7 +699,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260830-1024</b> &middot;
+    Versión <b id="sello-version">20260830-1122</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1348,6 +1348,246 @@ const RUTA_IMAGEN = {
           { codigo: 'CRD033643', alias: 'Vaso 4 oz Bénet Haka x50', cantidadPorPdv: 6 },
           { codigo: 'CRD032783', alias: 'Vaso azul 4 oz Bénet x50', cantidadPorPdv: 4 },
           { codigo: 'CRD020501', alias: 'Rollo de papel de cocina', cantidadPorPdv: 1 }
+        ]
+      }
+    ],
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
+  },
+
+  /* ══════════════════════════════════════════════════════════════ *
+   *  PLATAFORMA BAILEYS A&A 2026 — dos equipos, dos marcas          *
+   * ══════════════════════════════════════════════════════════════ *
+   *
+   * Del «Racional Impulso Baileys A&A 2026» (35 láminas, agosto de 2026).
+   * Alianza Nutresa–Baileys para Amor y Amistad, 28 ago → 30 oct, cadenas y
+   * autoservicios. Concepto «Juntos somos irresistibles».
+   *
+   * **Son dos equipos con racionales distintos y por eso son dos marcas.**
+   * Meterlos en una sola daría a la asesora Noel el café de la de Multimarca y
+   * viceversa: 14 asesoras Noel degustan galletas y muestrean chocolate; 30 de
+   * Multimarca Café y Chocolates degustan café y chocolate. Cada equipo tiene su
+   * iniciativa propia en la programación, así que el motor los separa solo.
+   *
+   * **Regla no negociable del racional:** ningún producto contiene alcohol y no
+   * se impulsa con menores de edad.
+   *
+   * Dos cosas que el motor no sabe expresar y se resolvieron en los contactos/día,
+   * porque el total de producto es el mismo y la alternativa era tocar el motor:
+   *  - «Día por medio» → la mitad de los contactos repartidos en todos los días.
+   *  - Alto y bajo tráfico (70 y 54) → su promedio, 62.
+   * Si alguna semana no cuadra, se corrige con el ajuste manual del punto.
+   */
+
+  {
+    id: 'baileys-noel',
+    marca: 'Baileys Noel',
+    evento: 'Temporada A&A NOEL',
+    imagen: 'galletas',
+    // En la programación la columna Marca dice 'Noel' a secas — que también usan
+    // 'Saltín Noel' y 'Ducales y Noel'. La iniciativa es la que acota la campaña.
+    patronMarcaProgramacion: 'noel',
+    patronIniciativaProgramacion: 'temporada a&a noel',
+    vigencia: { desde: '2026-08-28', hasta: '2026-09-30' },
+    contactosDiaTotal: null,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'galletas-baileys',
+        nombre: 'Degustación Noel Cubitos Baileys',
+        modo: 'preparada',
+        dias: 'todos',
+        // 70 contactos en día de alto tráfico y 54 en bajo: se pide el promedio.
+        contactosDia: 62,
+        // Una "preparación" es un contacto: consume 2 galletas de una bolsa de 36.
+        // El racional lo confirma: 70 contactos → 4 bolsas, 54 → 3 bolsas.
+        rindeContactos: 1,
+        consumoReceta: 2,
+        unidadesPorPaquete: 36,
+        nota: 'La bolsa de cubitos trae 36 galletas y cada contacto se lleva 2, así que ' +
+              'rinde 18 contactos. Es el número que manda: 62 × 6 días = 372 contactos = 21 bolsas.',
+        refs: [
+          { codigo: 'CRD033022', alias: 'Gta. Noel Wafer Baileys Tiramisú bolsa 120 g' }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'muestreo-corona',
+        nombre: 'Muestreo Chocolate Corona Baileys',
+        modo: 'directa',
+        dias: 'todos',
+        // El racional lo dice aparte de la degustación: 50 muestras diarias.
+        contactosDia: 50,
+        nota: 'Un sobre por persona. El inventario ya está en sobres, así que no hay conversión.',
+        refs: [
+          { codigo: 'CRD033713', alias: 'Sobre Choco Instantáneo Corona Baileys 14 g' }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'plegadizas-noel',
+        nombre: 'Plegadizas de regalo — recambio',
+        modo: 'fija',
+        dias: 'todos',
+        // 11.400 unidades para 44 asesoras y nueve semanas de campaña: 11400 ÷ 44 ≈ 259
+        // por asesora, ÷ 9 semanas ≈ 29 por cupo y semana. Es una estimación del
+        // racional, no un dato de la operación: confírmela antes de despachar.
+        nota: 'ESTIMADO. El racional declara 11.400 plegadizas para 44 asesoras y nueve ' +
+              'semanas: salen ~29 por cupo y semana. La asignación real es POR CEDI ' +
+              '(Bogotá 4.400, Medellín 2.560) y el motor no sabe repartir por bodega, ' +
+              'así que este número hay que confirmarlo con la operación.',
+        refs: [
+          { codigo: 'CRD033166', alias: 'Plegadiza Baileys varios diseños', cantidadPorPdv: 29 }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'dotacion-noel',
+        nombre: 'Dotación del puesto',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'El delantal Noel y el bolso manos libres del racional no tienen saldo en el ' +
+              'maestro cargado: se piden por el otro canal. Acá van los que sí existen.',
+        refs: [
+          { codigo: 'CRD033803', alias: 'Pinza acrílica postrera', cantidadPorPdv: 1 },
+          { codigo: 'CRD005022', alias: 'Servilletas ecológicas x200', cantidadPorPdv: 1 }
+        ],
+        sustitutos: [
+          { codigo: 'CRD007004', alias: 'Pinzas metálicas pequeñas' }
+        ]
+      }
+    ],
+    erp: {
+      vendedor: 'NUTRESA',
+      proveedor: 'NUTRESA',
+      clasificador1: 'NUTRESA',
+      clasificador2: 'NUTRESA',
+      tipoPedido: 'CLIE',
+      secuencia: 2,
+      horaEnvio: '10:00',
+      documento1: 'GENERICO',
+      documento2: 'BPO'
+    }
+  },
+
+  {
+    id: 'baileys-mm-cafe',
+    marca: 'Baileys MM Café',
+    evento: 'Multimarca - Colcafé y Corona Baileys',
+    imagen: 'cafe',
+    patronMarcaProgramacion: 'colcaf',
+    patronIniciativaProgramacion: 'multimarca - colcafe y corona baileys',
+    vigencia: { desde: '2026-09-01', hasta: '2026-09-30' },
+    contactosDiaTotal: null,
+    diasCiclo: 6,
+    lineas: [
+      {
+        id: 'cafe-matiz-baileys',
+        nombre: 'Degustación Matiz Baileys',
+        modo: 'preparada',
+        dias: 'todos',
+        contactosDia: 60,
+        // Una taza por contacto. La bolsa de 240 g rinde 34 tazas — coincide con la
+        // dosificación del racional: 7 g de molido por bebida de 100 ml.
+        rindeContactos: 1,
+        consumoReceta: 1,
+        unidadesPorPaquete: 34,
+        nota: 'Desde el 15 de septiembre el racional cambia este equipo de Corona a Matiz ' +
+              'Baileys con Noel Cubitos. Los dos liofilizados Baileys (CRD033579 de 85 g y ' +
+              'CRD033578 de 47 g) están en CERO: hoy solo hay molido, aunque el racional ' +
+              'diga que el shopper elige.',
+        refs: [
+          { codigo: 'CRD033052', alias: 'Matiz Baileys Tiramisú 240 g' }
+        ],
+        sustitutos: [
+          { codigo: 'CRD033579', alias: 'Matiz liofilizado Baileys 85 g — rinde 57 tazas' },
+          { codigo: 'CRD033578', alias: 'Matiz liofilizado Baileys 47 g — rinde 31 tazas' }
+        ]
+      },
+      {
+        id: 'chocolate-corona-baileys',
+        nombre: 'Degustación Corona Baileys — día por medio',
+        modo: 'preparada',
+        dias: 'todos',
+        // 60 contactos día por medio = 30 al día repartidos en todo el ciclo.
+        contactosDia: 30,
+        rindeContactos: 1,
+        consumoReceta: 1,
+        unidadesPorPaquete: 29,
+        nota: 'El racional dice 60 contactos día por medio. El motor no tiene esa frecuencia, ' +
+              'así que van 30 diarios: el mismo producto en el ciclo. La bolsa de 400 g ' +
+              'rinde 29 tazas.',
+        refs: [
+          { codigo: 'CRD033712', alias: 'Bolsa Choco Instantáneo Corona Baileys 400 g' }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'cubitos-acompana',
+        nombre: 'Noel Cubitos que acompañan la bebida',
+        modo: 'preparada',
+        dias: 'todos',
+        // Acompaña las dos degustaciones: 60 de café + 30 de chocolate.
+        contactosDia: 90,
+        rindeContactos: 1,
+        consumoReceta: 2,
+        unidadesPorPaquete: 36,
+        nota: 'Las dos degustaciones del equipo van acompañadas de Noel Cubitos, así que ' +
+              'son 60 + 30 = 90 contactos al día, a 2 galletas cada uno.',
+        refs: [
+          { codigo: 'CRD033022', alias: 'Gta. Noel Wafer Baileys Tiramisú bolsa 120 g' }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'muestras-corona-mm',
+        nombre: 'Muestras Corona instantáneo',
+        modo: 'directa',
+        dias: 'todos',
+        contactosDia: 20,
+        refs: [
+          { codigo: 'CRD033713', alias: 'Sobre Choco Instantáneo Corona Baileys 14 g' }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'plegadizas-mm',
+        nombre: 'Plegadizas de regalo — recambio',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'ESTIMADO, igual que en Baileys Noel: ~29 por cupo y semana. La asignación ' +
+              'real es por CEDI y hay que confirmarla.',
+        refs: [
+          { codigo: 'CRD033166', alias: 'Plegadiza Baileys varios diseños', cantidadPorPdv: 29 }
+        ],
+        sustitutos: []
+      },
+      {
+        id: 'dotacion-mm',
+        nombre: 'Dotación del puesto',
+        modo: 'fija',
+        dias: 'todos',
+        nota: 'El racional declara pinzas y capacillos como obligatorios para esta ' +
+              'degustación. El delantal Corona no tiene saldo en el maestro cargado.',
+        refs: [
+          { codigo: 'CRD012167', alias: 'Capacillos N.º 2 x paq 1000', cantidadPorPdv: 1 },
+          { codigo: 'CRD033803', alias: 'Pinza acrílica postrera', cantidadPorPdv: 1 },
+          { codigo: 'CRD033464', alias: 'Vaso 4 oz Colcafé Matiz x50', cantidadPorPdv: 5 },
+          { codigo: 'CRD005022', alias: 'Servilletas ecológicas x200', cantidadPorPdv: 1 },
+          { codigo: 'CRD000129', alias: 'Azúcar bolsa x200 sobres', cantidadPorPdv: 1 },
+          { codigo: 'CRD025973', alias: 'Mezcladores de madera x500', cantidadPorPdv: 1 }
+        ],
+        sustitutos: [
+          { codigo: 'CRD027414', alias: 'Vaso degustación bebidas 4 oz x50' }
         ]
       }
     ],
