@@ -699,7 +699,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260830-0749</b> &middot;
+    Versión <b id="sello-version">20260830-1011</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -3771,19 +3771,33 @@ const PREGUNTAS = [
 
 const respuestas = { racional: null, programacion: null, inventario: null };
 
+/**
+ * ¿Está respondida la pregunta?
+ *
+ * **El racional no exige estar completo.** Pedía el de *todas* las marcas para
+ * darse por resuelto, y como cada pregunta dormía a la siguiente, no tener el
+ * racional de una marca que ni siquiera se va a armar esta semana impedía cargar
+ * la programación y el inventario — que son de todas. Quedaba todo trabado por
+ * una marca de prueba.
+ *
+ * Con uno basta para tener la respuesta. Que a una marca le falte el suyo se
+ * dice en su fila y bloquea **esa** marca en su propio módulo, que es donde
+ * importa: es ahí donde el racional cambia el cálculo.
+ */
 function resuelta (id) {
-  if (id === 'racional') return estado.marcas.length > 0 && marcasSinRacional().length === 0;
+  if (id === 'racional') return estado.marcas.some(m => racionalListo(m.id));
   return !!estado.fuentes[id];
 }
 
 function pintarEmbudo () {
+  // Ninguna pregunta duerme a la siguiente. Eran tres puertas en fila y bastaba
+  // con que la primera no estuviera completa para no poder ni empezar con las
+  // otras dos, que son las que de verdad hacen falta para calcular.
   $('#embudo').innerHTML = PREGUNTAS.map((p, i) => {
     const lista = resuelta(p.id);
-    const anteriorOk = i === 0 || resuelta(PREGUNTAS[i - 1].id);
-    const dormida = !anteriorOk && !lista;
 
     return `
-      <div class="pregunta ${lista ? 'resuelta' : ''} ${dormida ? 'dormida' : ''}">
+      <div class="pregunta ${lista ? 'resuelta' : ''}">
         <div class="cabeza">
           <div class="paso">${lista ? '✓' : i + 1}</div>
           <div style="flex:1">
@@ -3796,7 +3810,7 @@ function pintarEmbudo () {
         </div>
         ${p.id === 'racional'
           ? panelRacional()
-          : (lista ? fichaGuardada(p.id) : (dormida ? '' : bloqueRespuesta(p)))}
+          : (lista ? fichaGuardada(p.id) : bloqueRespuesta(p))}
       </div>`;
   }).join('');
 
@@ -3820,9 +3834,11 @@ function panelRacional () {
   return `<div class="panel-respuesta">
     <div class="aviso ok" style="margin-bottom:12px">
       <div class="t">El racional es de cada marca, y se cambia por separado</div>
-      <div class="d">Actualizar el de Doria no toca el de Tosh. El archivo queda como respaldo
-        del pedido; las reglas de cálculo —contactos por día, referencias y recetas— se editan
-        en el módulo de cada marca.</div>
+      <div class="d">Con cargar el de la marca que va a armar es suficiente para seguir:
+        <b>las marcas sin racional no le bloquean nada acá</b>, solo su propio módulo.
+        Actualizar el de Doria no toca el de Tosh. El archivo queda como respaldo del pedido;
+        las reglas de cálculo —contactos por día, referencias y recetas— se editan en el
+        módulo de cada marca.</div>
     </div>
     <div class="ficha">
       ${estado.marcas.map(m => {
@@ -3992,11 +4008,22 @@ function conectarZona (id, zona) {
 
 function pintarAccionesEmbudo () {
   const listo = fuentesGlobalesListas();
+  // Lo que falta se dice por su nombre. «Responda las preguntas» no señalaba
+  // cuál, y con el racional bloqueando de más era imposible adivinarlo.
+  const falta = [];
+  if (!estado.fuentes.programacion) falta.push('la programación del servicio');
+  if (!estado.fuentes.inventario) falta.push('el inventario');
+  const sinRacional = marcasSinRacional();
+
   $('#acciones-embudo').innerHTML = listo
     ? `<button data-entrar>Entrar a las marcas</button>
        <span style="font-size:13px;color:var(--tenue)">
-         Programación e inventario están cargados${resuelta('racional') ? ' y los racionales al día' : ''}.</span>`
-    : '<span style="font-size:13px;color:var(--tenue)">Responda las preguntas para continuar.</span>';
+         Programación e inventario cargados.${sinRacional.length
+           ? ` ${sinRacional.length} marca(s) sin racional —${esc(sinRacional.map(m => m.marca).join(', '))}— ` +
+             'no se pueden armar hasta que lo tengan; las demás sí.'
+           : ' Todas las marcas tienen su racional.'}</span>`
+    : `<span style="font-size:13px;color:var(--tenue)">Para entrar a las marcas falta cargar
+         ${esc(falta.join(' y '))}. El racional de cada marca puede ir después.</span>`;
   const b = $('[data-entrar]');
   if (b) b.addEventListener('click', () => { pintarMarcas(); irA('marcas'); });
   pintarMigas();
@@ -4582,8 +4609,10 @@ function abrirMarca (id) {
  * referencias reales, así que no puede calcular nada útil todavía.
  */
 function pintarPuertaMarca (m) {
+  // El racional no entra en esta lista: tiene su propio aviso justo debajo, con
+  // el nombre de la marca y dónde cargarlo. Nombrarlo dos veces sonaba a dos
+  // cosas distintas faltando.
   const faltas = [];
-  if (!racionalListo(m.id)) faltas.push('el racional de esta marca');
   if (m.lineas.some(l => l.refs.some(r => r.codigo === 'CRD000000'))) {
     faltas.push('las referencias CRD reales de sus líneas');
   }
@@ -4591,14 +4620,17 @@ function pintarPuertaMarca (m) {
   if (!estado.fuentes.inventario) faltas.push('el inventario del día');
 
   const caja = $('#puerta-marca');
-  if (!faltas.length) { caja.innerHTML = ''; caja.classList.add('oculto'); return; }
+  // El racional cuenta para abrir o no la puerta aunque no se nombre en `faltas`.
+  if (!faltas.length && racionalListo(m.id)) {
+    caja.innerHTML = ''; caja.classList.add('oculto'); return;
+  }
 
   caja.classList.remove('oculto');
   caja.innerHTML = `
     <div class="tarjeta acento">
       <h3 class="th">Esta marca todavía no puede calcular</h3>
       <div class="cuerpo">
-        <p style="margin-top:0">Falta ${esc(faltas.join(', '))}.</p>
+        ${faltas.length ? `<p style="margin-top:0">Falta ${esc(faltas.join(', '))}.</p>` : ''}
         ${(!estado.fuentes.programacion || !estado.fuentes.inventario) ? `
           <div class="aviso faltante" style="margin-bottom:12px">
             <div class="t">La programación y el inventario son de todas las marcas</div>
