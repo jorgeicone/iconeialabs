@@ -699,7 +699,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260830-1011</b> &middot;
+    Versión <b id="sello-version">20260830-1024</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -4055,29 +4055,57 @@ async function recibir (id, archivos, { alTerminar = null, caja: cajaDada = null
   if (caja) caja.innerHTML = '<div class="ficha"><div class="fila"><span>Leyendo…</span></div></div>';
 
   if (id === 'programacion') {
-    // Se AGREGAN a lo que ya hay: los dos canales suelen cargarse por separado.
+    /**
+     * Los canales se suman —CD Nal y AU se cargan por separado— pero **un archivo
+     * que ya estaba se reemplaza, no se descarta**.
+     *
+     * Antes, volver a cargar un archivo con el mismo nombre se omitía «para no
+     * duplicar filas»: se avisaba en un `alert` y se seguía calculando con la
+     * versión vieja. Como la programación de cada semana llega con el mismo
+     * nombre de archivo, actualizarla era imposible — la aplicación decía que la
+     * había tomado y entregaba el pedido anterior. Ahora las filas del archivo
+     * viejo se van y entran las nuevas.
+     */
     const previas = estado.fuentes.programacion?.filas || [];
     const previosResumenes = estado.fuentes.programacion?.resumenes || [];
-    const filas = [], resumenes = [], errores = [];
+    const filas = [], resumenes = [], errores = [], reemplazados = [];
 
     for (const a of archivos) {
-      if (previosResumenes.some(r => r.archivo === a.name)) {
-        errores.push(`${a.name} ya estaba cargado: se omitió para no duplicar filas.`);
-        continue;
-      }
       try {
         const res = leerProgramacion(await leerLibro(a), XLSX, a.name);
+        // Un archivo ilegible no puede borrar lo que ya servía.
+        if (!res.filas.length) {
+          errores.push(`${a.name}: no se leyó ninguna fila, se conserva lo que ya había.`);
+          errores.push(...res.errores);
+          continue;
+        }
+        if (previosResumenes.some(r => r.archivo === a.name)) reemplazados.push(a.name);
         filas.push(...res.filas);
         resumenes.push(res.resumen);
         errores.push(...res.errores);
       } catch (e) { errores.push(`${a.name}: ${e.message}`); }
     }
-    if (!filas.length && !previas.length) { mostrarError(caja, errores.length ? errores : ['No se leyó ninguna fila.']); return; }
+
+    const entrantes = new Set(resumenes.map(r => r.archivo));
+    const conservadas = previas.filter(f => !entrantes.has(f.archivo));
+    const conservados = previosResumenes.filter(r => !entrantes.has(r.archivo));
+
+    if (!filas.length && !conservadas.length) {
+      mostrarError(caja, errores.length ? errores : ['No se leyó ninguna fila.']); return;
+    }
     estado.fuentes.programacion = {
-      filas: [...previas, ...filas],
-      resumenes: [...previosResumenes, ...resumenes],
+      filas: [...conservadas, ...filas],
+      resumenes: [...conservados, ...resumenes],
       cargadoEl: ahora()
     };
+    // Reemplazar no es un error: se dice, y se dice cuántas filas quedaron.
+    if (reemplazados.length) {
+      errores.unshift(`Se reemplazó la versión anterior de ${reemplazados.join(', ')}. ` +
+        `La programación queda con ${estado.fuentes.programacion.filas.length} filas.`);
+    }
+    // Un pedido calculado con la programación vieja ya no vale.
+    for (const p of Object.values(estado.pedidos)) p.confirmado = false;
+    guardarPedidos();
     if (errores.length) window.setTimeout(() => alert(errores.join('\n')), 50);
   } else {
     try {
@@ -4086,6 +4114,10 @@ async function recibir (id, archivos, { alTerminar = null, caja: cajaDada = null
       estado.fuentes.inventario = {
         saldos: res.saldos, catalogo: res.catalogo, resumen: res.resumen, cargadoEl: ahora()
       };
+      // Otro corte, otros saldos: lo confirmado con el corte anterior hay que
+      // volver a mirarlo antes de despacharlo.
+      for (const p of Object.values(estado.pedidos)) p.confirmado = false;
+      guardarPedidos();
     } catch (e) { mostrarError(caja, [e.message]); return; }
   }
 
@@ -4686,6 +4718,17 @@ function pintarFuentesMarca (m) {
   const inv = estado.fuentes.inventario;
   const invViejo = inv && !esDeHoy(inv.cargadoEl);
 
+  /**
+   * La semana del pedido se guarda con el resto de parámetros, y al reabrir la
+   * marca vuelve tal cual. Es lo correcto para retomar un borrador, pero pasada
+   * la semana significa que el pre-pedido se recalcula para una semana que ya
+   * fue — con archivos nuevos y todo, el resultado parece «el pedido anterior»
+   * y nada en pantalla decía por qué.
+   */
+  const semanaGuardada = estado.pedidos[m.id]?.semana;
+  const semanaVieja = semanaGuardada && semanaGuardada !== lunesDeEstaSemana()
+    ? semanaGuardada : null;
+
   const insignia = (ok, ojo) =>
     !ok ? '<span class="insignia alerta">falta</span>'
         : ojo ? '<span class="insignia borrador">revisar</span>'
@@ -4738,6 +4781,15 @@ function pintarFuentesMarca (m) {
           <div class="d">Se cargó ${esc(haceCuanto(inv.cargadoEl))}. El saldo rota a diario:
             calcular con un corte viejo pide producto que ya se despachó.</div></div>` : ''}
 
+        ${semanaVieja ? `<div class="aviso faltante" style="margin-top:12px">
+          <div class="t">Este pedido está armado para la semana del ${esc(semanaVieja)}</div>
+          <div class="d">La semana en curso empieza el ${esc(lunesDeEstaSemana())}. Los parámetros
+            quedaron guardados de la última vez, así que el pre-pedido sale con esa semana aunque
+            los archivos sean nuevos. Cámbiela abajo y vuelva a calcular.
+            <div class="acciones" style="margin-top:10px">
+              <button class="secundario chico" data-semana-actual>Poner la semana en curso y calcular</button>
+            </div></div></div>` : ''}
+
         <div data-ficha-marca></div>
 
         <input type="file" data-fm-input="racional" accept="${PREGUNTAS[0].acepta}" style="display:none">
@@ -4766,6 +4818,13 @@ function pintarFuentesMarca (m) {
   const revisado = $('[data-fm-revisado]');
   if (revisado) revisado.addEventListener('click', () => {
     ponerRacional(m.id, null); repintar(); pintarEmbudo();
+  });
+
+  const alDia = $('[data-semana-actual]');
+  if (alDia) alDia.addEventListener('click', () => {
+    $('#semana').value = lunesDeEstaSemana();
+    calcular();
+    pintarFuentesMarca(m);
   });
 
   $$('[data-fm-vaciar]').forEach(b => b.addEventListener('click', () => {
