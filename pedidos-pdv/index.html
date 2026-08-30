@@ -12,6 +12,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Constructor de pedidos para PDV</title>
 
+<!--
+  La aplicación no trae nada de fuera: el código, los estilos y las imágenes van
+  incrustados y lo único que sale a la red es Supabase. Declararlo cierra la puerta
+  a que un Excel manipulado o un pegado accidental terminen cargando algo de otro
+  sitio. `unsafe-inline` es obligado: el archivo de un solo golpe lleva el código y
+  los estilos dentro del HTML, que es lo que le permite funcionar sin servidor.
+-->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data:;
+  font-src 'self' data:;
+  connect-src 'self' https://nvgkhdrrxqdgxktfkioa.supabase.co;
+  base-uri 'none';
+  form-action 'none';
+  object-src 'none'">
+<!-- `frame-ancestors` no va acá: el navegador la ignora en un <meta> y solo
+     ensucia la consola. Quien la necesite la pone como cabecera en Cloudflare. -->
+
 <meta name="description" content="Arma el pre-pedido semanal de degustación para impulso en punto de venta y genera el archivo listo para el ERP.">
 <meta name="author"    content="Ing. Jorge Hugo Pérez Gaona · ICONE ialabs">
 <meta name="copyright" content="© 2026 Ing. Jorge Hugo Pérez Gaona / ICONE ialabs · Todos los derechos reservados.">
@@ -195,6 +215,12 @@ main { max-width: 1200px; margin: 0 auto; padding: 24px 22px 60px; }
 .ficha .fila { display: flex; gap: 8px; padding: 1px 0; }
 .ficha .fila span:first-child { color: var(--tenue); min-width: 118px; flex: none; }
 .ficha .fila b { color: var(--carbon); font-weight: 650; }
+
+/* Fila con botones: el estado a la izquierda, lo que se puede hacer a la derecha. */
+.ficha .fila-accion { align-items: center; padding: 5px 0; flex-wrap: wrap; }
+.ficha .fila-accion .empuje { flex: 1; min-width: 0; }
+.ficha .fila-accion button { padding: 5px 11px; font-size: 12px; }
+.ficha .fila-accion + .fila-accion { border-top: 1px solid var(--linea); }
 
 /* ── Botones ────────────────────────────────────────────────── */
 
@@ -529,6 +555,8 @@ details.sub > summary {
 <section class="vista oculto" id="vista-modulo">
   <div id="encabezado-marca"></div>
   <div id="puerta-marca" class="oculto"></div>
+  <!-- Las tres fuentes de la marca: se ven y se cambian sin salir de acá. -->
+  <div id="fuentes-marca"></div>
 
   <div class="tarjeta">
     <h3 class="th">Parámetros del pedido</h3>
@@ -671,7 +699,7 @@ details.sub > summary {
     Decisión Andina 351, Convenio de Berna.
   </div>
   <div class="privacidad">
-    Versión <b id="sello-version">20260826-1253</b> &middot;
+    Versión <b id="sello-version">20260830-0749</b> &middot;
   </div>
   <div class="privacidad">
     Los archivos se procesan en este dispositivo. El pedido se guarda en la nube del equipo;
@@ -1426,10 +1454,33 @@ const CIUDADES = {
   IBA1: { nombre: 'Ibagué', alias: ['ibague', 'ibagué'] },
   CART: { nombre: 'Cartagena', alias: ['cartagena'] }
 };
+
+/**
+ * ¿Aparece `palabra` en `texto` como palabra completa?
+ *
+ * Existe porque el emparejamiento era `texto.includes(alias)` a secas, y así el
+ * resultado dependía del orden en que están declarados los CEDI: cualquier alias
+ * que fuera trozo de otro nombre se llevaba la ciudad al primero que casara.
+ * Un pedido despachado desde la bodega equivocada no se nota hasta que llega.
+ */
+function contienePalabra (texto, palabra) {
+  if (!palabra) return false;
+  const borde = c => !c || !/[a-z0-9]/.test(c);
+  for (let i = texto.indexOf(palabra); i >= 0; i = texto.indexOf(palabra, i + 1)) {
+    if (borde(texto[i - 1]) && borde(texto[i + palabra.length])) return true;
+  }
+  return false;
+}
 function cediDeCiudad (ciudad) {
   const t = normalizar(ciudad);
+  if (!t) return null;
+  // Primero la coincidencia exacta: "Cali" es Cali y no hay nada que interpretar.
   for (const [cedi, def] of Object.entries(CIUDADES)) {
-    if (def.alias.some(a => t.includes(normalizar(a)))) return cedi;
+    if (def.alias.some(a => normalizar(a) === t)) return cedi;
+  }
+  // Después el alias como palabra completa, para "Bogotá D.C." o "Medellín - Antioquia".
+  for (const [cedi, def] of Object.entries(CIUDADES)) {
+    if (def.alias.some(a => contienePalabra(t, normalizar(a)))) return cedi;
   }
   return null;
 }
@@ -1578,7 +1629,13 @@ function leerHojaAgenda (matriz, cabecera, { nombreArchivo, nombreHoja, servicio
   };
 
   const grupos = new Map();
+  const sinServicio = new Set();
   let sinDestino = 0;
+
+  // Cuando la hoja Servicio declara una sola ciudad no hay nada que confundir y
+  // sirve de respaldo. Con dos o más, tomar "la primera" asignaba en silencio la
+  // marca, los cupos y la vigencia de otra ciudad a toda una agenda.
+  const unicoServicio = servicio.size === 1 ? [...servicio.values()][0] : null;
 
   for (let r = 3; r < matriz.length; r++) {
     const f = matriz[r] || [];
@@ -1595,7 +1652,8 @@ function leerHojaAgenda (matriz, cabecera, { nombreArchivo, nombreHoja, servicio
 
     const ciudad = String(f[idx.ciudad] ?? '').trim();
     const asesora = String(f[idx.asesora] ?? '').trim();
-    const srv = servicio.get(normalizar(ciudad)) || [...servicio.values()][0] || {};
+    const srv = servicio.get(normalizar(ciudad)) || unicoServicio;
+    if (!srv) { sinServicio.add(ciudad || '(sin ciudad)'); continue; }
     const clave = `${normalizar(asesora)}|${sap || normalizar(pdv)}`;
 
     let g = grupos.get(clave);
@@ -1640,7 +1698,7 @@ function leerHojaAgenda (matriz, cabecera, { nombreArchivo, nombreHoja, servicio
     return g;
   });
 
-  return { filas, sinDestino };
+  return { filas, sinDestino, sinServicio: [...sinServicio].sort() };
 }
 
 /**
@@ -1652,6 +1710,7 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
   const errores = [];
   const hojasLeidas = [];
   const servicio = leerHojaServicio(libro, XLSX);
+  const sinServicio = new Set();
   let sinDestino = 0;
 
   for (const nombreHoja of libro.SheetNames) {
@@ -1672,6 +1731,7 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
     if (iEvento < 0 && servicio && col(cabecera, 'Tipo de actividad') >= 0) {
       const r = leerHojaAgenda(matriz, cabecera, { nombreArchivo, nombreHoja, servicio });
       sinDestino += r.sinDestino;
+      r.sinServicio.forEach(c => sinServicio.add(c));
       if (r.filas.length) {
         filas.push(...r.filas);
         hojasLeidas.push({ hoja: nombreHoja, filas: r.filas.length });
@@ -1744,6 +1804,12 @@ function leerProgramacion (libro, XLSX, nombreArchivo = '') {
   if (sinDestino) {
     errores.push(`${sinDestino} día(s) de agenda tienen actividad pero no dicen a qué punto ` +
                  'de venta: quedan fuera del pedido porque no hay a dónde despachar.');
+  }
+  if (sinServicio.size) {
+    errores.push(`La hoja "Servicio" no dice nada de ${[...sinServicio].join(', ')}. ` +
+                 'Esas agendas quedan fuera: sin esa fila no se sabe de qué marca son, ' +
+                 'con qué vigencia ni con cuántos cupos, y adivinarlo despacharía ' +
+                 'producto de otra marca.');
   }
 
   return {
@@ -1886,6 +1952,23 @@ function saldoDe (saldos, cedi, codigo) {
 
 const DIA_MS = 86400000;
 
+/**
+ * Identidad de un destino dentro de un pedido.
+ *
+ * **No puede ser el SAP a secas.** Los destinos que salen de una agenda de asesora
+ * —Bénet en Bogotá— no traen código de cliente, así que su `sap` es cadena vacía y
+ * *todos* comparten llave: un ajuste manual escrito para un punto se aplicaba a
+ * todos los demás sin SAP, y "quitar" borraba la línea en todos a la vez. Cuando
+ * no hay SAP manda el nombre, que es lo único que los distingue.
+ *
+ * Se usa igual al deduplicar puntos, al guardar los ajustes y al leerlos: si las
+ * tres no coinciden, el ajuste se guarda con una llave y se busca con otra.
+ */function llaveDestino (p) {
+  const sap = String(p?.sap ?? '').trim();
+  if (sap) return sap;
+  return '#' + normalizar(p?.pdv ?? p?.nombre ?? '');
+}
+
 /** Días de la ventana [desde, hasta] que caen dentro del ciclo, por tipo. */function diasDelCiclo (inicioCiclo, diasCiclo, desde, hasta) {
   const ini = aFecha(inicioCiclo);
   let todos = 0, finde = 0;
@@ -1968,7 +2051,8 @@ function truncar (d) {
   const finCiclo = new Date(iniCiclo.getTime() + (diasCiclo - 1) * DIA_MS);
 
   const descartados = {
-    otraMarca: 0, otraIniciativa: 0, otroCedi: 0, fueraDeVentana: 0, sinPdv: 0, sinCedi: 0
+    otraMarca: 0, otraIniciativa: 0, otroCedi: 0, fueraDeVentana: 0, sinPdv: 0, sinCedi: 0,
+    sinCupo: 0
   };
   const ciudadesSinCedi = new Set();
   const puntos = [];
@@ -2002,6 +2086,14 @@ function truncar (d) {
       : diasDelCiclo(inicioCiclo, diasCiclo, desde, hasta);
     if (dias.todos === 0) { descartados.fueraDeVentana++; continue; }
 
+    // Un cupo declarado en 0 significa que ahí no trabaja nadie esa semana, y hay
+    // que respetarlo. `Number(x) || 1` lo convertía en 1 y le despachaba producto
+    // a un punto que la programación había apagado a propósito.
+    const cuposCrudo = f.cupos ?? f.cuposGrupo;
+    const cuposNum = cuposCrudo == null || cuposCrudo === '' ? 1 : Number(cuposCrudo);
+    const cupos = Number.isFinite(cuposNum) && cuposNum >= 0 ? cuposNum : 1;
+    if (cupos === 0) { descartados.sinCupo++; continue; }
+
     puntos.push({
       sap: f.sap || '',
       nombre: f.pdv || '(sin nombre)',
@@ -2009,7 +2101,7 @@ function truncar (d) {
       asesora: f.asesora,
       telefono: f.telefono,
       ciudad: f.ciudad,
-      cupos: Number(f.cupos ?? f.cuposGrupo ?? 1) || 1,
+      cupos,
       asesoras: f.asesora ? [f.asesora] : [],
       diasTodos: dias.todos,
       diasFinde: dias.finde,
@@ -2022,7 +2114,7 @@ function truncar (d) {
   // Un mismo PDV puede venir repetido entre canales; se consolida por SAP+nombre.
   const porClave = new Map();
   for (const p of puntos) {
-    const clave = p.sap || normalizar(p.nombre);
+    const clave = llaveDestino(p);
     const previo = porClave.get(clave);
     if (!previo) { porClave.set(clave, p); continue; }
     // Los dias se toman al maximo —son el mismo calendario visto dos veces— pero los
@@ -2066,7 +2158,10 @@ function truncar (d) {
  * queda intacto y el ajuste vale solo para este pedido.
  */function necesidadLinea (linea, pdv, cantidades = {}) {
   const dias = linea.dias === 'finde' ? pdv.diasFinde : pdv.diasTodos;
-  const cupo = Number(pdv.cupos) > 0 ? Number(pdv.cupos) : 1;
+  // Cero es un cupo válido —ese punto no opera esta semana— y hay que dejarlo en
+  // cero. Solo se cae a 1 cuando el dato falta o no es un número.
+  const cupoCrudo = Number(pdv.cupos);
+  const cupo = Number.isFinite(cupoCrudo) && cupoCrudo >= 0 ? cupoCrudo : 1;
 
   if (linea.modo === 'fija') {
     // No depende de contactos: cantidad fija por PDV. Cada referencia puede llevar
@@ -2075,7 +2170,8 @@ function truncar (d) {
     for (const ref of linea.refs) {
       const base = cantidades[ref.codigo] ?? ref.cantidadPorPdv ?? linea.cantidadPorPdv ?? 1;
       // Hacia arriba: medio guante no existe, y quedarse corto deja a alguien sin.
-      porRef[ref.codigo] = Math.max(base > 0 ? 1 : 0, Math.ceil(base * cupo));
+      // Con cupo 0 no hay a quién dotar y el mínimo de 1 no aplica.
+      porRef[ref.codigo] = cupo === 0 ? 0 : Math.max(base > 0 ? 1 : 0, Math.ceil(base * cupo));
     }
     return {
       modo: 'fija',
@@ -2269,7 +2365,8 @@ function fraseCandidatos (cands, linea) {
       detalle: `Descartados — otra marca: ${descartados.otraMarca}, otra iniciativa: ` +
                `${descartados.otraIniciativa}, otro CEDI: ${descartados.otroCedi}, ` +
                `fuera de ventana: ${descartados.fueraDeVentana}, ` +
-               `sin PDV asignado: ${descartados.sinPdv}, sin CEDI: ${descartados.sinCedi}.`
+               `sin PDV asignado: ${descartados.sinPdv}, sin CEDI: ${descartados.sinCedi}, ` +
+               `con cupo en cero: ${descartados.sinCupo}.`
     });
   }
 
@@ -2651,7 +2748,9 @@ const RELLENO = /\b(a|al|en|de|del|la|el|los|las|y|con|paq|paquete|paquetes|unid
   if (!ajustes) return resultado;
 
   for (const pedido of resultado.pedidos) {
-    const porPdv = ajustes[pedido.sap];
+    // Por llave de destino, no por SAP: los puntos de agenda no tienen SAP y con
+    // `ajustes[pedido.sap]` todos leían el mismo casillero.
+    const porPdv = ajustes[llaveDestino(pedido)];
     if (!porPdv) continue;
 
     for (const [codigo, cantidad] of Object.entries(porPdv)) {
@@ -2920,7 +3019,12 @@ function anchos (filas, columnas) {
   const quien = etiqueta || (lista.length > 1
     ? 'CONSOLIDADO'
     : String(r.marca).toUpperCase().replace(/[^A-Z0-9]+/g, ''));
-  return `PEDIDO ${quien} ${r.cedi} ${p(f.getDate())}${p(f.getMonth() + 1)}`;
+  // Un consolidado puede llevar marcas de bodegas distintas. Poner el CEDI del
+  // primero en el nombre haría pasar por un pedido de Bogotá un archivo que
+  // también despacha Medellín.
+  const cedis = [...new Set(lista.map(x => x.cedi).filter(Boolean))];
+  const donde = cedis.length > 1 ? 'VARIOS CEDI' : (cedis[0] || '—');
+  return `PEDIDO ${quien} ${donde} ${p(f.getDate())}${p(f.getMonth() + 1)}`;
 }
 
 
@@ -2959,6 +3063,16 @@ const CLAVE_EQUIPO = 'pdv_ZYpg54XS3_6pU3HUrLSi9ZuoJhrhGuF4';
 
 /** Nombres y teléfonos: se quedan acá, nunca suben. */
 const CLAVE_PERSONALES = 'cppdv_personales_v1';
+
+/**
+ * Los personales caducan igual que la programación de la que salieron.
+ *
+ * La purga de 30 días vivía solo en `cppdv_fuentes_v1`, pero desde que existe la
+ * nube el nombre y el teléfono se mudaron acá — o sea que justo la copia que
+ * importa era la única sin fecha de vencimiento. Cada registro lleva su fecha y
+ * se barren al abrir.
+ */
+const DIAS_CADUCA_PERSONALES = 30;
 const nube = {
   disponible: null,      // null = todavía sin probar
   ultimoError: null,
@@ -3021,9 +3135,10 @@ function almacen () {
 /** Aparta nombre y teléfono, los guarda en este equipo y devuelve las filas limpias. */
 function separarPersonales (filas) {
   const personales = {};
+  const el = new Date().toISOString();
   const limpias = (filas || []).map(f => {
     if (f.asesora || f.telefono) {
-      personales[llave(f)] = { asesora: f.asesora || '', telefono: f.telefono || '' };
+      personales[llave(f)] = { asesora: f.asesora || '', telefono: f.telefono || '', el };
     }
     const { asesora, telefono, ...resto } = f;
     return resto;
@@ -3065,6 +3180,48 @@ function cuantosPersonales () {
 function olvidarPersonales () {
   const a = almacen();
   if (a) a.removeItem(CLAVE_PERSONALES);
+}
+
+/**
+ * Borra del equipo los nombres y teléfonos que ya pasaron su plazo.
+ * Devuelve cuántos se fueron, para poder decirlo en pantalla.
+ */
+function purgarPersonales () {
+  const a = almacen();
+  if (!a) return 0;
+  let guardados = {};
+  try { guardados = JSON.parse(a.getItem(CLAVE_PERSONALES) || '{}'); } catch { return 0; }
+  const limite = Date.now() - DIAS_CADUCA_PERSONALES * 86400000;
+  const vivos = {};
+  let purgados = 0;
+  for (const [k, v] of Object.entries(guardados)) {
+    // Sin fecha son de antes de que esto existiera: se les da su plazo desde hoy.
+    if (!v || !v.el) { vivos[k] = { ...(v || {}), el: new Date().toISOString() }; continue; }
+    if (new Date(v.el).getTime() >= limite) vivos[k] = v; else purgados++;
+  }
+  if (purgados || Object.keys(vivos).length !== Object.keys(guardados).length) {
+    try { a.setItem(CLAVE_PERSONALES, JSON.stringify(vivos)); } catch { /* sin espacio */ }
+  }
+  return purgados;
+}
+
+/**
+ * Copia de las filas del ERP sin dato personal, para el historial de la nube.
+ *
+ * `separarPersonales()` solo cuidaba el camino de las fuentes. El historial subía
+ * las filas tal cual, y esas filas llevan el teléfono en `Telefono_entregar_en` y
+ * el nombre de la asesora dentro de `Observaciones` — o sea que los datos que se
+ * juraba no subir estaban subiendo con cada descarga. Acá se van, y la copia
+ * completa se queda en el navegador, que es donde hace falta para volver a bajar
+ * el archivo tal como se despachó.
+ */
+function sinPersonales (filas) {
+  return (filas || []).map(f => ({
+    ...f,
+    Telefono_entregar_en: '',
+    // Observaciones = "NOMBRE PDV/NOMBRE ASESORA": se conserva el punto de venta.
+    Observaciones: String(f.Observaciones ?? '').split('/')[0]
+  }));
 }
 
 /* ------------------------------------------------------------------ *
@@ -3157,7 +3314,12 @@ async function subirPedidos (pedidos) {
 }
 async function subirHistorial (registro) {
   try {
-    await rpc('pdv_anotar_historial', { p_registro: registro, p_quien: await identidad() });
+    // A la nube va el registro sin nombre ni teléfono. La copia con ellos se queda
+    // en este equipo, igual que la programación de la que salieron.
+    const limpio = registro && registro.filas
+      ? { ...registro, filas: sinPersonales(registro.filas), sinPersonales: true }
+      : registro;
+    await rpc('pdv_anotar_historial', { p_registro: limpio, p_quien: await identidad() });
     return { ok: true };
   } catch (e) {
     nube.ultimoError = e.message;
@@ -3225,7 +3387,7 @@ function diasDesde (iso) {
   return (Date.now() - t) / 86400000;
 }
 
-/** Lo que se purgó en el último arranque, para que la interfaz pueda decirlo. */const caducado = { programacion: null, inventario: null };const estado = {
+/** Lo que se purgó en el último arranque, para que la interfaz pueda decirlo. */const caducado = { programacion: null, inventario: null, personales: 0 };const estado = {
   marcas: [],
   marcaId: null,
   vista: 'embudo',
@@ -3286,6 +3448,10 @@ function almacen () {
       ? 'los archivos superan el espacio del navegador' : e.message };
   }
 }function cargarFuentes () {
+  // Los nombres y teléfonos apartados por la nube caducan con el mismo plazo que
+  // la programación: viven en otra clave, pero son el mismo dato personal.
+  caducado.personales = purgarPersonales();
+
   const a = almacen();
   if (!a) return;
   let p;
@@ -3357,12 +3523,27 @@ function rehidratarFila (f) {
   const a = almacen();
   if (!a) return;
   try { estado.pedidos = JSON.parse(a.getItem(CLAVE_PEDIDOS) || '{}') || {}; } catch { estado.pedidos = {}; }
-}function olvidarTodo () {
+}
+
+/**
+ * Deja el navegador como recién instalado.
+ *
+ * Borra **todo**, incluido el historial y los nombres y teléfonos apartados. Antes
+ * quitaba solo las fuentes y los pedidos: el botón decía «Reiniciar» y dejaba
+ * atrás los datos personales, que son justo lo que alguien quiere que desaparezca
+ * cuando pulsa eso en un PC compartido.
+ */function olvidarTodo () {
   const a = almacen();
-  if (a) { a.removeItem(CLAVE_FUENTES); a.removeItem(CLAVE_PEDIDOS); }
+  if (a) {
+    a.removeItem(CLAVE_FUENTES);
+    a.removeItem(CLAVE_PEDIDOS);
+    a.removeItem(CLAVE_HISTORIAL);
+  }
+  olvidarPersonales();
   estado.fuentes = { racional: {}, programacion: null, inventario: null };
   estado.pedidos = {};
   estado.resultados = {};
+  estado.historial = [];
 }
 
 /* ------------------------------------------------------------------ *
@@ -3609,15 +3790,60 @@ function pintarEmbudo () {
             <p class="q">${esc(p.q)}</p>
             <p class="por-que">${esc(p.porQue)}</p>
           </div>
-          ${lista ? `<div class="respuesta">Listo<br>
+          ${lista && p.id !== 'racional' ? `<div class="respuesta">Listo<br>
               <button class="cambiar" data-cambiar="${p.id}">cambiar</button></div>` : ''}
+          ${lista && p.id === 'racional' ? '<div class="respuesta">Listo</div>' : ''}
         </div>
-        ${lista ? fichaGuardada(p.id) : (dormida ? '' : bloqueRespuesta(p))}
+        ${p.id === 'racional'
+          ? panelRacional()
+          : (lista ? fichaGuardada(p.id) : (dormida ? '' : bloqueRespuesta(p)))}
       </div>`;
   }).join('');
 
   conectarEmbudo();
   pintarAccionesEmbudo();
+}
+
+/**
+ * El racional, marca por marca — siempre, esté cargado o no.
+ *
+ * Antes era todo o nada: la pregunta se daba por resuelta cuando **todas** las
+ * marcas tenían racional, y a partir de ahí desaparecía la zona de carga. La única
+ * salida era «cambiar», que borraba los cinco racionales de golpe para poder
+ * volver a subir uno. Así, actualizar el racional de una marca era imposible sin
+ * tumbar el de las demás.
+ *
+ * Cada marca tiene el suyo, así que cada marca tiene su fila y su botón.
+ */
+function panelRacional () {
+  const acepta = PREGUNTAS[0].acepta;
+  return `<div class="panel-respuesta">
+    <div class="aviso ok" style="margin-bottom:12px">
+      <div class="t">El racional es de cada marca, y se cambia por separado</div>
+      <div class="d">Actualizar el de Doria no toca el de Tosh. El archivo queda como respaldo
+        del pedido; las reglas de cálculo —contactos por día, referencias y recetas— se editan
+        en el módulo de cada marca.</div>
+    </div>
+    <div class="ficha">
+      ${estado.marcas.map(m => {
+        const r = estado.fuentes.racional[m.id];
+        return `<div class="fila fila-accion">
+          <span>${esc(m.marca)}</span>
+          <b>${r ? esc((r.archivo || 'revisado sin archivo') + ' · ' + fechaCorta(r.confirmadoEl))
+                 : 'sin cargar'}</b>
+          <span class="empuje"></span>
+          <button class="secundario chico" data-racional-marca="${esc(m.id)}"
+                  title="${r ? 'Subir otro archivo para esta marca' : 'Subir el racional de esta marca'}"
+            >${r ? 'Actualizar' : 'Cargar'}</button>
+          <button class="secundario chico" data-racional-revisado="${esc(m.id)}"
+                  title="Dejar constancia de que se revisó, sin archivo">Sin archivo</button>
+          ${r ? `<button class="secundario chico" data-racional-quitar="${esc(m.id)}"
+                   title="Quitar el racional de esta marca">✕</button>` : ''}
+        </div>`;
+      }).join('') || '<div class="fila"><span>No hay marcas todavía.</span></div>'}
+    </div>
+    <input type="file" data-input-racional accept="${acepta}" style="display:none">
+  </div>`;
 }
 
 function bloqueRespuesta (p) {
@@ -3635,40 +3861,19 @@ function bloqueRespuesta (p) {
            aplicación lo tenga. La próxima vez bastará con responder que sí.</div></div>`
     : '';
 
-  const faltantes = p.id === 'racional' ? marcasSinRacional() : [];
-  const selectorMarca = p.id === 'racional' && faltantes.length > 1
-    ? `<label class="campo" style="margin-top:12px">Racional de la marca</label>
-       <select data-marca-racional>${faltantes.map(m =>
-         `<option value="${m.id}">${esc(m.marca)} — ${esc(m.evento || '')}</option>`).join('')}</select>`
-    : '';
-
+  // El racional no pasa por acá: tiene su propio panel, una fila por marca.
   return `<div class="panel-respuesta">
     ${aviso}
-    ${p.id === 'racional' ? `<div class="aviso ok" style="margin-bottom:12px">
-        <div class="t">Faltan ${faltantes.length} marca(s): ${esc(faltantes.map(m => m.marca).join(', '))}</div>
-        <div class="d">El archivo se guarda como respaldo. Las reglas de cálculo se revisan en
-          el módulo de cada marca (contactos por día, referencias y recetas).</div></div>` : ''}
-    ${selectorMarca}
     <div class="suelta" data-zona="${p.id}" style="margin-top:10px">
       <div class="titulo">${p.titulo}</div>
       <div class="pista">${p.pista}</div>
       <input type="file" data-input="${p.id}" accept="${p.acepta}" ${p.id === 'programacion' ? 'multiple' : ''}>
     </div>
     <div data-ficha="${p.id}"></div>
-    ${p.id === 'racional' ? `<div class="acciones" style="margin-top:12px">
-        <button class="secundario" data-sin-archivo>No tengo el archivo, ya revisé los módulos</button>
-      </div>` : ''}
   </div>`;
 }
 
 function fichaGuardada (id) {
-  if (id === 'racional') {
-    const filas = estado.marcas.map(m => {
-      const r = estado.fuentes.racional[m.id];
-      return fila(m.marca, `${r?.archivo || 'revisado en el módulo'} · ${fechaCorta(r?.confirmadoEl)}`);
-    }).join('');
-    return `<div class="panel-respuesta"><div class="ficha">${filas}</div></div>`;
-  }
   const f = estado.fuentes[id];
   if (id === 'programacion') {
     return `<div class="panel-respuesta"><div class="ficha">
@@ -3712,21 +3917,40 @@ function conectarEmbudo () {
   }));
   $$('[data-cambiar]').forEach(b => b.addEventListener('click', () => {
     const id = b.dataset.cambiar;
-    if (id === 'racional') estado.fuentes.racional = {};
-    else estado.fuentes[id] = null;
+    estado.fuentes[id] = null;
     respuestas[id] = 'no';
     guardarFuentes();
     pintarEmbudo();
   }));
 
-  const sinArchivo = $('[data-sin-archivo]');
-  if (sinArchivo) sinArchivo.addEventListener('click', () => {
-    const sel = $('[data-marca-racional]');
-    const ids = sel ? [sel.value] : marcasSinRacional().map(m => m.id);
-    ids.forEach(id => { estado.fuentes.racional[id] = { archivo: null, confirmadoEl: ahora() }; });
+  // Racional: una marca por vez, sin tocar las demás.
+  const entradaRacional = $('[data-input-racional]');
+  $$('[data-racional-marca]').forEach(b => b.addEventListener('click', () => {
+    if (!entradaRacional) return;
+    entradaRacional.dataset.marca = b.dataset.racionalMarca;
+    entradaRacional.value = '';
+    entradaRacional.click();
+  }));
+  if (entradaRacional && !entradaRacional.dataset.conectado) {
+    entradaRacional.dataset.conectado = '1';
+    entradaRacional.addEventListener('change', () => {
+      const mid = entradaRacional.dataset.marca;
+      if (!mid || !entradaRacional.files.length) return;
+      ponerRacional(mid, entradaRacional.files[0].name);
+      pintarEmbudo();
+    });
+  }
+  $$('[data-racional-revisado]').forEach(b => b.addEventListener('click', () => {
+    ponerRacional(b.dataset.racionalRevisado, null);
+    pintarEmbudo();
+  }));
+  $$('[data-racional-quitar]').forEach(b => b.addEventListener('click', () => {
+    const m = marcaPorId(b.dataset.racionalQuitar);
+    if (!confirm(`¿Quitar el racional de ${m ? m.marca : 'esta marca'}? Las demás no se tocan.`)) return;
+    delete estado.fuentes.racional[b.dataset.racionalQuitar];
     guardarFuentes();
     pintarEmbudo();
-  });
+  }));
 
   const agregar = $('[data-agregar-programacion]');
   if (agregar) agregar.addEventListener('click', () => $('[data-input="programacion"]').click());
@@ -3739,6 +3963,20 @@ function conectarEmbudo () {
       if (input.files.length) recibir(input.dataset.input, [...input.files]);
     });
   });
+}
+
+/**
+ * Deja constancia del racional de UNA marca. `archivo` en null significa
+ * "lo revisé y no tengo el archivo": vale igual como respuesta, y se ve distinto.
+ * Cambiar el racional deja el pedido de esa marca sin confirmar — el cálculo pudo
+ * cambiar y nadie debería despacharlo sin volver a mirarlo.
+ */
+function ponerRacional (marcaId, archivo) {
+  if (!marcaId) return;
+  estado.fuentes.racional[marcaId] = { archivo: archivo || null, confirmadoEl: ahora() };
+  const p = estado.pedidos[marcaId];
+  if (p?.confirmado) { p.confirmado = false; guardarPedidos(); }
+  guardarFuentes();
 }
 
 function conectarZona (id, zona) {
@@ -3778,17 +4016,18 @@ function leerLibro (archivo) {
   });
 }
 
-async function recibir (id, archivos) {
-  const caja = $(`[data-ficha="${id}"]`);
+/**
+ * Recibe programación o inventario. `alTerminar` existe para que la misma carga
+ * sirva desde el embudo y desde el panel de fuentes de una marca, sin duplicar
+ * la lectura del Excel en dos sitios.
+ */
+async function recibir (id, archivos, { alTerminar = null, caja: cajaDada = null } = {}) {
+  // La caja se puede imponer: desde el módulo de una marca, la del embudo está en
+  // una vista oculta y el error se leería en una pantalla que nadie está mirando.
+  const caja = cajaDada || $(`[data-ficha="${id}"]`);
   if (caja) caja.innerHTML = '<div class="ficha"><div class="fila"><span>Leyendo…</span></div></div>';
 
-  if (id === 'racional') {
-    const sel = $('[data-marca-racional]');
-    const ids = sel ? [sel.value] : marcasSinRacional().map(m => m.id);
-    ids.forEach(mid => {
-      estado.fuentes.racional[mid] = { archivo: archivos[0].name, confirmadoEl: ahora() };
-    });
-  } else if (id === 'programacion') {
+  if (id === 'programacion') {
     // Se AGREGAN a lo que ya hay: los dos canales suelen cargarse por separado.
     const previas = estado.fuentes.programacion?.filas || [];
     const previosResumenes = estado.fuentes.programacion?.resumenes || [];
@@ -3825,6 +4064,7 @@ async function recibir (id, archivos) {
 
   const g = guardarFuentes();
   pintarEmbudo();
+  if (alTerminar) alTerminar();
   if (!g.ok) {
     $('#embudo').insertAdjacentHTML('beforeend',
       `<div class="aviso faltante"><div class="t">No se pudo guardar para la próxima vez</div>
@@ -4323,6 +4563,7 @@ function abrirMarca (id) {
     </div>`;
 
   pintarPuertaMarca(m);
+  pintarFuentesMarca(m);
   pintarLineasMarca(m);
   refrescarCedis(m);
 
@@ -4369,14 +4610,10 @@ function pintarPuertaMarca (m) {
             </div>
           </div>` : ''}
         ${!racionalListo(m.id) ? `
-          <div class="suelta" data-zona-marca>
-            <div class="titulo">Cargar el racional de ${esc(m.marca)}</div>
-            <div class="pista">PDF, PowerPoint o Excel</div>
-            <input type="file" data-input-marca accept=".pdf,.ppt,.pptx,.xls,.xlsx,.doc,.docx">
-          </div>
-          <div class="acciones">
-            <button class="secundario" data-racional-sin-archivo>Ya lo revisé, sin archivo</button>
-          </div>` : ''}
+          <div class="aviso ajustado" style="margin-bottom:12px">
+            <div class="t">Falta el racional de ${esc(m.marca)}</div>
+            <div class="d">Se carga —o se da por revisado sin archivo— en
+              <b>Lo que esta marca tiene delante</b>, justo aquí abajo.</div></div>` : ''}
         ${m.lineas.some(l => l.refs.some(r => r.codigo === 'CRD000000')) ? `
           <div class="aviso faltante" style="margin-top:12px">
             <div class="t">Las líneas todavía son de ejemplo</div>
@@ -4395,22 +4632,117 @@ function pintarPuertaMarca (m) {
 
   const btnLineas = $('[data-editar-lineas]');
   if (btnLineas) btnLineas.addEventListener('click', () => abrirEditorLineas(m.id));
+}
 
-  const zona = $('[data-zona-marca]');
-  if (zona) {
-    const input = $('[data-input-marca]');
-    zona.addEventListener('click', () => input.click());
+/**
+ * Las tres preguntas, dentro de la marca — siempre visibles.
+ *
+ * La aplicación recibe tres cosas: el racional, la programación y el inventario.
+ * Estaban solo en el embudo de arranque, y el embudo se contesta una vez: después
+ * ya no preguntaba nada y no había forma de subir un racional nuevo ni de
+ * reemplazar el corte del día sin volver atrás y deshacer lo de todas las marcas.
+ * Acá se ve qué tiene esta marca delante y se cambia cualquiera de las tres sin
+ * salir de la pantalla, que es donde uno está cuando se da cuenta de que el dato
+ * está viejo.
+ */
+function pintarFuentesMarca (m) {
+  const caja = $('#fuentes-marca');
+  if (!caja) return;
+
+  const r = estado.fuentes.racional[m.id];
+  const prog = estado.fuentes.programacion;
+  const inv = estado.fuentes.inventario;
+  const invViejo = inv && !esDeHoy(inv.cargadoEl);
+
+  const insignia = (ok, ojo) =>
+    !ok ? '<span class="insignia alerta">falta</span>'
+        : ojo ? '<span class="insignia borrador">revisar</span>'
+              : '<span class="insignia confirmado">al día</span>';
+
+  caja.innerHTML = `
+    <div class="tarjeta">
+      <h3 class="th">Lo que esta marca tiene delante</h3>
+      <div class="cuerpo">
+        <p style="margin-top:0;color:var(--carbon-2)">
+          El pedido sale de cruzar tres cosas. El <b>racional</b> es solo de ${esc(m.marca)};
+          la <b>programación</b> y el <b>inventario</b> son los mismos para todas las marcas.
+          Cualquiera de las tres se cambia acá, sin volver a Fuentes.</p>
+
+        <div class="ficha">
+          <div class="fila fila-accion">
+            <span>Racional</span>
+            <b>${r ? esc((r.archivo || 'revisado sin archivo') + ' · ' + fechaCorta(r.confirmadoEl))
+                   : 'sin cargar para esta marca'}</b>
+            ${insignia(!!r, false)}
+            <span class="empuje"></span>
+            <button class="secundario chico" data-fm-pedir="racional">${r ? 'Actualizar' : 'Cargar'}</button>
+            <button class="secundario chico" data-fm-revisado>Sin archivo</button>
+          </div>
+
+          <div class="fila fila-accion">
+            <span>Programación</span>
+            <b>${prog ? esc(`${num(prog.filas.length)} filas · ${haceCuanto(prog.cargadoEl)}`)
+                      : 'sin cargar'}</b>
+            ${insignia(!!prog, false)}
+            <span class="empuje"></span>
+            <button class="secundario chico" data-fm-pedir="programacion">
+              ${prog ? 'Agregar o reemplazar' : 'Cargar'}</button>
+            ${prog ? '<button class="secundario chico" data-fm-vaciar="programacion" title="Empezar de cero con la programación">✕</button>' : ''}
+          </div>
+
+          <div class="fila fila-accion">
+            <span>Inventario</span>
+            <b>${inv ? esc(`${inv.resumen.hoja} · ${num(inv.resumen.referencias)} referencias · ${haceCuanto(inv.cargadoEl)}`)
+                     : 'sin cargar'}</b>
+            ${insignia(!!inv, invViejo)}
+            <span class="empuje"></span>
+            <button class="secundario chico" data-fm-pedir="inventario">
+              ${inv ? 'Cargar el corte de hoy' : 'Cargar'}</button>
+          </div>
+        </div>
+
+        ${invViejo ? `<div class="aviso faltante" style="margin-top:12px">
+          <div class="t">El inventario no es de hoy</div>
+          <div class="d">Se cargó ${esc(haceCuanto(inv.cargadoEl))}. El saldo rota a diario:
+            calcular con un corte viejo pide producto que ya se despachó.</div></div>` : ''}
+
+        <div data-ficha-marca></div>
+
+        <input type="file" data-fm-input="racional" accept="${PREGUNTAS[0].acepta}" style="display:none">
+        <input type="file" data-fm-input="programacion" accept=".xlsx,.xls" multiple style="display:none">
+        <input type="file" data-fm-input="inventario" accept=".xlsx,.xls" style="display:none">
+      </div>
+    </div>`;
+
+  const cajaFicha = $('[data-ficha-marca]');
+  const repintar = () => { pintarFuentesMarca(m); pintarPuertaMarca(m); refrescarCedis(m); };
+
+  $$('[data-fm-pedir]').forEach(b => b.addEventListener('click', () => {
+    const input = porAtributo('data-fm-input', b.dataset.fmPedir);
+    if (input) { input.value = ''; input.click(); }
+  }));
+
+  $$('[data-fm-input]').forEach(input => {
     input.addEventListener('change', () => {
       if (!input.files.length) return;
-      estado.fuentes.racional[m.id] = { archivo: input.files[0].name, confirmadoEl: ahora() };
-      guardarFuentes(); pintarPuertaMarca(m); pintarEmbudo();
+      const id = input.dataset.fmInput;
+      if (id === 'racional') { ponerRacional(m.id, input.files[0].name); repintar(); pintarEmbudo(); return; }
+      recibir(id, [...input.files], { caja: cajaFicha, alTerminar: repintar });
     });
-  }
-  const sin = $('[data-racional-sin-archivo]');
-  if (sin) sin.addEventListener('click', () => {
-    estado.fuentes.racional[m.id] = { archivo: null, confirmadoEl: ahora() };
-    guardarFuentes(); pintarPuertaMarca(m); pintarEmbudo();
   });
+
+  const revisado = $('[data-fm-revisado]');
+  if (revisado) revisado.addEventListener('click', () => {
+    ponerRacional(m.id, null); repintar(); pintarEmbudo();
+  });
+
+  $$('[data-fm-vaciar]').forEach(b => b.addEventListener('click', () => {
+    if (!confirm('Se quita la programación cargada para poder empezar de cero. ' +
+                 'Afecta a todas las marcas. ¿Continuar?')) return;
+    estado.fuentes[b.dataset.fmVaciar] = null;
+    respuestas[b.dataset.fmVaciar] = 'no';
+    guardarFuentes(); repintar(); pintarEmbudo();
+  }));
 }
 
 function pintarLineasMarca (m) {
@@ -5066,13 +5398,17 @@ function pintarPuntos (r, cat) {
 
   $('#tabla-pdv').innerHTML = r.pedidos.map(p => {
     const total = p.items.reduce((a, i) => a + i.cantidad, 0);
-    const tocado = !!ajustes[p.sap];
+    // La llave, no el SAP: los destinos de agenda no lo traen y con `sap` vacío
+    // todos compartían casillero de ajustes y el mismo `data-instruccion=""`,
+    // así que la instrucción escrita en uno se leía y se aplicaba en los otros.
+    const k = llaveDestino(p);
+    const tocado = !!ajustes[k];
     return `
-      <details class="punto" data-sap="${esc(p.sap)}">
+      <details class="punto" data-destino="${esc(k)}">
         <summary>
           <span class="cons">${p.consecutivo}</span>
           <span class="nombre">${esc(p.pdv)}</span>
-          <span class="sap"><code>${esc(p.sap)}</code></span>
+          <span class="sap"><code>${p.sap ? esc(p.sap) : 'sin SAP'}</code></span>
           <span class="asesora">${esc(p.asesora || '—')}</span>
           <span class="dias">${p.diasTodos}/${p.diasFinde} días</span>
           ${p.cupos != null && p.cupos !== 1 ? `<span class="insignia borrador" title="${
@@ -5095,15 +5431,15 @@ function pintarPuntos (r, cat) {
           <div class="ajuste">
             <label class="campo">Ajuste manual de este punto</label>
             <div class="ajuste-fila">
-              <input type="text" data-instruccion="${esc(p.sap)}"
+              <input type="text" data-instruccion="${esc(k)}"
                      placeholder="CRD032318 = 150   ·   +20 CRD020300   ·   bajar 30 a CRD020300   ·   quitar CRD024393">
-              <button class="secundario" data-aplicar="${esc(p.sap)}">Aplicar</button>
+              <button class="secundario" data-aplicar="${esc(k)}">Aplicar</button>
             </div>
-            <div class="ajuste-resp" data-resp="${esc(p.sap)}"></div>
+            <div class="ajuste-resp" data-resp="${esc(k)}"></div>
             ${tocado ? `<div class="ajuste-lista">
-              ${Object.entries(ajustes[p.sap]).map(([c, q]) =>
+              ${Object.entries(ajustes[k]).map(([c, q]) =>
                 `<span class="chip">${esc(c)} → ${q === 0 ? 'quitado' : num(q)}
-                   <button data-quitar-ajuste="${esc(p.sap)}|${esc(c)}" title="Deshacer">✕</button></span>`).join('')}
+                   <button data-quitar-ajuste="${esc(k)}|${esc(c)}" title="Deshacer">✕</button></span>`).join('')}
             </div>` : ''}
           </div>
         </div>
@@ -5115,21 +5451,27 @@ function pintarPuntos (r, cat) {
     if (e.key === 'Enter') aplicarInstruccion(i.dataset.instruccion);
   }));
   $$('[data-quitar-ajuste]').forEach(b => b.addEventListener('click', () => {
-    const [sap, codigo] = b.dataset.quitarAjuste.split('|');
+    const [destino, codigo] = b.dataset.quitarAjuste.split('|');
     const p = estado.pedidos[estado.marcaId];
-    delete p.ajustes?.[sap]?.[codigo];
-    if (p.ajustes?.[sap] && !Object.keys(p.ajustes[sap]).length) delete p.ajustes[sap];
+    delete p.ajustes?.[destino]?.[codigo];
+    if (p.ajustes?.[destino] && !Object.keys(p.ajustes[destino]).length) delete p.ajustes[destino];
     p.confirmado = false;
     guardarPedidos();
     pintarResultado(recalcular(estado.marcaId));
   }));
 }
 
-function aplicarInstruccion (sap) {
-  const campo = $(`[data-instruccion="${sap}"]`);
-  const resp = $(`[data-resp="${sap}"]`);
+/** El selector se arma con la llave, que puede llevar comillas si el PDV las trae. */
+function porAtributo (nombre, valor) {
+  return $(`[${nombre}="${String(valor).replace(/["\\]/g, '\\$&')}"]`);
+}
+
+function aplicarInstruccion (destino) {
+  const campo = porAtributo('data-instruccion', destino);
+  const resp = porAtributo('data-resp', destino);
   const r = estado.resultados[estado.marcaId];
-  const pedido = r.pedidos.find(p => p.sap === sap);
+  const pedido = r.pedidos.find(p => llaveDestino(p) === destino);
+  if (!campo || !resp || !pedido) return;
   const orden = interpretarAjuste(campo.value);
 
   if (orden.error) {
@@ -5156,8 +5498,8 @@ function aplicarInstruccion (sap) {
 
   const p = estado.pedidos[estado.marcaId];
   p.ajustes = p.ajustes || {};
-  p.ajustes[sap] = p.ajustes[sap] || {};
-  p.ajustes[sap][orden.codigo] = nueva;
+  p.ajustes[destino] = p.ajustes[destino] || {};
+  p.ajustes[destino][orden.codigo] = nueva;
   p.confirmado = false;
   guardarPedidos();
 
@@ -5168,7 +5510,7 @@ function aplicarInstruccion (sap) {
   const exceso = totalRef - disponible;
 
   const nombreRef = estado.fuentes.inventario.catalogo.get(orden.codigo)?.nombre || orden.codigo;
-  resp.innerHTML = `
+  const mensaje = `
     <div class="aviso ${exceso > 0 ? 'faltante' : 'ok'}" style="margin:8px 0 0">
       <div class="t">Entendí: ${esc(orden.frase)}</div>
       <div class="d">
@@ -5183,9 +5525,20 @@ function aplicarInstruccion (sap) {
     </div>`;
 
   campo.value = '';
-  const abierto = $$('.punto[open]').map(d => d.dataset.sap);
+  const abierto = new Set($$('.punto[open]').map(d => d.dataset.destino));
+  abierto.add(destino);
   pintarResultado(recalcular(estado.marcaId));
-  abierto.forEach(s => { const d = $(`.punto[data-sap="${s}"]`); if (d) d.open = true; });
+  abierto.forEach(k => {
+    const d = porAtributo('data-destino', k);
+    if (d) d.open = true;
+  });
+
+  // El mensaje se escribe DESPUÉS de repintar. Escribirlo antes era escribirlo en
+  // un elemento que `pintarResultado` estaba a punto de destruir: la confirmación
+  // de lo que se entendió —y el aviso de que el ajuste se pasa del saldo del
+  // CEDI— aparecían y se borraban en el mismo instante, sin que nadie los viera.
+  const respNueva = porAtributo('data-resp', destino);
+  if (respNueva) respNueva.innerHTML = mensaje;
 }
 
 /* ══════════════════════════════════════════════════════════════ *
@@ -5249,7 +5602,21 @@ function descargar (resultados, etiqueta) {
   const cat = estado.fuentes.inventario.catalogo;
   const lista = Array.isArray(resultados) ? resultados : [resultados];
   const formato = $('#formato').value;
-  const opciones = { horaEnvio: lista[0].horaEnvio };
+
+  // La hora es de cada marca. Forzar la del primer resultado sobre todo el
+  // consolidado despachaba a las demás a una hora que nadie había pedido.
+  const opciones = lista.length > 1 ? {} : { horaEnvio: lista[0].horaEnvio };
+
+  // Un consolidado con varias bodegas es válido —la columna `Punto` va por
+  // pedido— pero hay que decirlo: quien lo recibe suele leer el nombre del
+  // archivo y suponer que todo sale de un solo CEDI.
+  const cedis = [...new Set(lista.map(r => r.cedi).filter(Boolean))];
+  if (cedis.length > 1 && !confirm(
+    `Este archivo mezcla ${cedis.length} CEDI (${cedis.join(', ')}). Cada pedido lleva ` +
+    'el suyo en la columna Punto, y el nombre del archivo dirá "VARIOS CEDI". ¿Descargar así?')) {
+    return;
+  }
+
   const libro = construirLibro(XLSX, lista, cat, opciones);
   const archivo = descargarLibro(XLSX, libro, nombreArchivo(lista, etiqueta), formato);
 
@@ -5257,7 +5624,7 @@ function descargar (resultados, etiqueta) {
     archivo,
     tipo: lista.length > 1 ? 'consolidado' : 'marca',
     marcas: lista.map(r => r.marca),
-    cedi: lista[0].cedi,
+    cedi: cedis.length > 1 ? cedis.join(' + ') : (cedis[0] || '—'),
     semana: lista[0].inicioCiclo,
     totalPdv: lista.reduce((a, r) => a + r.pedidos.length, 0),
     totalPaquetes: lista.reduce((a, r) => a + r.totalPaquetes, 0),
@@ -5478,7 +5845,13 @@ async function sincronizarConNube () {
   }
 
   if (f.racional && Object.keys(f.racional).length) {
-    estado.fuentes.racional = { ...f.racional, ...estado.fuentes.racional };
+    // La nube nunca perdía una clave: `{...nube, ...local}` revivía el racional de
+    // marcas ya borradas y dejaba huérfanos que reaparecían en cada sincronización.
+    // Solo entran los racionales de marcas que todavía existen.
+    const vivas = new Set(estado.marcas.map(m => m.id));
+    const deLaNube = Object.fromEntries(
+      Object.entries(f.racional).filter(([id]) => vivas.has(id)));
+    estado.fuentes.racional = { ...deLaNube, ...estado.fuentes.racional };
     cambio = true;
   }
 
@@ -5538,6 +5911,22 @@ function pintarEstadoNube () {
        ${faltan} punto(s) sin asesora en este equipo</span>` : '');
 }
 
+/**
+ * Quita los racionales de marcas que ya no existen.
+ *
+ * Al borrar una marca se limpiaba su racional en memoria, pero la copia guardada
+ * seguía trayéndolo y se volvía a subir. Quedaban entradas de marcas fantasma
+ * —`doria-mtab2m8q`, `prueba-doria`— que ya nadie podía ver ni borrar.
+ */
+function limpiarRacionalesHuerfanos () {
+  const vivas = new Set(estado.marcas.map(m => m.id));
+  const r = estado.fuentes.racional || {};
+  const huerfanos = Object.keys(r).filter(id => !vivas.has(id));
+  if (!huerfanos.length) return;
+  huerfanos.forEach(id => delete r[id]);
+  guardarFuentes();
+}
+
 function avisoCaducidad () {
   const partes = [];
   if (caducado.programacion) {
@@ -5547,6 +5936,10 @@ function avisoCaducidad () {
   if (caducado.inventario) {
     partes.push(`el inventario, del corte de hace ${caducado.inventario.dias} días ` +
                 `(el límite son ${caducado.inventario.limite})`);
+  }
+  if (caducado.personales) {
+    partes.push(`${caducado.personales} nombre(s) y teléfono(s) de asesoras que llevaban ` +
+                'más de 30 días guardados en este equipo');
   }
   if (!partes.length) return '';
   return `
@@ -5564,6 +5957,7 @@ function avisoCaducidad () {
   cargarFuentes();
   cargarPedidos();
   cargarHistorial();
+  limpiarRacionalesHuerfanos();
 
   pintarEmbudo();
   const aviso = avisoCaducidad() + pintarAlmacen();
@@ -5595,16 +5989,26 @@ function avisoCaducidad () {
   $('#btn-descargar').addEventListener('click', () => descargar(estado.resultados[estado.marcaId]));
   $('#btn-descargar-consolidado').addEventListener('click', () => descargar(confirmados(), 'CONSOLIDADO'));
 
-  $('#btn-borrar-historial').addEventListener('click', () => {
-    if (!confirm('¿Borrar todo el historial de pedidos descargados?')) return;
+  // Borrar tiene que borrar también donde el equipo no ve. El historial lleva el
+  // archivo del ERP y ese archivo nombra a las asesoras: dejar la copia de la nube
+  // intacta era decirle a alguien que borró algo que sigue estando.
+  $('#btn-borrar-historial').addEventListener('click', async () => {
+    if (!confirm('¿Borrar todo el historial de pedidos descargados, en este equipo y en la nube?')) return;
     borrarHistorial(); pintarHistorial();
+    const r = await borrarHistorialNube();
+    if (!r.ok) alert('El historial se borró en este equipo, pero la nube no respondió: ' +
+                     r.motivo + '\nVuelva a intentarlo cuando haya señal.');
+    pintarHistorial();
   });
 
-  $('#btn-reiniciar').addEventListener('click', () => {
-    if (!confirm('Se borran las fuentes cargadas y los pedidos guardados en este navegador. ¿Continuar?')) return;
+  $('#btn-reiniciar').addEventListener('click', async () => {
+    if (!confirm('Se borra todo: fuentes, pedidos, historial y los nombres y teléfonos ' +
+                 'guardados en este equipo. ¿También en la nube? Acepte para borrarlo todo.')) return;
     olvidarTodo();
+    const r = await olvidarTodoNube();
+    if (!r.ok) alert('Se borró todo en este equipo, pero la nube no respondió: ' + r.motivo);
     respuestas.racional = respuestas.programacion = respuestas.inventario = null;
-    pintarEmbudo(); irA('embudo');
+    pintarEmbudo(); pintarHistorial(); irA('embudo');
   });
 }
 
