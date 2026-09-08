@@ -717,7 +717,13 @@ async function admLogin(){
   const password = $('a-pass').value;
   if(!email || !password){ renderLogin('Complete correo y contraseña.'); return; }
   const r = await c.auth.signInWithPassword({email:email, password:password});
-  if(r.error){ renderLogin('Credenciales incorrectas.'); return; }
+  if(r.error){
+    const m = (r.error.message || '').toLowerCase();
+    if(m.indexOf('invalid login') >= 0) renderLogin('Correo o contraseña incorrectos.');
+    else if(m.indexOf('not confirmed') >= 0) renderLogin('La cuenta aún no confirma su correo.');
+    else renderLogin('No se pudo entrar: ' + r.error.message);
+    return;
+  }
   loadAdmin();
 }
 
@@ -819,6 +825,7 @@ async function loadAdmin(){
         '<div class="card-h" style="margin:0">Diagnósticos recibidos</div></div>' +
       '<div style="flex:1"></div>' +
       '<button class="btn btn-ghost" onclick="exportCSV()">Descargar CSV</button>' +
+      '<button class="btn btn-ghost" onclick="admClave()">Cambiar contraseña</button>' +
       '<button class="btn btn-ghost" onclick="admOut()">Cerrar sesión</button>' +
     '</div>' +
 
@@ -899,6 +906,38 @@ function verAviso(){
   const box = $('aviso-full');
   if(box.hidden) togAviso();
   setTimeout(function(){ $('f-legal').scrollIntoView({block:'center', behavior:'smooth'}); }, 60);
+}
+
+/* Cambiar la contraseña sin pasar por el tablero de Supabase */
+function admClave(msg, tono){
+  $('adm-root').innerHTML =
+    '<div class="adm-login"><div class="card">' +
+      '<div class="card-t">Cuenta administradora</div>' +
+      '<div class="card-h">Cambiar contraseña</div>' +
+      '<div class="card-d">Mínimo 10 caracteres. Queda activa de inmediato en las tres áreas.</div>' +
+      '<div class="fgrid">' +
+        '<div class="field"><label for="a-new">Nueva contraseña</label>' +
+          '<input id="a-new" type="password" autocomplete="new-password"></div>' +
+        '<div class="field"><label for="a-new2">Repítala</label>' +
+          '<input id="a-new2" type="password" autocomplete="new-password"></div>' +
+      '</div>' +
+      (msg ? '<div class="save-note ' + (tono || 'warn') + '" style="margin:1rem 0 0">' + esc(msg) + '</div>' : '') +
+      '<div class="btn-row" style="margin-top:1.25rem">' +
+        '<button class="btn btn-ghost" onclick="loadAdmin()">← Volver</button>' +
+        '<button class="btn btn-primary" style="flex:1" onclick="admClaveGuardar()">Guardar</button>' +
+      '</div>' +
+    '</div></div>';
+  $('a-new2').addEventListener('keydown', e => { if(e.key === 'Enter') admClaveGuardar(); });
+}
+
+async function admClaveGuardar(){
+  const c = getSB();
+  const a = $('a-new').value, b = $('a-new2').value;
+  if(a.length < 10){ admClave('⚠ Use al menos 10 caracteres.'); return; }
+  if(a !== b){ admClave('⚠ Las dos contraseñas no coinciden.'); return; }
+  const r = await c.auth.updateUser({password:a});
+  if(r.error){ admClave('⚠ No se pudo cambiar: ' + r.error.message); return; }
+  admClave('✓ Contraseña actualizada. Úsela la próxima vez que entre.', 'ok');
 }
 
 async function admOut(){
