@@ -1,0 +1,872 @@
+<title>Propuesta Paso Ancho</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+:root{
+  color-scheme:dark;
+  --navy:#050d1f; --card:#0a1630; --raise:#101f40; --line:#1c2d54;
+  --ink:#ffffff; --muted:#9db0d1;
+  --cyan:#00d4ff; --purple:#7b2fff; --orange:#ff8c00;
+  --p1:#00d4ff; --p2:#3d63e6; --p3:#7b2fff; --on1:#041224; --on2:#ffffff; --on3:#ffffff;
+  --ok:#3ddc97; --ok-bg:#0b2a24; --warn:#ffd166; --warn-bg:#2b2410; --info:#00d4ff; --info-bg:#06283a;
+}
+*{box-sizing:border-box}
+html{background:var(--navy)}
+body{margin:0; background:var(--navy); color:var(--ink);
+  font-family:"Instrument Sans",system-ui,sans-serif; font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 480px at 8% -6%, rgba(0,212,255,.13), transparent 60%),
+    radial-gradient(800px 520px at 100% 0%, rgba(123,47,255,.16), transparent 62%);
+  background-repeat:no-repeat; background-attachment:fixed}
+h1,h2,h3,h4{font-family:Outfit,system-ui,sans-serif; margin:0; line-height:1.12; text-wrap:balance}
+p{margin:0}
+:focus-visible{outline:2px solid var(--cyan); outline-offset:2px}
+.mono{font-family:"JetBrains Mono",monospace}
+.eyebrow{font-family:"JetBrains Mono",monospace; font-size:.72rem; font-weight:600; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--cyan)}
+.grad{background:linear-gradient(135deg,#00d4ff,#7b2fff); -webkit-background-clip:text; background-clip:text;
+  color:transparent; -webkit-text-fill-color:transparent}
+
+/* ── barra superior ─────────────────────── */
+.top{position:sticky; top:0; z-index:5; background:rgba(5,13,31,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line)}
+.top-in{max-width:1080px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+.wordmark{font-family:Outfit,sans-serif; font-size:18px; font-weight:900; letter-spacing:.2px; line-height:1; white-space:nowrap; color:#fff}
+.wordmark span{color:var(--cyan); font-weight:500; letter-spacing:.6px; margin-left:1px}
+.top .cli{font-family:"JetBrains Mono",monospace; font-size:.72rem; color:var(--muted); letter-spacing:.06em; margin-right:auto}
+.cta{font:700 .9rem Outfit,sans-serif; letter-spacing:.02em; background:var(--orange); color:#1a0e00; border:0;
+  border-radius:6px; padding:10px 16px; cursor:pointer; min-height:40px}
+.cta:hover{filter:brightness(1.08)}
+.cta[aria-pressed="true"]{background:transparent; color:var(--orange); box-shadow:inset 0 0 0 2px var(--orange)}
+
+.wrap{max-width:1080px; margin:0 auto; padding:34px 16px 90px; display:flex; flex-direction:column; gap:32px}
+
+/* ── hero ───────────────────────────────── */
+.hero{display:flex; flex-direction:column; gap:14px}
+.hero h1{font-size:clamp(2.4rem,7vw,4.2rem); font-weight:800; letter-spacing:-.01em; max-width:15ch}
+.hero .sub{color:var(--muted); font-size:1.08rem; max-width:60ch}
+.kpis{display:grid; grid-template-columns:repeat(2,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+@media(min-width:660px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{padding:16px 16px 14px 0; display:flex; flex-direction:column; gap:2px}
+.kpi + .kpi{padding-left:16px; border-left:1px solid var(--line)}
+.kpis .kpi:nth-child(3){padding-left:0; border-left:0}
+@media(min-width:660px){.kpis .kpi:nth-child(3){padding-left:16px; border-left:1px solid var(--line)}}
+.kpi b{font-family:Outfit,sans-serif; font-size:2.7rem; line-height:1; font-weight:800}
+.kpi span{font-size:.86rem; color:var(--muted)}
+
+/* ── pestañas ───────────────────────────── */
+.tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:thin}
+.tab{font:600 .95rem Outfit,sans-serif; letter-spacing:.02em; background:none; color:var(--muted); border:0;
+  border-bottom:3px solid transparent; padding:12px 16px; cursor:pointer; margin-bottom:-1px; white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--cyan)}
+.tab .n{font-family:"JetBrains Mono",monospace; font-size:.72rem; margin-left:6px; background:var(--raise);
+  padding:1px 6px; border-radius:3px; color:var(--cyan)}
+[hidden]{display:none !important}
+.panel{display:flex; flex-direction:column; gap:36px; padding-top:26px}
+.sec{display:flex; flex-direction:column; gap:14px}
+.sec > h2{font-size:1.7rem; font-weight:700}
+.sec > .lead{color:var(--muted); max-width:68ch}
+
+/* ── tarjetas base ──────────────────────── */
+.card{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:18px}
+.tesis{font-family:Outfit,sans-serif; font-weight:600; font-size:clamp(1.6rem,4.2vw,2.5rem); line-height:1.15; max-width:28ch; text-wrap:balance}
+.tesis-sub{color:var(--muted); max-width:62ch; margin-top:12px}
+.gestos{display:grid; gap:10px; grid-template-columns:1fr}
+@media(min-width:660px){.gestos{grid-template-columns:repeat(3,1fr)}}
+.gesto b{display:block; font-family:Outfit,sans-serif; font-size:1.2rem; margin-bottom:2px}
+.gesto span{font-size:.92rem; color:var(--muted)}
+
+/* ── línea de tiempo ────────────────────── */
+.gwrap{overflow-x:auto; padding-bottom:4px}
+.gantt{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)) minmax(100px,1.1fr); gap:6px 4px; min-width:620px}
+.gantt .m{font-family:"JetBrains Mono",monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); border-left:1px solid var(--line); padding-left:6px}
+.bar{padding:10px 12px; border-radius:6px; font-weight:600; font-size:.92rem; line-height:1.25}
+.bar small{display:block; font-weight:500; font-size:.78rem; opacity:.9}
+.p1{background:var(--p1); color:var(--on1)} .p2{background:var(--p2); color:var(--on2)} .p3{background:var(--p3); color:var(--on3)}
+.sop{border:1px dashed var(--muted); border-radius:6px; padding:10px 12px; font-size:.86rem; color:var(--muted); display:flex; align-items:center}
+
+/* ── fases ──────────────────────────────── */
+.fases{display:grid; gap:14px; grid-template-columns:1fr}
+@media(min-width:900px){.fases{grid-template-columns:repeat(3,1fr)}}
+.fase{display:flex; flex-direction:column; gap:14px}
+.fase .hd{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.pill{display:inline-flex; align-items:center; gap:7px; font-family:"JetBrains Mono",monospace; font-size:.74rem;
+  font-weight:600; letter-spacing:.06em; text-transform:uppercase}
+.pill i{width:12px; height:12px; border-radius:3px; display:inline-block}
+.meses{font-family:"JetBrains Mono",monospace; font-size:.74rem; color:var(--muted)}
+.piezas{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
+.piezas li b{font-family:Outfit,sans-serif; font-size:1.12rem; letter-spacing:.03em; margin-right:6px}
+.piezas li span{color:var(--muted); font-size:.92rem}
+.dl{display:flex; flex-direction:column; gap:10px; margin:auto 0 0; border-top:1px solid var(--line); padding-top:12px}
+.dl div{display:flex; flex-direction:column; gap:1px}
+.dl dt{font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.dl dd{margin:0; font-size:.94rem}
+.precio{font-family:Outfit,sans-serif; font-size:1.8rem; font-weight:800; font-variant-numeric:tabular-nums}
+
+.dos{display:grid; gap:14px; grid-template-columns:1fr}
+@media(min-width:760px){.dos{grid-template-columns:1fr 1fr}}
+.card ul{margin:10px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:.95rem}
+.chip{display:inline-block; font-family:"JetBrains Mono",monospace; font-size:.68rem; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; padding:2px 7px; border-radius:3px; white-space:nowrap}
+.chip.warn{background:var(--warn-bg); color:var(--warn)} .chip.ok{background:var(--ok-bg); color:var(--ok)}
+.chip.info{background:var(--info-bg); color:var(--info)}
+
+/* ── valores ocultos ────────────────────── */
+.ocultos .v{filter:blur(9px); user-select:none; pointer-events:none}
+.vwrap{position:relative}
+.ocultos .vb{filter:blur(11px); user-select:none; pointer-events:none}
+.vmsg{display:none; position:absolute; inset:0; z-index:2; align-items:flex-start; justify-content:center; padding-top:70px;
+  text-align:center; font-family:Outfit,sans-serif; font-size:1.2rem; font-weight:600}
+.vmsg span{background:var(--navy); border:1px solid var(--line); border-radius:8px; padding:14px 20px; max-width:34ch}
+.vmsg small{display:block; font:400 .86rem "Instrument Sans",sans-serif; color:var(--muted); margin-top:4px}
+.ocultos .vmsg{display:flex}
+
+/* ── arranque: semanas ──────────────────── */
+.semanas{display:grid; gap:12px; grid-template-columns:1fr}
+@media(min-width:760px){.semanas{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1040px){.semanas{grid-template-columns:repeat(4,1fr)}}
+.sem{display:flex; flex-direction:column; gap:10px}
+.sem .k{font-family:"JetBrains Mono",monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--cyan)}
+.sem h3{font-size:1.25rem}
+.sem dl{margin:0; display:flex; flex-direction:column; gap:8px; font-size:.92rem}
+.sem dt{font-family:"JetBrains Mono",monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.sem dd{margin:0}
+.banda{border:1px dashed var(--line); border-radius:8px; padding:12px 16px; color:var(--muted); font-size:.92rem}
+
+/* ── procesos a ajustar ─────────────────── */
+.proc{background:var(--card); border:1px solid var(--line); border-radius:8px}
+.proc + .proc{margin-top:0}
+.procs{display:flex; flex-direction:column; gap:8px}
+.proc summary{cursor:pointer; list-style:none; padding:14px 16px; display:flex; gap:12px; align-items:center}
+.proc summary::-webkit-details-marker{display:none}
+.proc summary::before{content:"+"; font-family:"JetBrains Mono",monospace; font-weight:600; color:var(--cyan);
+  width:18px; text-align:center; flex:none}
+.proc[open] summary::before{content:"–"}
+.proc summary h3{font-size:1.08rem; flex:1}
+.proc .cuerpo{padding:0 16px 16px 46px; display:grid; gap:12px; grid-template-columns:1fr}
+@media(min-width:760px){.proc .cuerpo{grid-template-columns:1fr 1fr}}
+.proc .cuerpo div{display:flex; flex-direction:column; gap:3px; font-size:.94rem}
+.proc .cuerpo b{font-family:"JetBrains Mono",monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.proc .cuerpo .aj b{color:var(--ok)}
+
+/* ── diagrama ───────────────────────────── */
+.diag{overflow-x:auto}
+.diag svg{display:block; width:100%; min-width:760px; height:auto}
+.diag text{font-family:"Instrument Sans",sans-serif; fill:#fff}
+.diag .t{font-family:Outfit,sans-serif; font-weight:700; font-size:16px}
+.diag .s{font-size:12.5px; fill:#9db0d1}
+.diag .tag{font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.06em; fill:#00d4ff}
+.diag .lab{font-family:"JetBrains Mono",monospace; font-size:11px; fill:#9db0d1}
+.diag .bx{fill:#0a1630; stroke:#1c2d54; stroke-width:1.5}
+.diag .bx.hoy{stroke:#00d4ff}
+.diag .bx.dec{stroke:#7b2fff; stroke-width:2}
+.diag .bx.fin{fill:#101f40; stroke:#3ddc97}
+.diag .ar{fill:none; stroke:#00d4ff; stroke-width:1.6; marker-end:url(#fl)}
+.diag .ar.pu{stroke:#9a63ff; marker-end:url(#fp)}
+
+/* ── mockups ────────────────────────────── */
+.mocks{display:grid; gap:16px; grid-template-columns:1fr}
+@media(min-width:900px){.mocks{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}}
+.mockcap{font-family:"JetBrains Mono",monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:8px}
+.tel{background:#060f22; border:1px solid var(--line); border-radius:14px; overflow:hidden; max-width:420px}
+.tel .bar2{background:var(--raise); padding:12px 14px; display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--line)}
+.tel .av{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7b2fff); display:grid; place-items:center;
+  font:800 .8rem Outfit,sans-serif; color:#041224}
+.tel .bar2 b{display:block; font-family:Outfit,sans-serif; font-size:1rem; line-height:1.1}
+.tel .bar2 span{font-size:.74rem; color:var(--muted)}
+.chat{padding:16px 14px; display:flex; flex-direction:column; gap:10px}
+.bub{max-width:84%; padding:9px 12px; border-radius:12px; font-size:.92rem; line-height:1.4}
+.bub small{display:block; font-family:"JetBrains Mono",monospace; font-size:.64rem; letter-spacing:.06em; text-transform:uppercase; margin-bottom:3px; opacity:.8}
+.bub.in{align-self:flex-start; background:var(--raise); border-top-left-radius:3px}
+.bub.out{align-self:flex-end; background:#2a1a66; border-top-right-radius:3px}
+.bub .foto{display:block; background:repeating-linear-gradient(0deg,#16264a 0 14px,#101f40 14px 28px); border:1px solid var(--line);
+  border-radius:6px; height:72px; margin-bottom:6px}
+.silencio{align-self:center; text-align:center; font-size:.8rem; color:var(--muted); border:1px dashed var(--line);
+  border-radius:8px; padding:8px 12px; max-width:90%}
+
+.panelmock{padding:18px; display:flex; flex-direction:column; gap:14px}
+.pm-h{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+.pm-h b{font-family:Outfit,sans-serif; font-size:1.2rem}
+.ledger{font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums; font-size:.84rem; width:100%; border-collapse:collapse}
+.ledger td{padding:5px 0}
+.ledger td:last-child{text-align:right; white-space:nowrap; padding-left:16px}
+.ledger .l{color:var(--muted)}
+.ledger .sum td{border-top:1px solid var(--muted); padding-top:8px; font-weight:600}
+.ledger .fin td{border-top:3px double var(--muted); padding-top:8px; font-weight:600; color:var(--warn)}
+.pm-n{font-size:.88rem; color:var(--muted); border-top:1px solid var(--line); padding-top:10px}
+
+/* ── capas del ecosistema ───────────────── */
+.capas{display:grid; gap:10px; grid-template-columns:1fr}
+@media(min-width:760px){.capas{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1040px){.capas{grid-template-columns:repeat(7,1fr)}}
+.capa{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:8px; position:relative}
+.capa .k{font-family:"JetBrains Mono",monospace; font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.capa .n{display:flex; flex-direction:column; gap:5px}
+.capa .n b{font-family:Outfit,sans-serif; font-size:.98rem; display:flex; align-items:center; gap:7px}
+.capa .n i{width:9px; height:9px; border-radius:2px; display:inline-block; flex:none}
+.capa .d{font-size:.8rem; color:var(--muted)}
+
+/* ── costos ─────────────────────────────── */
+.inv{display:grid; gap:12px; grid-template-columns:1fr}
+@media(min-width:760px){.inv{grid-template-columns:repeat(4,1fr)}}
+.inv .card{display:flex; flex-direction:column; gap:4px}
+.inv .card.tot{background:var(--raise); border-color:var(--cyan)}
+.hrs{display:flex; flex-direction:column; gap:10px}
+.hr{display:grid; grid-template-columns:96px 1fr 120px; gap:12px; align-items:center; font-size:.9rem}
+@media(max-width:560px){.hr{grid-template-columns:78px 1fr 92px; gap:8px; font-size:.82rem}}
+.hr b{font-family:Outfit,sans-serif; letter-spacing:.03em}
+.track{height:12px; background:var(--raise); border-radius:6px; position:relative}
+.track i{position:absolute; top:0; bottom:0; border-radius:6px}
+.hr .r{font-family:"JetBrains Mono",monospace; font-size:.78rem; color:var(--muted); text-align:right; font-variant-numeric:tabular-nums}
+.hrs .sub{display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:8px; font-size:.86rem; color:var(--muted); font-family:"JetBrains Mono",monospace}
+.opx{overflow-x:auto}
+table.data{width:100%; border-collapse:collapse; font-size:.92rem; min-width:560px}
+table.data th{text-align:left; font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); border-bottom:1px solid var(--muted); padding:0 14px 8px 0; font-weight:600}
+table.data td{padding:10px 14px 10px 0; border-bottom:1px solid var(--line); vertical-align:top}
+table.data td.num{font-family:"JetBrains Mono",monospace; white-space:nowrap; font-variant-numeric:tabular-nums}
+table.data tr.tot td{border-bottom:0; font-weight:600}
+.supuestos{font-size:.88rem; color:var(--muted)}
+.supuestos b{color:var(--ink); font-weight:600}
+
+/* ── preguntas ──────────────────────────── */
+.barra{position:sticky; top:62px; z-index:3; background:var(--navy); padding:10px 0 12px; border-bottom:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center}
+.prog{flex:1 1 220px; display:flex; flex-direction:column; gap:6px}
+.prog .t{font-family:"JetBrains Mono",monospace; font-size:.78rem; font-variant-numeric:tabular-nums}
+.meter{height:6px; background:var(--raise); border-radius:3px; overflow:hidden}
+.meter i{display:block; height:100%; width:0; background:var(--ok); transition:width .2s}
+.btns{display:flex; gap:8px; flex-wrap:wrap}
+.btn{font:600 .85rem Outfit,sans-serif; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:6px;
+  padding:8px 12px; cursor:pointer; min-height:36px}
+.btn:hover{border-color:var(--cyan)} .btn.sec{color:var(--muted)}
+.estado{font-size:.82rem; color:var(--muted); min-height:1.2em}
+.grupo{display:flex; flex-direction:column}
+.grupo > header{padding:20px 0 8px; display:flex; flex-direction:column; gap:2px}
+.grupo > header h2{font-size:1.4rem}
+.grupo > header p{color:var(--muted); font-size:.92rem}
+.cols{display:none}
+@media(min-width:820px){.cols{display:grid; grid-template-columns:32px 1fr minmax(260px,36%); gap:16px; padding:0 0 6px;
+  font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}}
+.q{display:grid; grid-template-columns:28px 1fr; gap:6px 12px; padding:12px 0; border-top:1px solid var(--line); align-items:start}
+@media(min-width:820px){.q{grid-template-columns:32px 1fr minmax(260px,36%); gap:16px}}
+.q input[type=checkbox]{width:20px; height:20px; margin:2px 0 0; accent-color:var(--cyan); cursor:pointer}
+.q .txt{display:flex; flex-direction:column; gap:4px}
+.q .head{display:flex; gap:8px; align-items:baseline; flex-wrap:wrap}
+.q .id{font-family:"JetBrains Mono",monospace; font-size:.74rem; color:var(--muted)}
+.q .main{font-size:1.02rem; font-weight:500}
+.q .why{font-size:.88rem; color:var(--muted)}
+.q.done .main{color:var(--muted)}
+.q textarea{grid-column:2; width:100%; min-height:44px; resize:vertical; font:400 .93rem "Instrument Sans",sans-serif; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); border-radius:6px; padding:8px 10px}
+@media(min-width:820px){.q textarea{grid-column:3; min-height:56px}}
+.q textarea::placeholder{color:var(--muted)}
+
+/* ── pie ────────────────────────────────── */
+footer{border-top:1px solid var(--line); padding-top:20px; display:flex; flex-direction:column; gap:6px; font-size:.84rem; color:var(--muted)}
+footer .wordmark{font-size:15px; margin-bottom:4px}
+@media(prefers-reduced-motion:reduce){*{transition:none !important; scroll-behavior:auto !important}}
+</style>
+
+<div class="top">
+  <div class="top-in">
+    <div class="wordmark">ICONE<span>ialabs</span></div>
+    <span class="cli">PROPUESTA · DISTRIBUIDORA PASO ANCHO</span>
+    <button class="cta" id="ver" type="button" aria-pressed="false">Mostrar valores</button>
+  </div>
+</div>
+
+<div class="wrap ocultos" id="raiz">
+
+  <section class="hero">
+    <p class="eyebrow">Distribuidora Paso Ancho · Cali · 5 de octubre de 2026</p>
+    <h1 class="grad">Un equipo de ocho que no descansa</h1>
+    <p class="sub">Un ecosistema de IA que se engancha a lo que ya hacen todos los días y entra por el WhatsApp que ya usan. Seis meses de implementación y soporte permanente después.</p>
+  </section>
+
+  <div class="kpis">
+    <div class="kpi"><b class="grad">6</b><span>meses de implementación</span></div>
+    <div class="kpi"><b class="grad">3</b><span>fases, cada una con resultado visible</span></div>
+    <div class="kpi"><b class="grad">8</b><span>artefactos sobre una sola memoria</span></div>
+    <div class="kpi"><b class="grad">1 h</b><span>de sesión cada semana</span></div>
+  </div>
+
+  <div>
+    <div class="tabs" role="tablist" aria-label="Secciones">
+      <button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="true">Propuesta</button>
+      <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1">Cómo empieza</button>
+      <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">Cómo quedaría</button>
+      <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">Costos</button>
+      <button class="tab" role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">Preguntas<span class="n" id="cuenta-tab">0/19</span></button>
+    </div>
+
+    <!-- ═══════════ 0 · PROPUESTA ═══════════ -->
+    <section class="panel" id="p0" role="tabpanel" aria-labelledby="t0">
+      <div>
+        <p class="tesis grad">Ustedes no necesitan un sistema nuevo. Necesitan que alguien lea las planillas que ya llenan.</p>
+        <p class="tesis-sub">Eso lo hace la IA, hoy, con una foto. Nadie tiene que aprender a entrar a un programa ni a actualizar nada: cada pieza se engancha a un gesto que ya existe.</p>
+      </div>
+
+      <div class="gestos">
+        <div class="card gesto"><b>Llenar el papel</b><span>La planilla sigue siendo la misma.</span></div>
+        <div class="card gesto"><b>Contar el efectivo</b><span>El arqueo diario, como hoy.</span></div>
+        <div class="card gesto"><b>Mandar la foto por WhatsApp</b><span>La única acción nueva, y ya la hacen.</span></div>
+      </div>
+
+      <div class="sec">
+        <p class="eyebrow">Los seis meses</p>
+        <div class="gwrap">
+          <div class="gantt" role="img" aria-label="Fase 1 en los meses 1 y 2, fase 2 en los meses 3 y 4, fase 3 en los meses 5 y 6, y soporte permanente después">
+            <div class="m">Mes 1</div><div class="m">Mes 2</div><div class="m">Mes 3</div>
+            <div class="m">Mes 4</div><div class="m">Mes 5</div><div class="m">Mes 6</div><div class="m">Después</div>
+            <div class="bar p1" style="grid-column:1 / 3">Fase 1<small>OJO + CUADRE</small></div>
+            <div class="bar p2" style="grid-column:3 / 5">Fase 2<small>Libro vivo + 3 piezas</small></div>
+            <div class="bar p3" style="grid-column:5 / 7">Fase 3<small>Cierre, extractos, consultor</small></div>
+            <div class="sop">Soporte permanente</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fases">
+        <article class="card fase">
+          <div class="hd"><span class="pill"><i class="p1"></i>Fase 1</span><span class="meses">Meses 1–2</span></div>
+          <h3>Que las planillas se lean solas</h3>
+          <ul class="piezas">
+            <li><b>OJO</b><span>Lee las planillas de papel desde una foto.</span></li>
+            <li><b>CUADRE</b><span>Cierra el día y explica de dónde sale cada diferencia.</span></li>
+          </ul>
+          <dl class="dl">
+            <div><dt>Qué verán</dt><dd>Un mes de planillas leído y cruzado con su libro. Se corre en paralelo: nada se apaga todavía.</dd></div>
+            <div><dt>Qué hacen ustedes</dt><dd>Fotografiar la planilla completa, incluido el pie.</dd></div>
+            <div><dt>Inversión</dt><dd class="precio"><span class="v">$8.900.000</span></dd></div>
+          </dl>
+        </article>
+
+        <article class="card fase">
+          <div class="hd"><span class="pill"><i class="p2"></i>Fase 2</span><span class="meses">Meses 3–4</span></div>
+          <h3>Una sola memoria del negocio</h3>
+          <ul class="piezas">
+            <li><b>LIBRO VIVO</b><span>Ventas, cartera, gastos, deuda, inventario y caja en un solo lugar.</span></li>
+            <li><b>ORDEN</b><span>Clasifica los gastos.</span></li>
+            <li><b>COBRO</b><span>Agente de cartera.</span></li>
+            <li><b>CENTINELA</b><span>Avisa cuando algo se sale de lo normal.</span></li>
+          </ul>
+          <dl class="dl">
+            <div><dt>Qué verán</dt><dd>Cartera y gastos al día, sin que nadie los teclee.</dd></div>
+            <div><dt>Qué hacen ustedes</dt><dd>Responder por WhatsApp las pocas dudas que el sistema no resuelva.</dd></div>
+            <div><dt>Inversión</dt><dd class="precio"><span class="v">$4.500.000</span></dd></div>
+          </dl>
+        </article>
+
+        <article class="card fase">
+          <div class="hd"><span class="pill"><i class="p3"></i>Fase 3</span><span class="meses">Meses 5–6</span></div>
+          <h3>Cierre y consulta sin esfuerzo</h3>
+          <ul class="piezas">
+            <li><b>BALANCE</b><span>Cierre mensual automático.</span></li>
+            <li><b>PUENTE</b><span>Traduce los extractos del banco.</span></li>
+            <li><b>BRÚJULA</b><span>Un consultor de bolsillo: se le pregunta a los números por WhatsApp.</span></li>
+          </ul>
+          <dl class="dl">
+            <div><dt>Qué verán</dt><dd>El cierre del mes sin armarlo a mano. El libro anterior se apaga cuando dos cierres seguidos cuadren.</dd></div>
+            <div><dt>Qué hacen ustedes</dt><dd>Leer el cierre y preguntar lo que quieran saber.</dd></div>
+            <div><dt>Inversión</dt><dd class="precio"><span class="v">$4.900.000</span></dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="dos">
+        <div class="card">
+          <h3>Si algo no se lee, no se inventa</h3>
+          <ul>
+            <li>Un número que no se alcanza a leer nunca se rellena por probabilidad: se le pregunta a quien mandó la foto.</li>
+            <li>Máximo tres preguntas por mensaje, con las opciones ya escritas, para contestar con una palabra.</li>
+            <li>El día se cierra igual, con salvedad. Nadie bloquea nada esperando una respuesta.</li>
+            <li>Si todo está bien, no llega ningún mensaje.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Cómo queda la propiedad</h3>
+          <ul>
+            <li>Licencia de uso perpetua e irrevocable para Paso Ancho.</li>
+            <li>El software es de ICONEialabs. Los datos son siempre de Paso Ancho.</li>
+            <li>Servicios en la nube a nombre de Paso Ancho: base de datos, IA, servidor y una línea de WhatsApp dedicada. Detalle en la pestaña Costos.</li>
+            <li>Sesión semanal de una hora: avance, decisiones y pedido de información.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 1 · CÓMO EMPIEZA ═══════════ -->
+    <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1" hidden>
+      <div class="sec">
+        <p class="eyebrow">Mes 1 · semana a semana</p>
+        <h2>Se empieza leyendo, no cambiando</h2>
+        <p class="lead">Durante el primer mes el papel no cambia. Se lee un mes completo de planillas, se cruza con el libro y, con esa evidencia, se decide qué procesos ajustar. Todas las semanas hay una sesión de una hora para ver avance y pedir lo que falta.</p>
+      </div>
+
+      <div class="semanas">
+        <article class="card sem">
+          <span class="k">Semana 1</span><h3>Arranque</h3>
+          <dl>
+            <div><dt>Qué pasa</dt><dd>Se confirman los datos que bloquean el diseño, se define quién manda las fotos y qué línea de WhatsApp se dedica. Se arma el perfil de Paso Ancho: el archivo que le enseña a OJO cómo son sus planillas.</dd></div>
+            <div><dt>Necesitamos de ustedes</dt><dd>Las planillas fotografiadas de un mes completo, con el pie.</dd></div>
+            <div><dt>Entregable</dt><dd>Perfil v1 y lista de datos confirmados.</dd></div>
+          </dl>
+        </article>
+        <article class="card sem">
+          <span class="k">Semana 2</span><h3>Primera lectura</h3>
+          <dl>
+            <div><dt>Qué pasa</dt><dd>OJO lee el mes completo. Cada dato queda marcado como ok, dudoso o ilegible, y se cruza contra el libro.</dd></div>
+            <div><dt>Necesitamos de ustedes</dt><dd>Una hora para resolver juntos las dudas de lectura.</dd></div>
+            <div><dt>Entregable</dt><dd>Informe del mes: qué cuadra al peso, qué se explica por ajustes manuales y qué queda por revisar.</dd></div>
+          </dl>
+        </article>
+        <article class="card sem">
+          <span class="k">Semana 3</span><h3>Mapa de procesos</h3>
+          <dl>
+            <div><dt>Qué pasa</dt><dd>Con la evidencia de la lectura se listan los procesos que hoy se repiten y se propone el ajuste mínimo para cada uno.</dd></div>
+            <div><dt>Necesitamos de ustedes</dt><dd>Decidir cuáles ajustes sí y cuáles no.</dd></div>
+            <div><dt>Entregable</dt><dd>Mapa de procesos con el ajuste propuesto y el tiempo que se libera.</dd></div>
+          </dl>
+        </article>
+        <article class="card sem">
+          <span class="k">Semana 4</span><h3>Piloto en paralelo</h3>
+          <dl>
+            <div><dt>Qué pasa</dt><dd>Se mandan por WhatsApp las fotos reales de la semana. OJO corre al lado del libro actual: nada se apaga.</dd></div>
+            <div><dt>Necesitamos de ustedes</dt><dd>Mandar la foto todos los días de la semana.</dd></div>
+            <div><dt>Entregable</dt><dd>Primera semana de cierres, con la causa de cada diferencia, y el plan del mes 2.</dd></div>
+          </dl>
+        </article>
+      </div>
+      <div class="banda">Mes 2: CUADRE corre en paralelo con el libro, se entrena a quien manda las fotos en un solo gesto y se acuerda el cierre diario antes de las 8:00. La métrica que se vigila es una sola: que las preguntas por semana bajen mes a mes.</div>
+
+      <div class="sec">
+        <p class="eyebrow">Procesos a ajustar</p>
+        <h2>Siete procesos, cada uno con su evidencia</h2>
+        <p class="lead">Los cuatro primeros salen de lo que ya vimos en sus planillas y en su libro. Los otros tres se activan en las fases siguientes. Toca cada uno para abrirlo.</p>
+        <div class="procs">
+          <details class="proc" open>
+            <summary><h3>Del papel al libro: el mismo dato dos veces</h3><span class="chip ok">Fase 1</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>Cada planilla se lee y se vuelve a teclear en el libro del día. En un solo bloque de la hoja de julio hay 225 fórmulas escritas a mano y 1.253 números digitados uno por uno.</span></div>
+              <div class="aj"><b>Ajuste</b><span>Se fotografía la planilla, OJO la lee y el libro vivo recibe el dato. Nadie vuelve a teclear.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>Las dos planillas de una misma ruta</h3><span class="chip ok">Fase 1</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>Un mensajero puede llevar dos planillas el mismo día, una por línea de producto, y la liquidación viene solo en una de ellas.</span></div>
+              <div class="aj"><b>Ajuste</b><span>Se fotografían las dos, se fusionan por ruta y fecha, y solo la que trae la liquidación completa se cruza con el libro.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>El cuadre diario que no explica nada</h3><span class="chip ok">Fase 1</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>La celda de cuadre del libro marca diferencia casi todos los días, así que dejó de servir como alarma. Dice que algo no cuadra, pero no por qué.</span></div>
+              <div class="aj"><b>Ajuste</b><span>CUADRE descompone la diferencia en causas conocidas (transferencias, gastos de ruta, cobros) y reporta solo el residuo que queda sin explicar.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>Venta del día y cobros de cartera, lado a lado</h3><span class="chip ok">Fase 1</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>La planilla de despacho trae lo despachado hoy y lo recaudado de cartera anterior en columnas vecinas. Sumarlos infla la venta del día.</span></div>
+              <div class="aj"><b>Ajuste</b><span>Desde la entrada se separan: el cobro suma efectivo, pero no suma venta. COBRO lo lleva en Fase 2.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>Consolidados que dependen de que alguien los llene</h3><span class="chip info">Fase 3</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>Varias hojas de consolidación (análisis, serie histórica, estado de resultados) quedaron sin actualizar porque piden un esfuerzo aparte del trabajo diario.</span></div>
+              <div class="aj"><b>Ajuste</b><span>Se alimentan solas desde el libro vivo. BALANCE cierra el mes sin armarlo a mano.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>Gastos sin una clasificación única</h3><span class="chip info">Fase 2</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>No hay una clasificación de gastos que se aplique sola, y eso dificulta compararlos de un mes a otro.</span></div>
+              <div class="aj"><b>Ajuste</b><span>ORDEN clasifica con reglas y aprende de cada respuesta confirmada: la misma duda no se pregunta dos veces.</span></div>
+            </div>
+          </details>
+          <details class="proc">
+            <summary><h3>Extractos de varios bancos, en formatos distintos</h3><span class="chip info">Fase 3</span></summary>
+            <div class="cuerpo">
+              <div><b>Hoy</b><span>Cada banco entrega su extracto a su manera y se revisan por separado.</span></div>
+              <div class="aj"><b>Ajuste</b><span>PUENTE los traduce a un solo formato y los cruza con el libro vivo.</span></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 2 · CÓMO QUEDARÍA ═══════════ -->
+    <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+      <div class="sec">
+        <p class="eyebrow">Un día cualquiera</p>
+        <h2>El paso a paso, de la planilla al cierre</h2>
+        <p class="lead">Los dos primeros pasos son los que ya hacen hoy. Todo lo demás lo hace el sistema.</p>
+        <div class="card diag">
+          <svg viewBox="0 0 1000 470" role="img" aria-label="Diagrama del día: planilla en papel, foto por WhatsApp, OJO lee, verificación, decisión. Si todo está claro, CUADRE cierra el día. Si hay una duda, se pregunta a quien mandó la foto y OJO reprocesa. El día queda cerrado antes de las 8:00 del día siguiente.">
+            <defs>
+              <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#00d4ff"/></marker>
+              <marker id="fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#9a63ff"/></marker>
+            </defs>
+
+            <rect class="bx hoy" x="0" y="30" width="170" height="84" rx="8"/>
+            <text class="t" x="85" y="62" text-anchor="middle">1 · Planilla</text>
+            <text class="s" x="85" y="86" text-anchor="middle">Papel, como hoy</text>
+
+            <rect class="bx hoy" x="215" y="30" width="170" height="84" rx="8"/>
+            <text class="t" x="300" y="62" text-anchor="middle">2 · Foto</text>
+            <text class="s" x="300" y="86" text-anchor="middle">Por WhatsApp, con el pie</text>
+
+            <rect class="bx" x="430" y="30" width="170" height="84" rx="8"/>
+            <text class="t" x="515" y="58" text-anchor="middle">3 · OJO lee</text>
+            <text class="s" x="515" y="78" text-anchor="middle">Marca cada dato:</text>
+            <text class="s" x="515" y="94" text-anchor="middle">ok, dudoso o ilegible</text>
+
+            <rect class="bx" x="645" y="30" width="170" height="84" rx="8"/>
+            <text class="t" x="730" y="58" text-anchor="middle">4 · Verifica</text>
+            <text class="s" x="730" y="78" text-anchor="middle">Suma de la planilla,</text>
+            <text class="s" x="730" y="94" text-anchor="middle">facturas y nombres</text>
+
+            <rect class="bx dec" x="860" y="30" width="140" height="84" rx="8"/>
+            <text class="t" x="930" y="68" text-anchor="middle">5 · ¿Todo</text>
+            <text class="t" x="930" y="88" text-anchor="middle">claro?</text>
+
+            <text class="tag" x="85" y="136" text-anchor="middle">YA LO HACEN</text>
+            <text class="tag" x="300" y="136" text-anchor="middle">YA LO HACEN</text>
+            <text class="lab" x="515" y="136" text-anchor="middle">LO HACE EL SISTEMA</text>
+            <text class="lab" x="730" y="136" text-anchor="middle">LO HACE EL SISTEMA</text>
+
+            <path class="ar" d="M170 72 H213"/><path class="ar" d="M385 72 H428"/>
+            <path class="ar" d="M600 72 H643"/><path class="ar" d="M815 72 H858"/>
+
+            <path class="ar" d="M900 114 V158 H595 V188"/>
+            <text class="lab" x="740" y="152" text-anchor="middle">sí</text>
+            <path class="ar pu" d="M960 114 V176 H875 V188"/>
+            <text class="lab" x="968" y="150">duda</text>
+
+            <rect class="bx" x="470" y="190" width="250" height="118" rx="8"/>
+            <text class="t" x="595" y="218" text-anchor="middle">Todo claro</text>
+            <text class="s" x="595" y="242" text-anchor="middle">CUADRE cierra el día y el</text>
+            <text class="s" x="595" y="259" text-anchor="middle">libro vivo se actualiza.</text>
+            <text class="s" x="595" y="278" text-anchor="middle">Sin mensaje: el silencio es la</text>
+            <text class="s" x="595" y="295" text-anchor="middle">señal de que todo va bien.</text>
+
+            <rect class="bx dec" x="750" y="190" width="250" height="118" rx="8"/>
+            <text class="t" x="875" y="218" text-anchor="middle">Hay una duda</text>
+            <text class="s" x="875" y="242" text-anchor="middle">Se le pregunta a quien mandó</text>
+            <text class="s" x="875" y="259" text-anchor="middle">la foto. Máximo 3 preguntas,</text>
+            <text class="s" x="875" y="276" text-anchor="middle">con las opciones escritas.</text>
+
+            <path class="ar pu" d="M875 308 V346"/>
+            <rect class="bx" x="750" y="348" width="250" height="80" rx="8"/>
+            <text class="t" x="875" y="378" text-anchor="middle">Contesta con una palabra</text>
+            <text class="s" x="875" y="400" text-anchor="middle">OJO reprocesa solo;</text>
+            <text class="s" x="875" y="416" text-anchor="middle">nadie más se entera.</text>
+            <path class="ar" d="M750 388 H595 V310"/>
+
+            <path class="ar" d="M470 250 H215 V346"/>
+            <rect class="bx fin" x="0" y="348" width="430" height="100" rx="8"/>
+            <text class="t" x="215" y="378" text-anchor="middle">Antes de las 8:00 del día siguiente</text>
+            <text class="s" x="215" y="402" text-anchor="middle">El día queda cerrado, con salvedad si algo</text>
+            <text class="s" x="215" y="419" text-anchor="middle">quedó sin confirmar. Nadie bloquea nada</text>
+            <text class="s" x="215" y="436" text-anchor="middle">esperando una respuesta.</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="sec">
+        <p class="eyebrow">Así se vería</p>
+        <h2>Lo que reciben y lo que ven</h2>
+        <p class="lead">Dos pantallas de ejemplo. Las cifras y nombres de factura son inventados: sirven para mostrar la forma, no para leer los números.</p>
+        <div class="mocks">
+          <div>
+            <div class="tel" role="img" aria-label="Conversación de WhatsApp de ejemplo">
+              <div class="bar2"><div class="av">OJ</div><div><b>OJO · Paso Ancho</b><span>responde solo si hace falta</span></div></div>
+              <div class="chat">
+                <div class="bub out"><small>Luz Dary</small><span class="foto"></span>Planilla ruta Camión, 2 de 2</div>
+                <div class="bub in"><small>OJO</small>En la planilla del Camión no alcanzo a leer el número de la factura de la fila 12. Se ve como <b>1123764</b> o <b>1123784</b>. ¿Cuál es?</div>
+                <div class="bub out"><small>Luz Dary</small>84</div>
+                <div class="silencio">Sin más mensajes. El día cerró completo y el silencio es la confirmación.</div>
+              </div>
+            </div>
+            <p class="mockcap">Ejemplo ilustrativo · WhatsApp</p>
+          </div>
+          <div>
+            <div class="card panelmock" role="img" aria-label="Pantalla de ejemplo del cierre del día">
+              <div class="pm-h"><b>Cierre del día · lunes 12 de octubre</b><span class="chip warn">Cerrado con salvedad</span></div>
+              <table class="ledger">
+                <tbody>
+                  <tr><td class="l">Venta del día (contado 2.060.000 + crédito 880.000)</td><td>2.940.000</td></tr>
+                  <tr><td class="l">Base de caja del día anterior</td><td>0</td></tr>
+                  <tr><td class="l">+ Contado de las rutas</td><td>2.060.000</td></tr>
+                  <tr><td class="l">+ Cobros de cartera (no suman venta)</td><td>1.150.000</td></tr>
+                  <tr><td class="l">− Transferencias (van al banco)</td><td>60.000</td></tr>
+                  <tr><td class="l">− Gastos de ruta</td><td>40.000</td></tr>
+                  <tr class="sum"><td>Efectivo esperado</td><td>3.110.000</td></tr>
+                  <tr><td class="l">Arqueo por denominación</td><td>3.083.000</td></tr>
+                  <tr class="fin"><td>Residuo</td><td>−27.000</td></tr>
+                </tbody>
+              </table>
+              <p class="pm-n">La caja cierra $27.000 por debajo de lo esperado, el 0,9 % de la venta. Suele ser un gasto de ruta sin anotar o un cobro que entró después del conteo. Queda anotado y no hace falta responder.</p>
+            </div>
+            <p class="mockcap">Ejemplo ilustrativo · cifras inventadas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <p class="eyebrow">El ecosistema de un vistazo</p>
+        <h2>De lo que ya hacen a lo que ve el dueño</h2>
+        <div class="capas">
+          <div class="capa"><span class="k">Entrada</span><div class="n"><b>Cuatro gestos</b></div><p class="d">Papel, efectivo, foto por WhatsApp y extractos del banco.</p></div>
+          <div class="capa"><span class="k">Captura</span><div class="n"><b><i class="p1"></i>OJO</b><b><i class="p3"></i>PUENTE</b></div><p class="d">Leen las planillas y los extractos.</p></div>
+          <div class="capa"><span class="k">Núcleo</span><div class="n"><b><i class="p2"></i>LIBRO VIVO</b><b><i class="p2"></i>ORDEN</b></div><p class="d">Una sola memoria y los gastos clasificados.</p></div>
+          <div class="capa"><span class="k">Operación diaria</span><div class="n"><b><i class="p1"></i>CUADRE</b><b><i class="p2"></i>COBRO</b><b><i class="p2"></i>CENTINELA</b></div><p class="d">Cierra el día, cuida la cartera y avisa lo raro.</p></div>
+          <div class="capa"><span class="k">Consolidación</span><div class="n"><b><i class="p3"></i>BALANCE</b></div><p class="d">Cierre mensual automático.</p></div>
+          <div class="capa"><span class="k">Conversación</span><div class="n"><b><i class="p3"></i>BRÚJULA</b></div><p class="d">Se le pregunta a los números por WhatsApp.</p></div>
+          <div class="capa"><span class="k">Salida</span><div class="n"><b>WhatsApp</b></div><p class="d">Del dueño y de operación, solo cuando hay algo que decidir.</p></div>
+        </div>
+        <p class="mockcap">Cuadro de color: fase 1 cian · fase 2 azul · fase 3 morado</p>
+      </div>
+    </section>
+
+    <!-- ═══════════ 3 · COSTOS ═══════════ -->
+    <section class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+      <div class="sec">
+        <p class="eyebrow">Costos asociados</p>
+        <h2>Lo que cuesta construirlo y lo que cuesta mantenerlo andando</h2>
+        <p class="lead">Los valores empiezan ocultos para poder proyectar sin que se lean. Toca «Mostrar valores» arriba para verlos.</p>
+      </div>
+
+      <div class="vwrap">
+        <div class="vmsg"><span>Valores ocultos<small>Toca «Mostrar valores» en la barra superior.</small></span></div>
+        <div class="vb" style="display:flex; flex-direction:column; gap:36px">
+
+          <div class="sec">
+            <p class="eyebrow">1 · Inversión de desarrollo</p>
+            <div class="inv">
+              <div class="card"><span class="pill"><i class="p1"></i>Fase 1 · meses 1–2</span><span class="precio">$8.900.000</span><span class="meses">OJO + CUADRE</span></div>
+              <div class="card"><span class="pill"><i class="p2"></i>Fase 2 · meses 3–4</span><span class="precio">$4.500.000</span><span class="meses">Libro vivo, ORDEN, COBRO, CENTINELA</span></div>
+              <div class="card"><span class="pill"><i class="p3"></i>Fase 3 · meses 5–6</span><span class="precio">$4.900.000</span><span class="meses">BALANCE, PUENTE, BRÚJULA</span></div>
+              <div class="card tot"><span class="pill">Implementación total</span><span class="precio">$18.300.000</span><span class="meses">Licencia de uso perpetua</span></div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">2 · Horas de desarrollo estimadas por artefacto</p>
+            <div class="card hrs">
+              <div class="hr"><b>OJO</b><div class="track"><i class="p1" style="left:60%;width:40%"></i></div><span class="r">12–20 h</span></div>
+              <div class="hr"><b>CUADRE</b><div class="track"><i class="p1" style="left:50%;width:30%"></i></div><span class="r">10–16 h</span></div>
+              <div class="sub"><span>Fase 1</span><span>22–36 h</span></div>
+              <div class="hr"><b>COBRO</b><div class="track"><i class="p2" style="left:50%;width:20%"></i></div><span class="r">10–14 h</span></div>
+              <div class="hr"><b>ORDEN</b><div class="track"><i class="p2" style="left:15%;width:10%"></i></div><span class="r">3–5 h</span></div>
+              <div class="hr"><b>CENTINELA</b><div class="track"><i class="p2" style="left:40%;width:20%"></i></div><span class="r">8–12 h</span></div>
+              <div class="sub"><span>Fase 2 · el libro vivo se estima al diseñar los datos</span><span>21–31 h</span></div>
+              <div class="hr"><b>BALANCE</b><div class="track"><i class="p3" style="left:40%;width:20%"></i></div><span class="r">8–12 h</span></div>
+              <div class="hr"><b>PUENTE</b><div class="track"><i class="p3" style="left:40%;width:30%"></i></div><span class="r">8–14 h</span></div>
+              <div class="hr"><b>BRÚJULA</b><div class="track"><i class="p3" style="left:30%;width:20%"></i></div><span class="r">6–10 h</span></div>
+              <div class="sub"><span>Fase 3</span><span>22–36 h</span></div>
+            </div>
+            <p class="supuestos">Escala de 0 a 20 horas por artefacto. El motor de OJO ya está construido; en la fase 1 se adapta al perfil de Paso Ancho.</p>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">3 · Costos mensuales de operación, a nombre de Paso Ancho</p>
+            <div class="card opx">
+              <table class="data">
+                <thead><tr><th>Concepto</th><th>Estimado al mes</th><th>Nota</th></tr></thead>
+                <tbody>
+                  <tr><td>Servidor pequeño</td><td class="num">USD 4–6</td><td>Hace que el cierre de un domingo a las 9 de la noche salga solo.</td></tr>
+                  <tr><td>IA: lectura de fotos <span class="chip info">estimado</span></td><td class="num">USD 7–45</td><td>Según el modelo y cuántas planillas se fotografíen al día. Ver supuestos abajo.</td></tr>
+                  <tr><td>WhatsApp Business</td><td class="num">≈ USD 0</td><td>Las conversaciones que inicia el usuario no se cobran, y responder dentro de 24 horas tampoco.</td></tr>
+                  <tr><td>Línea dedicada</td><td class="num">ya pagada</td><td>Una de las 7 líneas WOM que la empresa ya tiene. No se puede seguir usando en la app normal.</td></tr>
+                  <tr><td>Base de datos <span class="chip warn">a confirmar</span></td><td class="num">por definir</td><td>Plan de pago recomendado para tener respaldos. Se confirma antes de firmar.</td></tr>
+                  <tr class="tot"><td>Subtotal estimado</td><td class="num">USD 11–51</td><td>Más la base de datos.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="supuestos"><b>Supuestos de la IA:</b> 10 a 30 planillas fotografiadas al día durante 31 días (310 a 930 al mes); unos 4.500 tokens de entrada y 1.500 de salida por foto; precios por millón de tokens vigentes al 25 de septiembre de 2026. Con un modelo intermedio da USD 7–22 al mes y con uno de gama alta USD 15–45. No incluye razonamiento extendido ni reprocesos. Se mide con un mes real de planillas antes de fijar el modelo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 4 · PREGUNTAS ═══════════ -->
+    <section class="panel" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
+      <div class="barra">
+        <div class="prog">
+          <span class="t" id="prog-texto">0 de 19 preguntadas</span>
+          <div class="meter"><i id="prog-barra"></i></div>
+          <span class="t" id="prog-bloq" style="color:var(--muted)"></span>
+        </div>
+        <div class="btns">
+          <button class="btn" id="copiar" type="button">Copiar notas</button>
+          <button class="btn sec" id="borrar" type="button">Borrar todo</button>
+        </div>
+        <span class="estado" id="estado" role="status" aria-live="polite" style="flex-basis:100%"></span>
+      </div>
+      <div id="grupos"></div>
+      <p class="estado">Las notas se guardan solo en este navegador. Usa «Copiar notas» antes de cerrar.</p>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wordmark">ICONE<span>ialabs</span></div>
+    <p>ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados</p>
+    <p>Jorge Hugo Pérez Gaona · www.iconeialabs.com · 315 894 09 80</p>
+    <p>© 2026 Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados.</p>
+    <p>Documento confidencial preparado para Distribuidora Paso Ancho.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var GRUPOS = [
+    {t:"Qué necesitan lograr", h:"Define qué es éxito. Escuchar antes de proponer.", qs:[
+      {id:"A1", tag:"éxito", q:"Cuando abre el celular en la mañana, ¿qué número necesita ver para sentirse tranquilo?"},
+      {id:"A2", q:"¿Qué decisión se toma hoy sin el dato a tiempo?"},
+      {id:"A3", q:"Del seminario de Finanzas con IA: ¿qué fue lo que más le sirvió, y qué querría tener así en la empresa?"},
+      {id:"A4", tag:"éxito", q:"Dentro de seis meses, ¿qué tendría que haber pasado para decir que valió la pena?"}
+    ]},
+    {t:"Cómo trabajan hoy", h:"Para que ajustar procesos salga de lo que pasa, no de suposiciones.", qs:[
+      {id:"B1", q:"¿Quién pasa lo del papel al libro, y cuánto tiempo le toma cada día?"},
+      {id:"B2", q:"¿Quién tomaría la foto de las planillas: los mensajeros desde la ruta o Luz Dary al cierre?"},
+      {id:"B3", q:"¿Qué reportes se miran hoy, y quién los prepara?"},
+      {id:"B4", tag:"pedido", q:"¿Se puede incluir el pie de la planilla en la foto?", why:"Saldo inicial e inventario final: con eso el sistema verifica el movimiento de inventario y pregunta mucho menos."},
+      {id:"B5", tag:"pedido", q:"¿Cuál de las 7 líneas WOM se puede dedicar a esto?", why:"Un número conectado a la API ya no se puede usar en la app normal."},
+      {id:"B6", tag:"pedido", q:"¿Cuántas planillas se generan en un día normal, sumando todas las rutas?", why:"Con ese número se calcula el costo mensual de la lectura con IA."}
+    ]},
+    {t:"Datos que bloquean el diseño", h:"Sin estas respuestas hay piezas que no se pueden cerrar.", qs:[
+      {id:"C1", tag:"bloquea", q:"¿Qué es exactamente «credicontado»?", why:"Los recaudos del mes y el credicontado no se relacionan entre sí de ninguna forma que hayamos podido deducir."},
+      {id:"C2", tag:"bloquea", q:"En la nota de cierre (la hoja suelta), ¿cómo se relacionan Efectivo, PDT, DV, EG, IG y Real?", why:"Sin esa relación no podemos incluir la nota en el cierre."},
+      {id:"C3", tag:"bloquea", q:"¿La caja arranca cada día en cero o hay un fondo fijo?", why:"Cambia el punto de partida del cuadre."},
+      {id:"C4", tag:"bloquea", q:"En el margen derecho de la planilla de ruta, ¿qué significa exactamente la línea «Ventas»?", why:"No es el total de la planilla y no queremos asumirlo."},
+      {id:"C5", tag:"pedido", q:"¿Nos pueden compartir las planillas fotografiadas de un mes completo, el último cerrado?", why:"Es el insumo para probar la lectura contra su propio libro."}
+    ]},
+    {t:"Para acordar", h:"Ritmo, responsables y el acuerdo de servicio.", qs:[
+      {id:"D1", q:"¿Qué ritmo de inversión es cómodo para la empresa?"},
+      {id:"D2", q:"¿Quién decide y quién más tiene que ver el plan: Luz Dary, la contadora?"},
+      {id:"D3", q:"Propuesta: el cierre de cada día queda listo antes de las 8:00 del día siguiente, todos los días, incluidos domingos y festivos. ¿Les sirve?"},
+      {id:"D4", q:"¿Qué día y hora funcionan para la sesión semanal de una hora, y quién asiste?"}
+    ]}
+  ];
+  var ETIQ = {bloquea:["warn","bloquea el diseño"], "éxito":["info","define éxito"], pedido:["ok","pedido"]};
+  var KEY = "pa-preguntas-v2";
+  var st = {done:{}, notes:{}};
+  try{ var raw = localStorage.getItem(KEY); if(raw){ var o = JSON.parse(raw); if(o && o.done && o.notes) st = o; } }catch(e){}
+  function guardar(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+
+  var todas = [];
+  GRUPOS.forEach(function(g){ g.qs.forEach(function(q){ todas.push(q); }); });
+  var TOTAL = todas.length;
+  var BLOQ = todas.filter(function(q){ return q.tag === "bloquea"; });
+  function el(tag, cls, txt){ var e = document.createElement(tag); if(cls) e.className = cls; if(txt != null) e.textContent = txt; return e; }
+
+  var cont = document.getElementById("grupos"), filas = {};
+  GRUPOS.forEach(function(g){
+    var sec = el("section", "grupo");
+    var h = el("header"); h.appendChild(el("h2", null, g.t)); h.appendChild(el("p", null, g.h)); sec.appendChild(h);
+    var cols = el("div", "cols"); cols.appendChild(el("span")); cols.appendChild(el("span", null, "Pregunta")); cols.appendChild(el("span", null, "Nota")); sec.appendChild(cols);
+    g.qs.forEach(function(q){
+      var f = el("div", "q"); filas[q.id] = f;
+      var cb = el("input"); cb.type = "checkbox"; cb.checked = !!st.done[q.id];
+      cb.setAttribute("aria-label", "Marcar como preguntada: " + q.q);
+      var t = el("div", "txt");
+      var hd = el("div", "head"); hd.appendChild(el("span", "id", q.id));
+      if(q.tag){ var e = ETIQ[q.tag]; hd.appendChild(el("span", "chip " + e[0], e[1])); }
+      t.appendChild(hd); t.appendChild(el("p", "main", q.q));
+      if(q.why) t.appendChild(el("p", "why", q.why));
+      var ta = el("textarea"); ta.rows = 2; ta.placeholder = "Lo que responda…"; ta.value = st.notes[q.id] || "";
+      ta.setAttribute("aria-label", "Nota para " + q.id);
+      cb.addEventListener("change", function(){ if(cb.checked) st.done[q.id] = true; else delete st.done[q.id]; guardar(); pintar(); });
+      ta.addEventListener("input", function(){ if(ta.value) st.notes[q.id] = ta.value; else delete st.notes[q.id]; guardar(); });
+      f.appendChild(cb); f.appendChild(t); f.appendChild(ta); sec.appendChild(f);
+    });
+    cont.appendChild(sec);
+  });
+
+  function pintar(){
+    var hechas = todas.filter(function(q){ return st.done[q.id]; }).length;
+    var bh = BLOQ.filter(function(q){ return st.done[q.id]; }).length;
+    document.getElementById("prog-texto").textContent = hechas + " de " + TOTAL + " preguntadas";
+    document.getElementById("prog-barra").style.width = (hechas / TOTAL * 100) + "%";
+    document.getElementById("prog-bloq").textContent = "Bloquean el diseño: " + bh + " de " + BLOQ.length;
+    document.getElementById("cuenta-tab").textContent = hechas + "/" + TOTAL;
+    todas.forEach(function(q){ filas[q.id].classList.toggle("done", !!st.done[q.id]); });
+  }
+  pintar();
+
+  var estado = document.getElementById("estado");
+  function avisar(m){ estado.textContent = m; setTimeout(function(){ if(estado.textContent === m) estado.textContent = ""; }, 4000); }
+
+  document.getElementById("copiar").addEventListener("click", function(){
+    var fecha = new Date().toLocaleDateString("es-CO", {day:"numeric", month:"long", year:"numeric"});
+    var out = "PREGUNTAS PASO ANCHO — " + fecha + "\n";
+    GRUPOS.forEach(function(g){
+      out += "\n" + g.t.toUpperCase() + "\n";
+      g.qs.forEach(function(q){
+        out += (st.done[q.id] ? "[x] " : "[ ] ") + q.id + " " + q.q + "\n";
+        if(st.notes[q.id]) out += "    Nota: " + st.notes[q.id].replace(/\n/g, "\n    ") + "\n";
+      });
+    });
+    function respaldo(){
+      var t = document.createElement("textarea"); t.value = out; t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      var ok = false; try{ ok = document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(t);
+      avisar(ok ? "Notas copiadas." : "No se pudo copiar. Selecciona el texto de las notas y cópialo a mano.");
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(out).then(function(){ avisar("Notas copiadas."); }, respaldo);
+    } else respaldo();
+  });
+
+  var bb = document.getElementById("borrar"), armado = false, reloj;
+  bb.addEventListener("click", function(){
+    if(!armado){ armado = true; bb.textContent = "¿Seguro? Toca otra vez"; reloj = setTimeout(function(){ armado = false; bb.textContent = "Borrar todo"; }, 4000); return; }
+    clearTimeout(reloj); armado = false; bb.textContent = "Borrar todo";
+    st = {done:{}, notes:{}}; guardar();
+    document.querySelectorAll("#grupos input[type=checkbox]").forEach(function(c){ c.checked = false; });
+    document.querySelectorAll("#grupos textarea").forEach(function(t){ t.value = ""; });
+    pintar(); avisar("Todo borrado.");
+  });
+
+  /* valores: arrancan ocultos en cada carga, nunca se recuerdan */
+  var raiz = document.getElementById("raiz"), ver = document.getElementById("ver");
+  function marcarValores(oculto){
+    document.querySelectorAll(".v, .vb").forEach(function(n){ if(oculto) n.setAttribute("aria-hidden", "true"); else n.removeAttribute("aria-hidden"); });
+  }
+  marcarValores(true);
+  ver.addEventListener("click", function(){
+    var oculto = raiz.classList.toggle("ocultos");
+    ver.setAttribute("aria-pressed", oculto ? "false" : "true");
+    ver.textContent = oculto ? "Mostrar valores" : "Ocultar valores";
+    marcarValores(oculto);
+  });
+
+  var tabs = [0,1,2,3,4].map(function(i){ return document.getElementById("t" + i); });
+  function ir(i){
+    tabs.forEach(function(t, j){
+      var sel = i === j;
+      t.setAttribute("aria-selected", sel ? "true" : "false"); t.tabIndex = sel ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !sel;
+    });
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ ir(i); });
+    t.addEventListener("keydown", function(e){
+      if(e.key === "ArrowRight" || e.key === "ArrowLeft"){
+        var n = (i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length; ir(n); tabs[n].focus();
+      }
+    });
+  });
+})();
+</script>
