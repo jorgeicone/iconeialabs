@@ -679,21 +679,50 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
           </div>
 
           <div class="sec">
-            <p class="eyebrow">3 · Costos mensuales de operación, a nombre de Paso Ancho</p>
+            <p class="eyebrow">3 · Lo que Paso Ancho paga cada mes a terceros</p>
             <div class="card opx">
               <table class="data">
-                <thead><tr><th>Concepto</th><th>Estimado al mes</th><th>Nota</th></tr></thead>
+                <thead><tr><th>Concepto</th><th>Para qué sirve</th><th>Estimado al mes</th><th>Estado</th></tr></thead>
                 <tbody>
-                  <tr><td>Servidor pequeño</td><td class="num">USD 4–6</td><td>Hace que el cierre de un domingo a las 9 de la noche salga solo.</td></tr>
-                  <tr><td>IA: lectura de fotos <span class="chip info">estimado</span></td><td class="num">USD 7–45</td><td>Según el modelo y cuántas planillas se fotografíen al día. Ver supuestos abajo.</td></tr>
-                  <tr><td>WhatsApp Business</td><td class="num">≈ USD 0</td><td>Las conversaciones que inicia el usuario no se cobran, y responder dentro de 24 horas tampoco.</td></tr>
-                  <tr><td>Línea dedicada</td><td class="num">ya pagada</td><td>Una de las 7 líneas WOM que la empresa ya tiene. No se puede seguir usando en la app normal.</td></tr>
-                  <tr><td>Base de datos <span class="chip warn">a confirmar</span></td><td class="num">por definir</td><td>Plan de pago recomendado para tener respaldos. Se confirma antes de firmar.</td></tr>
-                  <tr class="tot"><td>Subtotal estimado</td><td class="num">USD 11–51</td><td>Más la base de datos.</td></tr>
+                  <tr><td>API de Claude (la IA) <span class="chip info">estimado</span></td><td>Lee las fotos de las planillas, clasifica gastos y responde consultas. Se paga por uso, en una cuenta de Anthropic a nombre de Paso Ancho, con tarjeta y en dólares.</td><td class="num">USD 7–45</td><td><span class="chip ok">obligatorio</span></td></tr>
+                  <tr><td>Supabase (base de datos)</td><td>Guarda el libro vivo: ventas, cartera, gastos, deuda, inventario y caja. El plan Pro trae respaldos diarios con 7 días de retención y 8 GB; el gratis trae 500 MB y se pausa tras una semana sin actividad.</td><td class="num">USD 25</td><td><span class="chip ok">obligatorio</span> <span class="chip warn">confirmar precio</span></td></tr>
+                  <tr><td>Servidor pequeño</td><td>Hace que el cierre de un domingo a las 9 de la noche salga solo, sin depender de un computador prendido.</td><td class="num">USD 4–6</td><td><span class="chip ok">obligatorio</span></td></tr>
+                  <tr><td>WhatsApp Business (Meta)</td><td>Los mensajes de servicio y las respuestas dentro de las 24 horas no se cobran. Solo se cobran los recordatorios que el sistema inicie fuera de esa ventana, por mensaje; la tarifa para Colombia se confirma en la lista de Meta.</td><td class="num">USD 0–2</td><td><span class="chip warn">confirmar tarifa</span></td></tr>
+                  <tr><td>Línea de WhatsApp dedicada</td><td>Una de las 7 líneas WOM que la empresa ya paga. Un número conectado a la API ya no se puede usar en la app normal.</td><td class="num">ya pagada</td><td><span class="chip ok">sin costo nuevo</span></td></tr>
+                  <tr><td>Claude Pro o Max (suscripción)</td><td>No lo necesita el sistema: corre sobre la API. Sirve para que una persona converse con Claude en la app. Pro cuesta USD 20 al mes por persona (USD 17 pagando el año) y Max desde USD 100.</td><td class="num">USD 0</td><td><span class="chip info">opcional, por persona</span></td></tr>
+                  <tr class="tot"><td>Subtotal a terceros</td><td>Con la IA leyendo solo planillas.</td><td class="num">USD 36–78</td><td></td></tr>
                 </tbody>
               </table>
             </div>
-            <p class="supuestos"><b>Supuestos de la IA:</b> 10 a 30 planillas fotografiadas al día durante 31 días (310 a 930 al mes); unos 4.500 tokens de entrada y 1.500 de salida por foto; precios por millón de tokens vigentes al 25 de septiembre de 2026. Con un modelo intermedio da USD 7–22 al mes y con uno de gama alta USD 15–45. No incluye razonamiento extendido ni reprocesos. Se mide con un mes real de planillas antes de fijar el modelo.</p>
+            <p class="supuestos">Las cuentas de Anthropic, Supabase y Meta quedan a nombre de Paso Ancho y se pagan con su tarjeta. Los valores están en dólares: el costo en pesos cambia con la TRM del mes. No incluyen impuestos.</p>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">4 · Lo que se paga a ICONEialabs cada mes</p>
+            <div class="card opx">
+              <table class="data">
+                <thead><tr><th>Concepto</th><th>Qué incluye</th><th>Valor al mes</th><th>Estado</th></tr></thead>
+                <tbody>
+                  <tr><td>Acompañamiento estratégico</td><td>Sesión semanal de una hora: avance, decisiones y pedido de información.</td><td class="num">$2.600.000</td><td><span class="chip ok">ya existente</span></td></tr>
+                  <tr><td>Soporte permanente del ecosistema</td><td>Desde el mes 7: vigilar que todo siga corriendo, ajustar el perfil y resolver lo que falle.</td><td class="num">por definir</td><td><span class="chip warn">a acordar</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="sec">
+            <p class="eyebrow">5 · Costo de la IA según cuántas planillas se fotografíen</p>
+            <div class="card opx">
+              <table class="data">
+                <thead><tr><th>Planillas al día</th><th>Al mes</th><th>Modelo intermedio · USD 2 y USD 10 por millón de tokens</th><th>Modelo de gama alta · USD 4 y USD 20 por millón</th></tr></thead>
+                <tbody>
+                  <tr><td class="num">10</td><td class="num">310</td><td class="num">USD 7,44</td><td class="num">USD 14,88</td></tr>
+                  <tr><td class="num">20</td><td class="num">620</td><td class="num">USD 14,88</td><td class="num">USD 29,76</td></tr>
+                  <tr><td class="num">30</td><td class="num">930</td><td class="num">USD 22,32</td><td class="num">USD 44,64</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="supuestos"><b>Supuestos:</b> unos 4.500 tokens de entrada (la imagen y las instrucciones) y 1.500 de salida por foto. Es un supuesto que se mide, no una cifra comprobada. Los precios por millón de tokens se verificaron en la página oficial de Anthropic el 6 de octubre de 2026. No incluye el uso de las fases 2 y 3 (clasificar gastos, consultas a BRÚJULA), razonamiento extendido ni reprocesos. Baja si se guarda en caché lo que se repite en cada foto (el perfil y el esquema) y con el procesamiento por lotes, que cuesta la mitad, cuando no hace falta respuesta inmediata. El modelo se decide con un mes real de planillas.</p>
           </div>
         </div>
       </div>
