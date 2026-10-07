@@ -272,6 +272,70 @@ table.data tr.tot td{border-bottom:0; font-weight:600}
 footer{border-top:1px solid var(--line); padding-top:20px; display:flex; flex-direction:column; gap:6px; font-size:.84rem; color:var(--muted)}
 footer .wordmark{font-size:15px; margin-bottom:4px}
 @media(prefers-reduced-motion:reduce){*{transition:none !important; scroll-behavior:auto !important}}
+
+/* ── brand banner ─────────────────────── */
+.brand-banner{width:100%; display:block; max-height:100px; object-fit:cover; object-position:left center}
+.brand-hero{background:var(--navy); border-bottom:1px solid var(--line); padding:18px 0; overflow:hidden; position:relative}
+.brand-hero-in{max-width:1080px; margin:0 auto; padding:0 16px; position:relative; z-index:1}
+.brand-hero-in small{font-family:"JetBrains Mono",monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:6px}
+.brand-hero-in .bh1{font-family:Outfit,sans-serif; font-weight:900; font-size:clamp(2rem,7vw,3.6rem); line-height:1; letter-spacing:-.02em; display:flex; gap:.3em; align-items:baseline; flex-wrap:wrap}
+.brand-hero-in .bh1 span{color:var(--cyan)}
+.brand-hero-in .bh2{font-family:"JetBrains Mono",monospace; font-size:.82rem; letter-spacing:.15em; color:var(--cyan); margin-top:8px; text-transform:uppercase}
+.brand-hero-in .bh3{font-size:.94rem; color:var(--muted); margin-top:4px}
+.dots-bg{position:absolute; inset:0; pointer-events:none; overflow:hidden}
+
+/* ── nav wrapper (tabs más visibles) ──── */
+.nav-wrap{background:var(--raise); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:2px}
+.nav-label{font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); padding:8px 14px 0; display:flex; align-items:center; gap:8px}
+.nav-label::after{content:""; flex:1; height:1px; background:var(--line)}
+.tabs{display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin; padding:6px 6px 6px; border-bottom:none}
+.tab{font:600 .9rem Outfit,sans-serif; letter-spacing:.02em; background:none; color:var(--muted); border:0;
+  border-radius:6px; padding:10px 14px; cursor:pointer; white-space:nowrap; transition:background .15s, color .15s; position:relative}
+.tab:hover{color:var(--ink); background:var(--card)}
+.tab[aria-selected="true"]{color:var(--ink); background:var(--card); box-shadow:inset 0 0 0 2px var(--cyan)}
+.tab .n{font-family:"JetBrains Mono",monospace; font-size:.72rem; margin-left:5px; background:var(--navy);
+  padding:1px 5px; border-radius:3px; color:var(--cyan)}
+[hidden]{display:none !important}
+.panel{display:flex; flex-direction:column; gap:36px; padding-top:26px}
+
+/* ── acuerdo ─────────────────────────── */
+.acuerdo-doc{display:flex; flex-direction:column; gap:0}
+.acuerdo-doc h3{font-size:1.12rem; font-weight:700; font-family:Outfit,sans-serif; color:var(--cyan); margin-bottom:6px}
+.a-sec{padding:18px 0; border-bottom:1px solid var(--line)}
+.a-sec:last-of-type{border-bottom:0; padding-bottom:0}
+.a-label{font-family:"JetBrains Mono",monospace; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); display:block; margin-bottom:4px; margin-top:10px}
+.a-grid{display:grid; gap:12px; margin-top:10px}
+@media(min-width:680px){.a-grid.col2{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.a-grid.col4{grid-template-columns:1fr 1fr 1fr 1fr}}
+.a-box{background:var(--raise); border:1px solid var(--line); border-radius:8px; padding:14px}
+.a-highlight{border-left:3px solid var(--purple) !important; background:rgba(123,47,255,.07) !important}
+.a-ok{border-left:3px solid var(--ok) !important; background:var(--ok-bg) !important}
+.a-warn{border-left:3px solid var(--orange) !important; background:rgba(255,140,0,.08) !important}
+.a-firmas{display:grid; gap:20px; margin-top:20px; padding-top:20px; border-top:2px solid var(--line)}
+@media(min-width:680px){.a-firmas{grid-template-columns:1fr 1fr 1fr}}
+.firma-linea{height:1px; background:var(--line); margin:24px 0 8px}
+.acuerdo-header{display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; margin-bottom:4px; border-bottom:1px solid var(--line); flex-wrap:wrap; gap:10px}
+.aj-form input, .aj-form textarea{width:100%; font:400 .95rem "Instrument Sans",sans-serif; color:var(--ink); background:var(--raise); border:1px solid var(--line); border-radius:6px; padding:10px 12px}
+.aj-form textarea{resize:vertical; min-height:80px}
+.aj-form label{font-family:"JetBrains Mono",monospace; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:5px}
+.aj-form .row{display:flex; flex-direction:column; gap:5px}
+.aj-estado{font-size:.84rem; color:var(--ok); min-height:1.2em}
+
+/* ── print ─────────────────────────────── */
+@media print{
+  .top, .nav-wrap, .brand-hero, footer, #ajustes-sec, .no-print{display:none !important}
+  body{background:#fff !important; color:#111 !important; font-size:13px}
+  .card{background:#f9f9f9 !important; border:1px solid #ddd !important; color:#111 !important}
+  .a-box{background:#f2f2f2 !important; border-color:#ccc !important; color:#111 !important}
+  .a-label, .eyebrow, .brand-hero-in .bh2{color:#555 !important}
+  .a-highlight{background:#f0eaff !important; border-color:#bbb !important}
+  .a-ok{background:#e8f5ef !important; border-color:#aaa !important}
+  .firma-linea{background:#999}
+  .grad{background:none !important; color:#111 !important; -webkit-text-fill-color:#111 !important}
+  .wrap{padding-bottom:20px}
+  #p5{display:block !important}
+  .panel{padding-top:0}
+}
 </style>
 
 <div class="top">
@@ -279,6 +343,28 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
     <div class="wordmark">ICONE<span>ialabs</span></div>
     <span class="cli">PROPUESTA · DISTRIBUIDORA PASO ANCHO</span>
     <button class="cta" id="ver" type="button" aria-pressed="false">Mostrar valores</button>
+  </div>
+</div>
+
+<!-- ── brand banner ICONE Method ─────────── -->
+<div class="brand-hero">
+  <svg class="dots-bg" viewBox="0 0 1200 100" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <circle cx="820" cy="20" r="5" fill="#00d4ff" opacity=".7"/>
+    <circle cx="900" cy="55" r="3" fill="#7b2fff" opacity=".6"/>
+    <circle cx="980" cy="15" r="4" fill="#ff8c00" opacity=".5"/>
+    <circle cx="1050" cy="70" r="3" fill="#00d4ff" opacity=".5"/>
+    <circle cx="1100" cy="35" r="6" fill="#3d63e6" opacity=".4"/>
+    <circle cx="1150" cy="80" r="3" fill="#7b2fff" opacity=".6"/>
+    <circle cx="1180" cy="20" r="4" fill="#00d4ff" opacity=".5"/>
+    <circle cx="750" cy="45" r="3" fill="#ff8c00" opacity=".4"/>
+    <circle cx="1070" cy="55" r="5" fill="#ff8c00" opacity=".5"/>
+    <circle cx="860" cy="80" r="4" fill="#3d63e6" opacity=".5"/>
+  </svg>
+  <div class="brand-hero-in">
+    <small>Jorge Hugo Pérez Gaona</small>
+    <div class="bh1">ICONE<span>METHOD</span></div>
+    <div class="bh2">Identifica · Conecta · Ejecuta</div>
+    <div class="bh3">Transforma tu negocio con Inteligencia Artificial</div>
   </div>
 </div>
 
@@ -298,12 +384,16 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
   </div>
 
   <div>
-    <div class="tabs" role="tablist" aria-label="Secciones">
-      <button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="true">Propuesta</button>
-      <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1">Cómo empieza</button>
-      <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">Cómo quedaría</button>
-      <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">Costos</button>
-      <button class="tab" role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">Preguntas<span class="n" id="cuenta-tab">0/19</span></button>
+    <div class="nav-wrap">
+      <span class="nav-label">Navega entre secciones</span>
+      <div class="tabs" role="tablist" aria-label="Secciones de la propuesta">
+        <button class="tab" role="tab" id="t0" aria-controls="p0" aria-selected="true">Propuesta</button>
+        <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1">Cómo empieza</button>
+        <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1">Cómo quedaría</button>
+        <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1">Costos</button>
+        <button class="tab" role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">Preguntas<span class="n" id="cuenta-tab">0/19</span></button>
+        <button class="tab" role="tab" id="t5" aria-controls="p5" aria-selected="false" tabindex="-1" style="color:var(--orange)">⚖ Acuerdo</button>
+      </div>
     </div>
 
     <!-- ═══════════ 0 · PROPUESTA ═══════════ -->
@@ -344,7 +434,7 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
           <dl class="dl">
             <div><dt>Qué verán</dt><dd>Un mes de planillas leído y cruzado con su libro. Se corre en paralelo: nada se apaga todavía.</dd></div>
             <div><dt>Qué hacen ustedes</dt><dd>Fotografiar la planilla completa, incluido el pie.</dd></div>
-            <div><dt>Inversión</dt><dd class="precio"><span class="v">$8.900.000</span></dd></div>
+            <div><dt>Inversión (2 meses)</dt><dd class="precio"><span class="v">$11.300.000</span></dd></div>
           </dl>
         </article>
 
@@ -360,7 +450,7 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
           <dl class="dl">
             <div><dt>Qué verán</dt><dd>Cartera y gastos al día, sin que nadie los teclee.</dd></div>
             <div><dt>Qué hacen ustedes</dt><dd>Responder por WhatsApp las pocas dudas que el sistema no resuelva.</dd></div>
-            <div><dt>Inversión</dt><dd class="precio"><span class="v">$4.500.000</span></dd></div>
+            <div><dt>Inversión (2 meses)</dt><dd class="precio"><span class="v">$11.300.000</span></dd></div>
           </dl>
         </article>
 
@@ -375,7 +465,7 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
           <dl class="dl">
             <div><dt>Qué verán</dt><dd>El cierre del mes sin armarlo a mano. El libro anterior se apaga cuando dos cierres seguidos cuadren.</dd></div>
             <div><dt>Qué hacen ustedes</dt><dd>Leer el cierre y preguntar lo que quieran saber.</dd></div>
-            <div><dt>Inversión</dt><dd class="precio"><span class="v">$4.900.000</span></dd></div>
+            <div><dt>Inversión (2 meses)</dt><dd class="precio"><span class="v">$11.300.000</span></dd></div>
           </dl>
         </article>
       </div>
@@ -674,10 +764,10 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
           <div class="sec">
             <p class="eyebrow">1 · Inversión de desarrollo</p>
             <div class="inv">
-              <div class="card"><span class="pill"><i class="p1"></i>Fase 1 · meses 1–2</span><span class="precio">$8.900.000</span><span class="meses">OJO + CUADRE</span></div>
-              <div class="card"><span class="pill"><i class="p2"></i>Fase 2 · meses 3–4</span><span class="precio">$4.500.000</span><span class="meses">Libro vivo, ORDEN, COBRO, CENTINELA</span></div>
-              <div class="card"><span class="pill"><i class="p3"></i>Fase 3 · meses 5–6</span><span class="precio">$4.900.000</span><span class="meses">BALANCE, PUENTE, BRÚJULA</span></div>
-              <div class="card tot"><span class="pill">Implementación total</span><span class="precio">$18.300.000</span><span class="meses">Licencia de uso perpetua</span></div>
+              <div class="card"><span class="pill"><i class="p1"></i>Fase 1 · meses 1–2</span><span class="precio">$11.300.000</span><span class="meses">OJO + CUADRE · 2 × $5.650.000</span></div>
+              <div class="card"><span class="pill"><i class="p2"></i>Fase 2 · meses 3–4</span><span class="precio">$11.300.000</span><span class="meses">Libro vivo, ORDEN, COBRO, CENTINELA · 2 × $5.650.000</span></div>
+              <div class="card"><span class="pill"><i class="p3"></i>Fase 3 · meses 5–6</span><span class="precio">$11.300.000</span><span class="meses">BALANCE, PUENTE, BRÚJULA · 2 × $5.650.000</span></div>
+              <div class="card tot"><span class="pill">Total 6 meses</span><span class="precio">$33.900.000</span><span class="meses">Cuota fija $5.650.000/mes · licencia perpetua</span></div>
             </div>
           </div>
 
@@ -793,7 +883,198 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
       <div id="grupos"></div>
       <p class="estado">Las notas se guardan solo en este navegador. Usa «Copiar notas» antes de cerrar.</p>
     </section>
-  </div>
+
+    <!-- ═══════════ 5 · ACUERDO ═══════════ -->
+    <section class="panel" id="p5" role="tabpanel" aria-labelledby="t5" hidden>
+
+      <div class="sec">
+        <p class="eyebrow">Acuerdo de servicio</p>
+        <h2>Lo que acordamos, por escrito y simple</h2>
+        <p class="lead">Este documento resume los términos del servicio en lenguaje claro. Está protegido por las leyes colombianas de derechos de autor (Ley 23 de 1982 y normas concordantes). Descárgalo en PDF, revísalo, y si hay algo que ajustar úsalo el formulario al final.</p>
+      </div>
+
+      <!-- DOCUMENTO DEL ACUERDO -->
+      <div class="card" id="acuerdo-texto" style="padding:24px 20px">
+        <div class="acuerdo-header">
+          <div>
+            <div class="wordmark" style="font-size:20px; margin-bottom:3px">ICONE<span>ialabs</span></div>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase">Acuerdo de prestación de servicios tecnológicos</span>
+          </div>
+          <span class="chip warn">Borrador · sujeto a ajustes</span>
+        </div>
+
+        <div class="acuerdo-doc">
+
+          <!-- 1. PARTES -->
+          <div class="a-sec">
+            <h3>1 · Las partes</h3>
+            <div class="a-grid col2">
+              <div class="a-box">
+                <span class="a-label">Prestador</span>
+                <p><strong>Jorge Hugo Pérez Gaona</strong>, persona natural, actuando bajo la marca comercial <strong>ICONEialabs</strong>, con domicilio en Bogotá D.C. Número de contacto: 315 894 09 80.</p>
+              </div>
+              <div class="a-box">
+                <span class="a-label">Cliente</span>
+                <p><strong>Distribuidora Paso Ancho</strong> y/o la persona natural o jurídica que la represente legalmente, con domicilio en Cali, Valle del Cauca. La figura bajo la que el cliente suscribe la elige el propio cliente.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. OBJETO -->
+          <div class="a-sec">
+            <h3>2 · Qué se va a hacer</h3>
+            <p>El prestador diseña, desarrolla, implementa y acompaña un ecosistema de inteligencia artificial compuesto por los siguientes artefactos, adaptados a los procesos y formatos propios de Paso Ancho:</p>
+            <div class="a-grid col4" style="margin-top:10px">
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p1"></i>OJO</span><br><small style="color:var(--muted); font-size:.8rem">Lee las planillas</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p1"></i>CUADRE</span><br><small style="color:var(--muted); font-size:.8rem">Cierre diario</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p2"></i>LIBRO VIVO</span><br><small style="color:var(--muted); font-size:.8rem">Memoria única</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p2"></i>ORDEN</span><br><small style="color:var(--muted); font-size:.8rem">Clasifica gastos</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p2"></i>COBRO</span><br><small style="color:var(--muted); font-size:.8rem">Cartera</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p2"></i>CENTINELA</span><br><small style="color:var(--muted); font-size:.8rem">Alertas</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p3"></i>BALANCE</span><br><small style="color:var(--muted); font-size:.8rem">Cierre mensual</small></div>
+              <div class="a-box" style="text-align:center"><span class="pill"><i class="p3"></i>PUENTE + BRÚJULA</span><br><small style="color:var(--muted); font-size:.8rem">Extractos + consultor</small></div>
+            </div>
+          </div>
+
+          <!-- 3. DERECHOS DE AUTOR — la clave -->
+          <div class="a-sec">
+            <h3>3 · Quién es dueño de qué <span class="chip info" style="font-size:.7rem">lo más importante</span></h3>
+            <div class="a-grid col2">
+              <div class="a-box a-highlight">
+                <span class="a-label">El código es de ICONEialabs</span>
+                <p>El código fuente, los algoritmos, los prompts, la arquitectura y todo el material intelectual desarrollado por ICONEialabs son y seguirán siendo propiedad exclusiva de <strong>Jorge Hugo Pérez Gaona</strong>, conforme a la Ley 23 de 1982 y disposiciones de la DNDA. Paso Ancho <strong>no adquiere</strong> derechos patrimoniales sobre el software.</p>
+                <p style="margin-top:6px; font-size:.88rem; color:var(--muted)">Esto permite cobrar menos que si el cliente comprara el código completo, y permite a ICONEialabs mejorar las herramientas con el tiempo.</p>
+              </div>
+              <div class="a-box a-ok">
+                <span class="a-label">La licencia de uso es de Paso Ancho, para siempre</span>
+                <p>Paso Ancho recibe una <strong>licencia de uso perpetua, irrevocable y exclusiva</strong> para su operación. Esta licencia:</p>
+                <ul style="margin:8px 0 0; padding-left:16px; font-size:.92rem; display:flex; flex-direction:column; gap:5px">
+                  <li>No se vence al terminar los 6 meses.</li>
+                  <li>No requiere pago adicional después del mes 6.</li>
+                  <li>No se puede ceder ni vender a terceros.</li>
+                  <li>Incluye todas las mejoras del período contratado.</li>
+                </ul>
+              </div>
+              <div class="a-box">
+                <span class="a-label">Los datos son de Paso Ancho, siempre</span>
+                <p>Todos los datos ingresados, procesados y generados son propiedad exclusiva del cliente. Se pueden exportar en cualquier momento. No se usan para ningún otro fin ni se comparten.</p>
+              </div>
+              <div class="a-box a-warn">
+                <span class="a-label">Si algo le pasa a ICONEialabs</span>
+                <p>Si el prestador no puede continuar el servicio, el cliente recibe una <strong>copia completa del código fuente</strong> para seguir operando de forma independiente. Esta cláusula de continuidad garantiza que el negocio no queda bloqueado por una situación ajena.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. PAGOS -->
+          <div class="a-sec">
+            <h3>4 · Cuánto y cuándo se paga</h3>
+            <div class="a-grid col2">
+              <div class="a-box a-highlight">
+                <span class="a-label">Cuota mensual</span>
+                <p class="precio" style="font-size:2rem">$5.650.000</p>
+                <p style="color:var(--muted); font-size:.9rem; margin-top:2px">COP por mes, todo incluido: desarrollo, acompañamiento semanal y visita mensual a Cali.</p>
+              </div>
+              <div class="a-box a-warn">
+                <span class="a-label">Pago por adelantado — regla clave</span>
+                <p>Cada mes de trabajo se activa con el pago <strong>recibido y confirmado</strong>. Sin pago, el mes no arranca. El primer pago se hace antes de la semana 1.</p>
+                <p style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-size:.9rem">El pago del mes siguiente debe confirmarse dentro de los <strong>primeros 5 días naturales</strong> del mes en curso. Si no llega en ese plazo, el mes siguiente queda en pausa hasta que llegue.</p>
+              </div>
+              <div class="a-box">
+                <span class="a-label">Total 6 meses a ICONEialabs</span>
+                <p class="precio" style="font-size:1.6rem">$33.900.000</p>
+                <p style="color:var(--muted); font-size:.88rem; margin-top:2px">Pagados en 6 cuotas mensuales. No hay pago adicional por la licencia después del mes 6.</p>
+              </div>
+              <div class="a-box">
+                <span class="a-label">Forma de pago</span>
+                <p>Transferencia bancaria, consignación o el medio que acuerden las partes. El prestador emite soporte de recibo por cada pago recibido.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. TERCEROS -->
+          <div class="a-sec">
+            <h3>5 · Los servicios que paga Paso Ancho directamente a terceros</h3>
+            <div class="a-box" style="margin-top:8px">
+              <p>Los servicios de infraestructura —<strong>API de Claude (Anthropic), base de datos (Supabase), servidor y WhatsApp Business (Meta)</strong>— los contrata y paga <strong>directamente el cliente</strong>, a nombre del cliente, con sus propios medios de pago. No pasan por ICONEialabs ni los factura ICONEialabs.</p>
+              <p style="margin-top:10px; padding-top:10px; border-top:1px solid var(--line)"><strong>El cliente suministra al prestador los accesos</strong> necesarios (credenciales, claves de API, permisos de administrador) para configurar, integrar y mantener el ecosistema. Esos accesos son confidenciales y se usan únicamente para los fines de este contrato.</p>
+              <p style="margin-top:8px; font-size:.88rem; color:var(--muted)">Estimado mensual: USD 42–143 según volumen y modelo. Ver detalle en la pestaña Costos.</p>
+            </div>
+          </div>
+
+          <!-- 6. VISITA MENSUAL -->
+          <div class="a-sec">
+            <h3>6 · La visita mensual a Cali</h3>
+            <p>Una visita mensual a la sede del cliente está incluida en la cuota. <strong>El cliente asume los costos de tiquetes aéreos y hospedaje.</strong> La visita comprende la tarde de un día y la mañana del siguiente; el prestador llega y trabaja en las instalaciones.</p>
+          </div>
+
+          <!-- 7. DURACIÓN -->
+          <div class="a-sec">
+            <h3>7 · Cuánto dura</h3>
+            <p>Seis (6) meses, contados desde la confirmación del primer pago. Al finalizar el mes 6, Paso Ancho tiene el ecosistema completo en producción y la licencia perpetua vigente. <strong>El soporte a partir del mes 7</strong> se acuerda en un adéndum separado antes de terminar el mes 5.</p>
+          </div>
+
+          <!-- 8. CONFIDENCIALIDAD -->
+          <div class="a-sec">
+            <h3>8 · Confidencialidad</h3>
+            <p>Ambas partes guardan reserva sobre la información recibida del otro. El prestador no divulga datos financieros ni operativos del cliente. El cliente no divulga el código, los algoritmos ni los métodos del prestador. Esta obligación persiste después de terminar el contrato.</p>
+          </div>
+
+          <!-- 9. FIRMAS -->
+          <div class="a-firmas">
+            <div>
+              <span class="a-label">Prestador</span>
+              <div class="firma-linea"></div>
+              <p style="font-size:.9rem">Jorge Hugo Pérez Gaona<br>Persona natural · ICONEialabs<br><span style="color:var(--muted)">CC ___________________</span></p>
+            </div>
+            <div>
+              <span class="a-label">Cliente</span>
+              <div class="firma-linea"></div>
+              <p style="font-size:.9rem">Distribuidora Paso Ancho<br>Representante: ___________________<br><span style="color:var(--muted)">NIT / CC ___________________</span></p>
+            </div>
+            <div>
+              <span class="a-label">Fecha y ciudad</span>
+              <div class="firma-linea"></div>
+              <p style="font-size:.9rem">Cali, _____ de ___________ de 2026</p>
+            </div>
+          </div>
+
+        </div><!-- /acuerdo-doc -->
+      </div><!-- /card acuerdo-texto -->
+
+      <!-- DESCARGAR PDF -->
+      <div class="sec no-print" style="align-items:flex-start; gap:10px">
+        <p class="lead">Una vez revisados y acordados los términos, descarga el PDF para firmarlo y enviarlo.</p>
+        <button class="cta" type="button" onclick="imprimirAcuerdo()">Descargar acuerdo en PDF</button>
+      </div>
+
+      <!-- FORMULARIO DE AJUSTES -->
+      <div class="sec no-print" id="ajustes-sec">
+        <p class="eyebrow">¿Algo que ajustar?</p>
+        <h2>Solicitud de modificación</h2>
+        <p class="lead">Si algún término no está claro o quieren cambiar algo, escríbelo aquí. Queda guardado en este dispositivo y puedes enviarlo directamente a Jorge.</p>
+        <div class="card aj-form" style="display:flex; flex-direction:column; gap:14px">
+          <div class="row">
+            <label for="aj-nombre">Tu nombre</label>
+            <input type="text" id="aj-nombre" placeholder="Mauricio / Luz Dary / ...">
+          </div>
+          <div class="row">
+            <label for="aj-texto">¿Qué cambiarías del acuerdo?</label>
+            <textarea id="aj-texto" rows="5" placeholder="Ej: En el punto 4, preferiríamos confirmar el pago el día 10 del mes, no el día 5. En el punto 6, la visita podría ser…"></textarea>
+          </div>
+          <div class="btns" style="flex-wrap:wrap; gap:8px">
+            <button class="btn" id="aj-guardar" type="button">Guardar borrador</button>
+            <button class="btn" id="aj-wa" type="button" style="background:rgba(61,220,151,.12); color:var(--ok); border-color:var(--ok)">Enviar a Jorge por WhatsApp</button>
+            <button class="btn" id="aj-email" type="button" style="background:var(--info-bg); color:var(--cyan); border-color:var(--cyan)">Enviar por correo</button>
+          </div>
+          <span class="aj-estado" id="aj-estado" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+
+    </section>
+    <!-- /ACUERDO -->
+
+  </div><!-- /tabs container -->
 
   <footer>
     <div class="wordmark">ICONE<span>ialabs</span></div>
@@ -929,7 +1210,7 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
     marcarValores(oculto);
   });
 
-  var tabs = [0,1,2,3,4].map(function(i){ return document.getElementById("t" + i); });
+  var tabs = [0,1,2,3,4,5].map(function(i){ return document.getElementById("t" + i); });
   function ir(i){
     tabs.forEach(function(t, j){
       var sel = i === j;
@@ -945,5 +1226,35 @@ footer .wordmark{font-size:15px; margin-bottom:4px}
       }
     });
   });
+
+  /* ── acuerdo: ajustes y PDF ── */
+  var AJ_KEY = "pa-ajustes-v1";
+  function ajEstado(m, ok){
+    var e = document.getElementById("aj-estado");
+    e.textContent = m; e.style.color = ok ? "var(--ok)" : "var(--warn)";
+    setTimeout(function(){ if(e.textContent === m) e.textContent = ""; }, 5000);
+  }
+  var ajNombre = document.getElementById("aj-nombre");
+  var ajTexto = document.getElementById("aj-texto");
+  try{ var raw2 = localStorage.getItem(AJ_KEY); if(raw2){ var o2 = JSON.parse(raw2); if(o2){ if(o2.nombre) ajNombre.value = o2.nombre; if(o2.texto) ajTexto.value = o2.texto; } } }catch(e){}
+  document.getElementById("aj-guardar").addEventListener("click", function(){
+    try{ localStorage.setItem(AJ_KEY, JSON.stringify({nombre: ajNombre.value, texto: ajTexto.value})); ajEstado("Borrador guardado en este dispositivo.", true); }catch(e){ ajEstado("No se pudo guardar.", false); }
+  });
+  document.getElementById("aj-wa").addEventListener("click", function(){
+    var nombre = ajNombre.value.trim() || "Cliente";
+    var msg = "Hola Jorge, soy " + nombre + " de Paso Ancho. Revisé el acuerdo y tengo estos comentarios:\n\n" + ajTexto.value.trim();
+    window.open("https://wa.me/573158940980?text=" + encodeURIComponent(msg), "_blank");
+  });
+  document.getElementById("aj-email").addEventListener("click", function(){
+    var nombre = ajNombre.value.trim() || "Cliente";
+    var subj = "Ajustes al acuerdo de servicio - Paso Ancho";
+    var body = "Hola Jorge,\n\nSoy " + nombre + " de Paso Ancho. Revisé el acuerdo y tengo estos comentarios:\n\n" + ajTexto.value.trim() + "\n\nQuedo atento a tu respuesta.";
+    window.open("mailto:jorgehugoperezgaona@gmail.com?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body));
+  });
+
 })();
+
+function imprimirAcuerdo(){
+  window.print();
+}
 </script>
