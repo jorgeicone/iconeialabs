@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
+<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Trueque · Fundación Managers</title>
@@ -266,6 +267,10 @@ footer i{font-style:italic;font-family:'Playfair Display',Georgia,serif;font-siz
         <span class="count" id="cO">0</span>
       </div>
     </div>
+        <label class="consent" style="display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;font-size:14px;line-height:1.5;cursor:pointer">
+      <input type="checkbox" id="autoriza" style="width:20px;height:20px;margin-top:2px;flex-shrink:0">
+      <span>Autorizo a ICONEialabs a tratar mis datos (nombre, correo, celular y respuestas) para conectarme con otras personas de esta comunidad. Mis respuestas se procesan con herramientas de IA para sugerir conexiones. <a href="/politica-de-datos/" target="_blank" rel="noopener" style="text-decoration:underline">Política de tratamiento de datos</a>.</span>
+    </label>
     <p class="err" id="e3"></p>
 
     <div class="actions">
@@ -452,6 +457,7 @@ document.getElementById("go3").addEventListener("click", function(){
   limpiar("e3",["ofrezco"]);
   var ofrezco = document.getElementById("ofrezco").value.trim();
   if(ofrezco.length < 10) return error("e3","ofrezco","Cuéntanos un poco más de lo que puedes dar. Es la mitad del trueque.");
+  if(!document.getElementById("autoriza").checked) return error("e3","autoriza","Para entrar al trueque necesitamos tu autorización de tratamiento de datos.");
 
   var datos = {
     p_comunidad: COM,
@@ -460,7 +466,7 @@ document.getElementById("go3").addEventListener("click", function(){
     p_celular:   document.getElementById("celular").value.trim(),
     p_necesito:  document.getElementById("necesito").value.trim(),
     p_ofrezco:   ofrezco,
-    p_meta:      { ref: document.referrer || null, ua: navigator.userAgent.slice(0,180) }
+    p_meta:      { ref: document.referrer || null, ua: navigator.userAgent.slice(0,180), autoriza_datos: true, politica_version: "2026-10-11" }
   };
 
   var btn = this;
