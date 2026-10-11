@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /pedidos-pdv/
+Disallow: /trueque/
+Disallow: /trueque-managers/
+Disallow: /diagnostico-jaguarcol/
+Disallow: /diagnostico-necesidades-educativas/
+
+Sitemap: https://iconeialabs.com/sitemap.xml
