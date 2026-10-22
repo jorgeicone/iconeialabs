@@ -111,3 +111,62 @@ th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:up
 .notice{border:1px solid rgba(255,140,0,.5);background:rgba(255,140,0,.08);border-radius:8px;padding:12px 14px;font-size:14px;margin-bottom:16px}
 details summary{cursor:pointer;color:var(--cyan);font-size:14px}
 @media (prefers-reduced-motion:no-preference){.card,.kpi,.match{transition:border-color .2s}.card:hover,.match:hover{border-color:rgba(0,212,255,.45)}}
+
+/* ---------- ilustraciones ---------- */
+.art{border-radius:10px;overflow:hidden;line-height:0;border:1px solid var(--line);background:var(--navy-2)}
+.art svg{width:100%;height:100%;display:block}
+.art.wide{aspect-ratio:16/9}
+.art.thumb{height:84px;margin-bottom:12px}
+.art.vacio{width:min(260px,70%);aspect-ratio:16/9;margin:0 auto 14px}
+.pulse{transform-box:fill-box;transform-origin:center;animation:rcpulse 2.4s ease-out infinite}
+@keyframes rcpulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none;opacity:.5}}
+
+/* ---------- portada ---------- */
+.hero.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:32px;align-items:center}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+@media (max-width:780px){.hero.split{grid-template-columns:1fr;gap:20px}.hero.split .art{order:-1}}
+.steps .card{position:relative;padding-top:44px}
+.stepn{position:absolute;top:14px;left:18px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#04101f;font-family:var(--mono);font-weight:600;font-size:13px;display:grid;place-items:center}
+.card.eco{display:block;color:inherit}
+.card.eco .art.thumb{height:96px}
+a.card:hover{text-decoration:none}
+
+/* ---------- explorar ---------- */
+.ecohead{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:24px;align-items:center;margin-bottom:12px}
+@media (max-width:640px){.ecohead{grid-template-columns:1fr}.ecohead .art{order:-1}}
+.chips.tabs{margin:12px 0 14px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;scrollbar-width:thin}
+.chips.tabs .chip{white-space:nowrap;text-decoration:none}
+.chips.tabs .chip b{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-left:2px}
+a.chip:hover{border-color:var(--cyan);color:var(--white)}
+
+/* ---------- entrar ---------- */
+.login{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:40px;align-items:center}
+@media (max-width:860px){.login{grid-template-columns:1fr;gap:24px}.login-side{order:-1}.login-side .ticks{display:none}}
+.login-side .ticks{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px;font-size:14.5px;color:var(--fg)}
+.login-side .ticks li{padding-left:24px;position:relative}
+.login-side .ticks li::before{content:"";position:absolute;left:0;top:.4em;width:12px;height:7px;border-left:2px solid var(--cyan);border-bottom:2px solid var(--cyan);transform:rotate(-45deg)}
+
+/* ---------- estados vacíos y carga ---------- */
+.empty.rich{grid-column:1/-1;padding:28px 18px}
+.empty.rich h4{font-family:var(--display);color:var(--white);margin:0 0 6px;font-size:16px}
+.empty.rich p{margin:0 auto 14px;max-width:46ch}
+.skel{display:grid;gap:14px}
+.sk{border-radius:10px;background:linear-gradient(90deg,var(--navy-2),var(--navy-3),var(--navy-2));background-size:200% 100%;animation:rcsk 1.4s linear infinite}
+.sk.h{height:34px;width:min(420px,80%)} .sk.p{height:16px;width:min(560px,100%)} .sk.c{height:170px}
+@keyframes rcsk{from{background-position:200% 0}to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+
+/* ---------- navegación en celular ---------- */
+@media (max-width:700px){
+  .top .wrap{gap:8px 12px}
+  .top nav{order:3;width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .top nav::-webkit-scrollbar{display:none}
+  .top nav a{white-space:nowrap}
+  .who{margin-left:auto}
+}
+.grid.steps{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+@media (max-width:860px){
+  .login-side .ticks{display:none}
+  .login-side .art.wide{aspect-ratio:auto;height:120px}
+}

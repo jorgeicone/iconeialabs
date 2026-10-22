@@ -80,26 +80,38 @@
     const { data: s } = await sb.rpc("rc_network_stats");
     const st = s || {};
     const ecoCards = (st.ecosystems || []).map((e) => `
-      <a class="card" href="#/explorar?eco=${e.slug}">
+      <a class="card eco" href="#/explorar?eco=${e.slug}">
+        <div class="art thumb">${RC_ART.svg(e.slug)}</div>
         <h4>${esc(e.name)}</h4>
         <p>${esc(ecoBySlug(e.slug)?.description || "")}</p>
         <div class="meta"><span>${e.listings} publicaciones</span><span>${e.matches} matches</span></div>
       </a>`).join("");
     app.innerHTML = `
-      <div class="hero">
-        <div class="eyebrow">Fundación Managers × ICONEialabs</div>
-        <h1>Una sola puerta a muchos ecosistemas</h1>
-        <p class="lead">Publica lo que ofreces o lo que necesitas. La red te propone contrapartes con puntaje y explicación, y un gestor acompaña el cierre.</p>
-        <div class="row" style="gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,max-content))">
-          <a class="btn primary" href="${state.user ? "#/publicar" : "#/entrar"}">Publicar una necesidad u oferta</a>
-          <a class="btn" href="#/explorar">Explorar la red</a>
+      ${state.user && !state.actor ? '<div class="notice">Falta un paso: <a href="#/registro">registra tu empresa o perfil</a> para publicar y recibir matches.</div>' : ""}
+      <div class="hero split">
+        <div>
+          <div class="eyebrow">Fundación Managers × ICONEialabs</div>
+          <h1>Una sola puerta a muchos ecosistemas</h1>
+          <p class="lead">Publica lo que ofreces o lo que necesitas. La red te propone contrapartes con puntaje y explicación, y un gestor acompaña el cierre.</p>
+          <div class="cta">
+            <a class="btn primary" href="${state.user ? (state.actor ? "#/publicar" : "#/registro") : "#/entrar"}">Publicar una necesidad u oferta</a>
+            <a class="btn" href="#/explorar">Explorar la red</a>
+          </div>
         </div>
+        <div class="art wide">${RC_ART.svg("hero")}</div>
       </div>
       <div class="grid g4">
         <div class="kpi"><b>${st.actors ?? 0}</b><span>actores en la red</span></div>
         <div class="kpi"><b>${st.demands ?? 0} / ${st.offers ?? 0}</b><span>demandas / ofertas activas</span></div>
         <div class="kpi"><b>${st.matches ?? 0}</b><span>matches propuestos</span></div>
         <div class="kpi"><b>${st.liquidity ?? 0} %</b><span>demandas con ≥ 3 matches fuertes</span></div>
+      </div>
+      <div class="section"><h2>Cómo funciona</h2>
+        <div class="grid g3 steps">
+          <div class="card"><span class="stepn">1</span><h4>Publicas</h4><p>Cuentas en tus palabras qué ofreces o qué necesitas y eliges el ecosistema. Tarda unos minutos.</p></div>
+          <div class="card"><span class="stepn">2</span><h4>La red te cruza</h4><p>El motor propone contrapartes con un puntaje de 0 a 100 y te explica por qué encajan.</p></div>
+          <div class="card"><span class="stepn">3</span><h4>Cierras con acompañamiento</h4><p>Si los dos aceptan, se revela el contacto, se agenda la cita y un gestor te acompaña hasta el negocio.</p></div>
+        </div>
       </div>
       <div class="section"><h2>Ecosistemas</h2><p class="muted">Elige uno para ver lo que hoy se ofrece y se busca.</p>
       <div class="grid g3">${ecoCards}</div></div>`;
@@ -116,16 +128,19 @@
     const { data: rows, error } = await query;
     if (error) return fail(error);
     const opts = state.ecosystems.map((e) => `<option value="${e.slug}" ${e.slug === ecoSlug ? "selected" : ""}>${esc(e.name)}</option>`).join("");
+    const cur = ecoBySlug(ecoSlug);
+    const ecoChips = `<div class="chips tabs"><a class="chip ${ecoSlug ? "" : "on"}" href="#/explorar">Todos</a>${state.ecosystems.map((e) => `<a class="chip ${e.slug === ecoSlug ? "on" : ""}" href="#/explorar?eco=${e.slug}">${esc(e.name)}</a>`).join("")}</div>`;
     app.innerHTML = `
-      <h2>Explorar la red</h2>
-      <p class="muted">${rows.length} publicaciones activas${ecoSlug ? " en " + esc(ecoBySlug(ecoSlug)?.name || ecoSlug) : ""}.</p>
+      ${cur ? `<div class="ecohead"><div><div class="eyebrow">Ecosistema</div><h2>${esc(cur.name)}</h2><p class="muted">${esc(cur.description || "")}</p></div><div class="art wide">${RC_ART.svg(cur.slug)}</div></div>` : "<h2>Explorar la red</h2>"}
+      ${ecoChips}
+      <p class="muted">${rows.length} publicaciones activas${cur ? " en " + esc(cur.name) : ""}.</p>
       <form class="toolbar" id="f">
         <div class="field"><label>Ecosistema</label><select name="eco"><option value="">Todos</option>${opts}</select></div>
         <div class="field"><label>Lado</label><select name="side"><option value="">Ofertas y demandas</option><option value="demand" ${side === "demand" ? "selected" : ""}>Solo demandas (lo que buscan)</option><option value="offer" ${side === "offer" ? "selected" : ""}>Solo ofertas</option></select></div>
         <div class="field" style="flex:2 1 220px"><label>Buscar</label><input name="q" value="${esc(q)}" placeholder="empaques, café, software…"></div>
         <button class="btn">Filtrar</button>
       </form>
-      <div class="grid g3">${rows.map(cardListing).join("") || '<div class="empty">Nada por aquí todavía. Sé el primero en publicar.</div>'}</div>`;
+      <div class="grid g3">${rows.map(cardListing).join("") || emptyState("Nada coincide con esta búsqueda", "Prueba otro ecosistema o quita filtros. También puedes ser el primero en publicar aquí.", '<a class="btn primary" href="#/publicar">Publicar</a>')}</div>`;
     document.getElementById("f").onsubmit = (ev) => {
       ev.preventDefault();
       const fd = new FormData(ev.target); const p = new URLSearchParams();
@@ -133,8 +148,12 @@
       go("#/explorar?" + p.toString());
     };
   }
+  function emptyState(title, text, action) {
+    return `<div class="empty rich"><div class="art vacio">${RC_ART.svg("vacio")}</div><h4>${esc(title)}</h4><p>${esc(text)}</p>${action || ""}</div>`;
+  }
   function cardListing(l) {
     return `<div class="card">
+      <div class="art thumb" title="${esc(l.ecosystem_name)}">${RC_ART.svg(l.ecosystem_slug)}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
         <span class="pill ${l.side}">${l.side === "offer" ? "Oferta" : "Demanda"}</span>
         <span class="pill">${esc(TYPES[l.type] || l.type)}</span>
@@ -155,20 +174,32 @@
 
   function viewLogin() {
     app.innerHTML = `
+      <div class="login">
       <div class="auth">
         <h2>Entrar a Red Conecta</h2>
         <p class="muted">Con tu correo y una contraseña. Si es tu primera vez, crea la cuenta y luego registra tu empresa o perfil.</p>
         <form id="f">
-          <div class="field"><label>Correo</label><input name="email" type="email" required autocomplete="email"></div>
-          <div class="field"><label>Contraseña</label><input name="password" type="password" required minlength="6" autocomplete="current-password"></div>
+          <div class="field"><label for="em">Correo</label><input id="em" name="email" type="email" required autocomplete="email"></div>
+          <div class="field"><label for="pw">Contraseña</label><input id="pw" name="password" type="password" required minlength="6" autocomplete="current-password"></div>
+          <label class="check" style="margin-bottom:12px"><input type="checkbox" id="showpw"> Mostrar contraseña</label>
           <div class="actions">
             <button class="btn primary" data-act="in">Entrar</button>
             <button class="btn" data-act="up">Crear cuenta</button>
             <button class="btn ghost" data-act="magic">Enviarme un enlace</button>
           </div>
         </form>
+      </div>
+      <aside class="login-side">
+        <div class="art wide">${RC_ART.svg("hero")}</div>
+        <ul class="ticks">
+          <li>Un solo perfil para todos los ecosistemas</li>
+          <li>Matches con puntaje y explicación</li>
+          <li>El contacto se revela solo con interés mutuo</li>
+        </ul>
+      </aside>
       </div>`;
     const f = document.getElementById("f");
+    document.getElementById("showpw").onchange = (ev) => { f.password.type = ev.target.checked ? "text" : "password"; };
     f.querySelectorAll("button").forEach((b) => b.addEventListener("click", async (ev) => {
       ev.preventDefault();
       const act = b.dataset.act; const email = f.email.value.trim(); const password = f.password.value;
@@ -315,7 +346,7 @@
         <td>${r.status === "active" ? '<span class="pill ok">activa</span>' : `<span class="pill">${esc(r.status)}</span>`}</td>
         <td class="small">${fmtDate(r.valid_until) || "—"}</td>
         <td><button class="btn sm" data-toggle="${r.id}" data-st="${r.status}">${r.status === "active" ? "Pausar" : "Activar"}</button></td>
-      </tr>`).join("") || '<tr><td colspan="7" class="muted">Aún no has publicado nada.</td></tr>'}
+      </tr>`).join("") || '<tr><td colspan="7" class="muted">Aún no has publicado nada. <a href="#/publicar">Publica tu primera necesidad u oferta</a>.</td></tr>'}
       </tbody></table></div>`;
     app.querySelectorAll("[data-toggle]").forEach((b) => b.onclick = async () => {
       const st = b.dataset.st === "active" ? "paused" : "active";
@@ -333,12 +364,24 @@
     if (listingId) q = q.or(`demand_id.eq.${listingId},offer_id.eq.${listingId}`);
     const { data: rows, error } = await q;
     if (error) return fail(error);
-    const mine = rows.filter((m) => [m.demand?.actor_id, m.offer?.actor_id].includes(state.actor.id));
+    const all = rows.filter((m) => [m.demand?.actor_id, m.offer?.actor_id].includes(state.actor.id));
+    const iAmDemandOf = (m) => m.demand?.actor_id === state.actor.id;
+    const TABS = {
+      todos: ["Todos", () => true],
+      responder: ["Por responder", (m) => m.status === "proposed" && !(iAmDemandOf(m) ? m.accepted_by_demand : m.accepted_by_offer)],
+      avance: ["En avance", (m) => ["mutual", "meeting", "negotiating"].includes(m.status) || (m.status === "proposed" && (iAmDemandOf(m) ? m.accepted_by_demand : m.accepted_by_offer))],
+      cerrados: ["Cerrados", (m) => ["closed_won", "closed_lost"].includes(m.status)],
+    };
+    const tab = TABS[params.get("tab")] ? params.get("tab") : "todos";
+    const mine = all.filter(TABS[tab][1]);
+    const link = (t) => "#/matches?" + new URLSearchParams({ ...(listingId ? { listing: listingId } : {}), ...(t === "todos" ? {} : { tab: t }) }).toString();
+    const tabs = `<div class="chips tabs">${Object.entries(TABS).map(([k, [label, fn]]) => `<a class="chip ${k === tab ? "on" : ""}" href="${link(k)}">${label} <b>${all.filter(fn).length}</b></a>`).join("")}</div>`;
     app.innerHTML = `
       <h2>Tus matches</h2>
-      <p class="muted">${mine.length} contrapartes propuestas${listingId ? " para esta publicación" : ""}. Cada una viene con su explicación. Acepta las que te interesen: cuando el otro lado también acepte, verás el contacto.</p>
+      <p class="muted">Cada contraparte viene con su explicación. Acepta las que te interesen: cuando el otro lado también acepte, verás el contacto.</p>
       ${listingId ? '<p><a href="#/matches">Ver todos mis matches</a></p>' : ""}
-      <div class="grid" id="list">${mine.map(renderMatch).join("") || '<div class="empty">Todavía no hay contrapartes con puntaje suficiente. Cuando entren ofertas o demandas afines, aparecerán aquí y te avisaremos.</div>'}</div>`;
+      ${tabs}
+      <div class="grid" id="list">${mine.map(renderMatch).join("") || emptyState(all.length ? "Nada en esta pestaña" : "Aún no hay contrapartes con puntaje suficiente", all.length ? "Cambia de pestaña para ver el resto de tus matches." : "Cuando entren ofertas o demandas afines a lo que publicaste, aparecerán aquí.", all.length ? "" : '<a class="btn primary" href="#/publicar">Publicar otra necesidad u oferta</a>')}</div>`;
     bindMatchActions(() => viewMatches(params));
   }
   function renderMatch(m) {
@@ -450,7 +493,7 @@
             <div class="small muted">↔ ${esc(m.offer?.title)} (${esc(m.offer?.actor?.display_name || m.offer?.actor?.legal_name)}) · ${esc(m.rc_ecosystems?.name)}</div>
             <div class="expl">${esc(m.explanation)}</div>
             <div class="acts"><button class="btn sm primary" data-act="mgr" data-ok="1" data-id="${m.id}">Aprobar y proponer</button> <button class="btn sm danger" data-act="mgr" data-ok="0" data-id="${m.id}">Descartar</button></div>
-          </div></div>`).join("") || '<div class="empty">Nada en revisión.</div>'}</div></div>`;
+          </div></div>`).join("") || emptyState("Nada esperando tu decisión", "Cuando el motor encuentre cruces con puntaje de 50 a 69, llegarán aquí para que los apruebes.")}</div></div>`;
     bindMatchActions(viewPanel);
   }
 
@@ -461,7 +504,7 @@
     const [path, qs] = h.split("?");
     const fn = routes[path] || viewHome;
     renderChrome();
-    app.innerHTML = '<p class="muted">Cargando…</p>';
+    app.innerHTML = '<div class="skel" aria-busy="true" aria-label="Cargando"><div class="sk h"></div><div class="sk p"></div><div class="grid g3"><div class="sk c"></div><div class="sk c"></div><div class="sk c"></div></div></div>';
     try { await fn(new URLSearchParams(qs || "")); } catch (e) { fail(e); }
     window.scrollTo(0, 0);
   }
