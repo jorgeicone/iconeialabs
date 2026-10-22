@@ -77,7 +77,19 @@
 
   // ---------- vistas ----------
   async function viewHome() {
-    const { data: s } = await sb.rpc("rc_network_stats");
+    const [{ data: s }, { data: evs }] = await Promise.all([
+      sb.rpc("rc_network_stats"),
+      sb.from("rc_events").select("id,name,starts_at,ends_at,location,mode,status,rc_ecosystems(slug,name)")
+        .in("status", ["open", "scheduled", "live"]).gte("ends_at", new Date().toISOString()).order("starts_at").limit(3),
+    ]);
+    const nextEvents = (evs || []).length ? `
+      <div class="section"><h2>Próximas ruedas de negocio</h2><p class="muted">Citas 1:1 entre compradores y proveedores, con agenda armada por afinidad.</p>
+      <div class="grid g3">${evs.map((e) => `<a class="card eco" href="#/rueda?id=${e.id}">
+        <div class="art thumb">${RC_ART.photo(e.rc_ecosystems?.slug || "hero", "sm")}</div>
+        <span class="pill ${(EV_STATUS[e.status] || [])[1] || ""}">${(EV_STATUS[e.status] || [e.status])[0]}</span>
+        <h4 style="margin-top:8px">${esc(e.name)}</h4>
+        <p>${esc(fmtDay(e.starts_at))} · ${fmtHour(e.starts_at)} · ${esc(e.location || e.mode)}</p></a>`).join("")}</div>
+      <p style="margin-top:10px"><a href="#/ruedas">Ver todas las ruedas →</a></p></div>` : "";
     const st = s || {};
     const ecoCards = (st.ecosystems || []).map((e) => `
       <a class="card eco" href="#/explorar?eco=${e.slug}">
@@ -113,6 +125,7 @@
           <div class="card"><span class="stepn">3</span><h4>Cierras con acompañamiento</h4><p>Si los dos aceptan, se revela el contacto, se agenda la cita y un gestor te acompaña hasta el negocio.</p></div>
         </div>
       </div>
+      ${nextEvents}
       <div class="section"><h2>Ecosistemas</h2><p class="muted">Elige uno para ver lo que hoy se ofrece y se busca.</p>
       <div class="grid g3">${ecoCards}</div></div>`;
   }
@@ -497,8 +510,181 @@
     bindMatchActions(viewPanel);
   }
 
+  // ---------- ruedas de negocio ----------
+  const TZ = "America/Bogota";
+  const fmtDay = (d) => new Date(d).toLocaleDateString("es-CO", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
+  const fmtHour = (d) => new Date(d).toLocaleTimeString("es-CO", { timeZone: TZ, hour: "2-digit", minute: "2-digit" });
+  const EV_STATUS = { draft: ["Borrador", ""], open: ["Inscripciones abiertas", "ok"], scheduled: ["Agenda publicada", "purple"], live: ["En curso", "anchor"], closed: ["Cerrada", ""] };
+  const ROLES = { buyer: "Comprador", seller: "Proveedor", both: "Comprador y proveedor" };
+  const OUTCOMES = { interes: "Hay interés", negocio: "Negocio cerrado", sin_interes: "Sin interés", no_asistio: "No asistió" };
+  const actorName = (a) => (a ? a.display_name || a.legal_name : "—");
+
+  async function viewEvents() {
+    const { data: evs, error } = await sb.from("rc_events").select("*, rc_ecosystems(slug,name)").order("starts_at");
+    if (error) return fail(error);
+    const sums = await Promise.all(evs.map((e) => sb.rpc("rc_event_summary", { p_event: e.id }).then((r) => r.data || {})));
+    const create = state.manager ? `
+      <details class="card" style="margin:16px 0"><summary><b>Crear una rueda</b></summary>
+        <form id="newev" style="margin-top:14px">
+          <div class="row">
+            <div class="field" style="grid-column:1/-1"><label for="ev-name">Nombre</label><input id="ev-name" name="name" required placeholder="Rueda de encadenamiento · Turismo Valle"></div>
+            <div class="field"><label for="ev-eco">Ecosistema</label><select id="ev-eco" name="ecosystem_id"><option value="">Todos</option>${state.ecosystems.map((e) => `<option value="${e.id}">${esc(e.name)}</option>`).join("")}</select></div>
+            <div class="field"><label for="ev-date">Fecha</label><input id="ev-date" name="date" type="date" required></div>
+            <div class="field"><label for="ev-from">Desde (hora Colombia)</label><input id="ev-from" name="from" type="time" value="09:00" required></div>
+            <div class="field"><label for="ev-to">Hasta</label><input id="ev-to" name="to" type="time" value="12:00" required></div>
+            <div class="field"><label for="ev-slot">Minutos por cita</label><input id="ev-slot" name="slot_minutes" type="number" min="10" max="60" value="20"></div>
+            <div class="field"><label for="ev-max">Citas máximas por actor</label><input id="ev-max" name="max_meetings" type="number" min="1" max="20" value="8"></div>
+            <div class="field"><label for="ev-tables">Mesas simultáneas</label><input id="ev-tables" name="tables" type="number" min="1" max="200" value="30"></div>
+            <div class="field"><label for="ev-mode">Modalidad</label><select id="ev-mode" name="mode"><option value="presencial">Presencial</option><option value="virtual">Virtual</option><option value="mixto">Mixta</option></select></div>
+            <div class="field"><label for="ev-loc">Lugar o enlace</label><input id="ev-loc" name="location" placeholder="Universidad EAN · Bogotá"></div>
+          </div>
+          <div class="field"><label for="ev-desc">Descripción</label><textarea id="ev-desc" name="description" placeholder="Quiénes compran, quiénes ofrecen y qué se busca."></textarea></div>
+          <div class="actions"><button class="btn primary">Crear rueda</button></div>
+        </form></details>` : "";
+    app.innerHTML = `
+      <h2>Ruedas de negocio</h2>
+      <p class="muted">Encuentros de citas 1:1 entre compradores y proveedores. La agenda la arma el motor según la afinidad de lo que cada uno publicó.</p>
+      ${create}
+      <div class="grid g3" style="margin-top:16px">${evs.map((e, i) => {
+        const [st, cls] = EV_STATUS[e.status] || [e.status, ""]; const s = sums[i];
+        return `<a class="card eco" href="#/rueda?id=${e.id}">
+          <div class="art thumb">${RC_ART.photo(e.rc_ecosystems?.slug || "hero", "sm")}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><span class="pill ${cls}">${st}</span>${e.rc_ecosystems ? `<span class="pill">${esc(e.rc_ecosystems.name)}</span>` : ""}</div>
+          <h4>${esc(e.name)}</h4>
+          <p>${esc(fmtDay(e.starts_at))} · ${fmtHour(e.starts_at)}–${fmtHour(e.ends_at)}</p>
+          <div class="meta"><span>${esc(e.location || e.mode)}</span><span>${s.buyers ?? 0} compradores</span><span>${s.sellers ?? 0} proveedores</span>${s.meetings ? `<span>${s.meetings} citas</span>` : ""}</div>
+        </a>`; }).join("") || emptyState("Aún no hay ruedas programadas", "Cuando la Fundación o un aliado programe una, aparecerá aquí con su enlace de inscripción.")}</div>`;
+    const f = document.getElementById("newev");
+    if (f) f.onsubmit = async (ev) => {
+      ev.preventDefault(); const fd = new FormData(f);
+      const at = (t) => new Date(`${fd.get("date")}T${t}:00-05:00`).toISOString();
+      if (fd.get("to") <= fd.get("from")) return toast("La hora final debe ser después de la inicial", true);
+      const row = { name: fd.get("name"), ecosystem_id: fd.get("ecosystem_id") || null, description: fd.get("description") || null,
+        location: fd.get("location") || null, mode: fd.get("mode"), starts_at: at(fd.get("from")), ends_at: at(fd.get("to")),
+        slot_minutes: Number(fd.get("slot_minutes")), max_meetings: Number(fd.get("max_meetings")), tables: Number(fd.get("tables")),
+        status: "open", created_by: state.user.id };
+      const { data, error } = await sb.from("rc_events").insert(row).select().single();
+      if (error) return fail(error);
+      toast("Rueda creada. Comparte su enlace para que se inscriban."); go("#/rueda?id=" + data.id);
+    };
+  }
+
+  async function viewEvent(params) {
+    const id = params.get("id");
+    const { data: e, error } = await sb.from("rc_events").select("*, rc_ecosystems(slug,name)").eq("id", id).maybeSingle();
+    if (error) return fail(error);
+    if (!e) { app.innerHTML = emptyState("No encontramos esta rueda", "Puede que el enlace esté incompleto o que la rueda aún no se publique.", '<a class="btn" href="#/ruedas">Ver ruedas</a>'); return; }
+    const { data: s } = await sb.rpc("rc_event_summary", { p_event: id });
+    const sum = s || {};
+    let parts = [], meetings = [], mine = null;
+    if (state.user) {
+      const [{ data: p }, { data: m }] = await Promise.all([
+        sb.from("rc_event_participants").select("*, rc_actors(id,display_name,legal_name,region,verified_at)").eq("event_id", id).order("created_at"),
+        sb.from("rc_meetings").select("*, buyer:rc_actors!rc_meetings_buyer_actor_id_fkey(id,display_name,legal_name,contact_email,contact_phone), seller:rc_actors!rc_meetings_seller_actor_id_fkey(id,display_name,legal_name,contact_email,contact_phone)").eq("event_id", id).order("slot_index").order("table_no"),
+      ]);
+      parts = p || []; meetings = m || [];
+      mine = state.actor ? parts.find((x) => x.actor_id === state.actor.id) : null;
+    }
+    const [st, cls] = EV_STATUS[e.status] || [e.status, ""];
+    const canJoin = ["open", "scheduled"].includes(e.status);
+    const myMeetings = state.actor ? meetings.filter((m) => [m.buyer_actor_id, m.seller_actor_id].includes(state.actor.id)) : [];
+
+    let joinBox;
+    if (!state.user) joinBox = `<div class="notice">Para inscribirte <a href="#/entrar">entra a Red Conecta</a> y registra tu empresa o perfil.</div>`;
+    else if (!state.actor) joinBox = `<div class="notice">Para inscribirte primero <a href="#/registro">registra tu empresa o perfil</a>.</div>`;
+    else if (!canJoin) joinBox = mine ? `<div class="notice">Estás inscrito como <b>${ROLES[mine.role]}</b>.</div>` : "";
+    else joinBox = `<form id="join" class="card" style="margin-bottom:16px">
+        <h4>${mine ? "Tu inscripción" : "Inscribirme en esta rueda"}</h4>
+        <div class="row" style="align-items:end">
+          <div class="field"><label for="j-role">Voy como</label><select id="j-role" name="role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${mine?.role === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+          <div class="field" style="grid-column:span 2"><label for="j-wants">Qué busco en la rueda (opcional)</label><input id="j-wants" name="wants" value="${esc(mine?.wants || "")}" placeholder="Proveedores de empaque, compradores en Bogotá…"></div>
+          <div class="field"><button class="btn primary">${mine ? "Actualizar" : "Inscribirme"}</button></div>
+        </div>
+        <p class="small muted" style="margin:0">La agenda se arma con lo que tienes publicado en la red. <a href="#/publicar">Publica tus ofertas o necesidades</a> para que te asignen mejores citas.</p>
+      </form>`;
+
+    const myAgenda = state.actor && mine ? `
+      <div class="section"><h3>Mi agenda</h3>
+      ${myMeetings.length ? `<div class="table"><table class="agenda"><thead><tr><th>Hora</th><th>Mesa</th><th>Con</th><th>Por qué</th><th>Resultado</th></tr></thead><tbody>
+        ${myMeetings.map((m) => { const other = m.buyer_actor_id === state.actor.id ? m.seller : m.buyer; const reveal = ["interes", "negocio"].includes(m.outcome);
+          return `<tr><td class="mono">${fmtHour(m.starts_at)}</td><td class="mono">${m.table_no ?? "—"}</td>
+            <td><b>${esc(actorName(other))}</b><div class="small muted">${m.buyer_actor_id === state.actor.id ? "Proveedor" : "Comprador"} · afinidad ${Number(m.score || 0).toFixed(0)}</div>${reveal ? `<div class="small">${esc(other?.contact_email || "")} ${other?.contact_phone ? "· " + esc(other.contact_phone) : ""}</div>` : ""}</td>
+            <td class="small">${esc((m.buyer_actor_id === state.actor.id ? m.reason : m.reason_seller || m.reason) || "")}</td>
+            <td>${outcomeSelect(m)}</td></tr>`; }).join("")}
+      </tbody></table></div>` : `<p class="muted">${e.status === "open" ? "La agenda se publica cuando cierren las inscripciones. Te avisaremos." : "No quedaste con citas en esta rueda. Publica ofertas o necesidades afines al ecosistema para la próxima."}</p>`}
+      </div>` : "";
+
+    const slots = Math.floor((new Date(e.ends_at) - new Date(e.starts_at)) / 60000 / e.slot_minutes);
+    const managerBox = state.manager ? `
+      <div class="section"><h3>Gestión de la rueda</h3>
+        <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn primary" data-ev="gen">${meetings.length ? "Regenerar agenda pendiente" : "Generar agenda"}</button>
+          ${e.status !== "open" ? '<button class="btn" data-ev="open">Reabrir inscripciones</button>' : ""}
+          ${e.status !== "live" ? '<button class="btn" data-ev="live">Marcar en curso</button>' : ""}
+          ${e.status !== "closed" ? '<button class="btn" data-ev="closed">Cerrar rueda</button>' : ""}
+          <button class="btn ghost" data-ev="copy">Copiar enlace de inscripción</button>
+        </div>
+        <p class="small muted">Regenerar conserva las citas que ya tienen asistencia o resultado y rehace el resto. ${slots} franjas de ${e.slot_minutes} min · hasta ${e.max_meetings} citas por actor · ${e.tables} mesas.</p>
+        <h3>Participantes (${parts.length})</h3>
+        <div class="table"><table><thead><tr><th>Actor</th><th>Rol</th><th>Busca</th><th>Citas</th></tr></thead><tbody>
+          ${parts.map((p) => `<tr><td>${esc(actorName(p.rc_actors))}${p.rc_actors?.verified_at ? " ✓" : ""}<div class="small muted">${esc(p.rc_actors?.region || "")}</div></td><td>${ROLES[p.role]}</td><td class="small">${esc(p.wants || "")}</td><td class="mono">${meetings.filter((m) => [m.buyer_actor_id, m.seller_actor_id].includes(p.actor_id)).length}</td></tr>`).join("") || '<tr><td colspan="4" class="muted">Aún no hay inscritos.</td></tr>'}
+        </tbody></table></div>
+        <h3>Agenda completa (${meetings.length} citas)</h3>
+        ${meetings.length ? `<div class="table"><table class="agenda"><thead><tr><th>Hora</th><th>Mesa</th><th>Comprador</th><th>Proveedor</th><th>Afinidad</th><th>Resultado</th></tr></thead><tbody>
+          ${meetings.map((m) => `<tr><td class="mono">${fmtHour(m.starts_at)}</td><td class="mono">${m.table_no ?? "—"}</td><td>${esc(actorName(m.buyer))}</td><td>${esc(actorName(m.seller))}</td><td class="mono">${Number(m.score || 0).toFixed(0)}</td><td>${outcomeSelect(m)}</td></tr>`).join("")}
+        </tbody></table></div>` : '<p class="muted">Todavía no hay agenda. Genérala cuando haya compradores y proveedores inscritos.</p>'}
+      </div>` : "";
+
+    app.innerHTML = `
+      <p><a href="#/ruedas">← Ruedas de negocio</a></p>
+      <div class="ecohead"><div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><span class="pill ${cls}">${st}</span>${e.rc_ecosystems ? `<span class="pill">${esc(e.rc_ecosystems.name)}</span>` : ""}</div>
+        <h2>${esc(e.name)}</h2>
+        <p><b>${esc(fmtDay(e.starts_at))}</b> · ${fmtHour(e.starts_at)}–${fmtHour(e.ends_at)} (hora de Colombia) · ${esc(e.location || e.mode)}</p>
+        <p class="muted">${esc(e.description || "")}</p>
+      </div><div class="art wide">${RC_ART.photo(e.rc_ecosystems?.slug || "hero")}</div></div>
+      <div class="grid g4" style="margin:16px 0">
+        <div class="kpi"><b>${sum.buyers ?? 0}</b><span>compradores</span></div>
+        <div class="kpi"><b>${sum.sellers ?? 0}</b><span>proveedores</span></div>
+        <div class="kpi"><b>${sum.meetings ?? 0}</b><span>citas agendadas</span></div>
+        <div class="kpi"><b>${(sum.interes ?? 0) + (sum.negocio ?? 0)}</b><span>citas con interés o negocio</span></div>
+      </div>
+      ${joinBox}${myAgenda}${managerBox}`;
+
+    const jf = document.getElementById("join");
+    if (jf) jf.onsubmit = async (ev) => {
+      ev.preventDefault(); const fd = new FormData(jf);
+      const { error } = await sb.rpc("rc_event_join", { p_event: id, p_actor: state.actor.id, p_role: fd.get("role"), p_wants: fd.get("wants") || null });
+      if (error) return fail(error); toast(mine ? "Inscripción actualizada" : "Quedaste inscrito. Te avisaremos cuando salga la agenda."); viewEvent(params);
+    };
+    app.querySelectorAll("select[data-meeting]").forEach((sel) => sel.onchange = async () => {
+      if (!sel.value) return;
+      const { error } = await sb.rpc("rc_meeting_result", { p_meeting: sel.dataset.meeting, p_outcome: sel.value });
+      if (error) return fail(error); toast("Resultado guardado"); viewEvent(params);
+    });
+    app.querySelectorAll("[data-ev]").forEach((b) => b.onclick = async () => {
+      const act = b.dataset.ev;
+      if (act === "copy") {
+        const url = location.href.split("#")[0] + "#/rueda?id=" + id;
+        try { await navigator.clipboard.writeText(url); toast("Enlace copiado"); } catch { toast(url); }
+        return;
+      }
+      if (act === "gen") {
+        b.disabled = true; b.textContent = "Generando…";
+        const { data, error } = await sb.rpc("rc_generate_agenda", { p_event: id });
+        if (error) { b.disabled = false; return fail(error); }
+        toast(`Agenda lista: ${data.citas} citas en ${data.franjas} franjas${data.sin_cupo ? ` · ${data.sin_cupo} pares sin cupo` : ""}`); return viewEvent(params);
+      }
+      const { error } = await sb.from("rc_events").update({ status: act }).eq("id", id);
+      if (error) return fail(error); toast("Estado de la rueda actualizado"); viewEvent(params);
+    });
+  }
+  function outcomeSelect(m) {
+    return `<select data-meeting="${m.id}" aria-label="Resultado de la cita" class="sel-sm"><option value="">${m.outcome ? OUTCOMES[m.outcome] : "Registrar…"}</option>${Object.entries(OUTCOMES).filter(([k]) => k !== m.outcome).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>`;
+  }
+
   // ---------- router ----------
-  const routes = { "": viewHome, "/": viewHome, "/explorar": viewExplore, "/entrar": viewLogin, "/registro": viewRegister, "/publicar": viewPublish, "/mis-publicaciones": viewMine, "/matches": viewMatches, "/panel": viewPanel };
+  const routes = { "": viewHome, "/": viewHome, "/explorar": viewExplore, "/ruedas": viewEvents, "/rueda": viewEvent, "/entrar": viewLogin, "/registro": viewRegister, "/publicar": viewPublish, "/mis-publicaciones": viewMine, "/matches": viewMatches, "/panel": viewPanel };
   async function route() {
     const h = location.hash.replace(/^#/, "");
     const [path, qs] = h.split("?");
