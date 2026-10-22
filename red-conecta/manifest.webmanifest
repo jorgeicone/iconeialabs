@@ -1,0 +1,13 @@
+{
+  "name": "Red Conecta",
+  "short_name": "Conecta",
+  "description": "Una sola puerta a muchos ecosistemas. Fundación Managers × ICONEialabs.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#050d1f",
+  "theme_color": "#050d1f",
+  "lang": "es",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

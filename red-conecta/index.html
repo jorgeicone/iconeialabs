@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Red Conecta</title>
+<meta name="description" content="Red Conecta: una sola puerta a muchos ecosistemas. Fundación Managers × ICONEialabs.">
+<meta name="theme-color" content="#050d1f">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="Inicio">
+      <span class="dot"></span><span class="name">Red Conecta</span>
+    </a>
+    <nav id="nav" aria-label="Principal">
+      <a href="#/explorar">Explorar</a>
+      <a href="#/publicar" data-auth>Publicar</a>
+      <a href="#/matches" data-auth>Matches</a>
+      <a href="#/mis-publicaciones" data-auth>Mis publicaciones</a>
+      <a href="#/panel" data-manager hidden>Panel gestor</a>
+    </nav>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<main id="app" class="wrap"><p class="muted">Cargando…</p></main>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="wordmark">ICONE<span>ialabs</span></span> × Fundación Managers</div>
+  <div class="muted">Método ICONE — Estrategia · Sistemas · Resultados · www.iconeialabs.com</div>
+</div></footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="vendor/supabase.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
