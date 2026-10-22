@@ -100,11 +100,31 @@ ${inner}</svg>`;
     },
   };
 
+  // Fotografías de Adobe Stock (licencia gratuita), tratadas en modo claro. Ids en el banco de escenas.
+  const PHOTOS = {
+    hero: "Socios cerrando un acuerdo con un apretón de manos",
+    productoras: "Dos operarias revisan un despacho en la bodega",
+    productividad: "Ingeniera con tableta revisando la producción en planta",
+    emprendimiento: "Emprendedora presenta resultados a su equipo",
+    talento: "Entrevista de trabajo: una candidata entrega su hoja de vida",
+    financiacion: "Equipo revisando cifras y proyecciones",
+    conocimiento: "Taller de formación con participantes de varias edades",
+    turismo: "Recepción de hotel atendiendo a huéspedes",
+    rural: "Caficultora recogiendo café maduro en su finca",
+  };
+
   const cache = {};
+  const svg = (slug) => {
+    const id = scenes[slug] ? slug : "hero";
+    return (cache[id] ||= shell(id, scenes[id]()));
+  };
   return {
-    svg(slug) {
-      const id = scenes[slug] ? slug : "hero";
-      return (cache[id] ||= shell(id, scenes[id]()));
+    svg,
+    // size: "sm" (640 px, tarjetas) o "lg" (1280 px, portada y cabeceras)
+    photo(slug, size = "lg") {
+      if (!PHOTOS[slug]) return svg(slug);
+      const src = `img/${slug}${size === "sm" ? "-sm" : ""}.webp`;
+      return `<img src="${src}" alt="${PHOTOS[slug]}" loading="${size === "sm" ? "lazy" : "eager"}" decoding="async" width="${size === "sm" ? 640 : 1280}" height="${size === "sm" ? 360 : 720}">`;
     },
   };
 })();

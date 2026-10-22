@@ -81,7 +81,7 @@
     const st = s || {};
     const ecoCards = (st.ecosystems || []).map((e) => `
       <a class="card eco" href="#/explorar?eco=${e.slug}">
-        <div class="art thumb">${RC_ART.svg(e.slug)}</div>
+        <div class="art thumb">${RC_ART.photo(e.slug, "sm")}</div>
         <h4>${esc(e.name)}</h4>
         <p>${esc(ecoBySlug(e.slug)?.description || "")}</p>
         <div class="meta"><span>${e.listings} publicaciones</span><span>${e.matches} matches</span></div>
@@ -98,7 +98,7 @@
             <a class="btn" href="#/explorar">Explorar la red</a>
           </div>
         </div>
-        <div class="art wide">${RC_ART.svg("hero")}</div>
+        <div class="art wide">${RC_ART.photo("hero")}</div>
       </div>
       <div class="grid g4">
         <div class="kpi"><b>${st.actors ?? 0}</b><span>actores en la red</span></div>
@@ -131,7 +131,7 @@
     const cur = ecoBySlug(ecoSlug);
     const ecoChips = `<div class="chips tabs"><a class="chip ${ecoSlug ? "" : "on"}" href="#/explorar">Todos</a>${state.ecosystems.map((e) => `<a class="chip ${e.slug === ecoSlug ? "on" : ""}" href="#/explorar?eco=${e.slug}">${esc(e.name)}</a>`).join("")}</div>`;
     app.innerHTML = `
-      ${cur ? `<div class="ecohead"><div><div class="eyebrow">Ecosistema</div><h2>${esc(cur.name)}</h2><p class="muted">${esc(cur.description || "")}</p></div><div class="art wide">${RC_ART.svg(cur.slug)}</div></div>` : "<h2>Explorar la red</h2>"}
+      ${cur ? `<div class="ecohead"><div><div class="eyebrow">Ecosistema</div><h2>${esc(cur.name)}</h2><p class="muted">${esc(cur.description || "")}</p></div><div class="art wide">${RC_ART.photo(cur.slug)}</div></div>` : "<h2>Explorar la red</h2>"}
       ${ecoChips}
       <p class="muted">${rows.length} publicaciones activas${cur ? " en " + esc(cur.name) : ""}.</p>
       <form class="toolbar" id="f">
@@ -153,7 +153,7 @@
   }
   function cardListing(l) {
     return `<div class="card">
-      <div class="art thumb" title="${esc(l.ecosystem_name)}">${RC_ART.svg(l.ecosystem_slug)}</div>
+      <div class="art thumb" title="${esc(l.ecosystem_name)}">${RC_ART.photo(l.ecosystem_slug, "sm")}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
         <span class="pill ${l.side}">${l.side === "offer" ? "Oferta" : "Demanda"}</span>
         <span class="pill">${esc(TYPES[l.type] || l.type)}</span>
@@ -190,7 +190,7 @@
         </form>
       </div>
       <aside class="login-side">
-        <div class="art wide">${RC_ART.svg("hero")}</div>
+        <div class="art wide">${RC_ART.photo("hero")}</div>
         <ul class="ticks">
           <li>Un solo perfil para todos los ecosistemas</li>
           <li>Matches con puntaje y explicación</li>
