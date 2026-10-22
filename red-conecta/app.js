@@ -99,7 +99,7 @@
         <div class="meta"><span>${e.listings} publicaciones</span><span>${e.matches} matches</span></div>
       </a>`).join("");
     app.innerHTML = `
-      ${state.user && !state.actor ? '<div class="notice">Falta un paso: <a href="#/registro">registra tu empresa o perfil</a> para publicar y recibir matches.</div>' : ""}
+      ${state.user && !state.actor ? '<div class="notice">Falta un paso: registra tu empresa o perfil para publicar y recibir matches. <a href="#/asistente">Hazlo conversando con el asistente</a> o <a href="#/registro">usa el formulario</a>.</div>' : ""}
       <div class="hero split">
         <div>
           <div class="eyebrow">Fundación Managers × ICONEialabs</div>
@@ -241,6 +241,7 @@
     app.innerHTML = `
       <h2>${state.actor ? "Tu perfil en la red" : "Registra tu empresa o perfil"}</h2>
       <p class="muted">Una sola identidad para todos los ecosistemas. Lo que marques aquí define dónde te propone la red.</p>
+      ${state.actor ? "" : '<div class="notice">¿Prefieres conversar? <a href="#/asistente">El asistente arma tu perfil y tus primeras publicaciones</a> a partir de lo que le cuentes.</div>'}
       <form id="f">
         <div class="row">
           <div class="field"><label>Tipo</label><select name="kind" required>
@@ -289,7 +290,7 @@
     const tagChips = state.tags.filter((t) => t.kind === "tag").map((t) => `<span class="chip" data-tag="${esc(t.code)}">${esc(t.label)}</span>`).join("");
     app.innerHTML = `
       <h2>Publicar en la red</h2>
-      <p class="muted">Describe con tus palabras. El motor clasifica y en segundos te muestra con quién te cruza.</p>
+      <p class="muted">Describe con tus palabras. El motor clasifica y en segundos te muestra con quién te cruza. ¿Prefieres conversar? <a href="#/asistente">Publica con el asistente</a>.</p>
       <form id="f">
         <div class="row">
           <div class="field"><label>¿Qué publicas?</label><select name="side"><option value="demand">Una necesidad (demanda)</option><option value="offer">Una oferta</option></select></div>
@@ -510,6 +511,129 @@
     bindMatchActions(viewPanel);
   }
 
+  // ---------- asistente de registro con IA ----------
+  // La conversación vive solo en memoria; la función rc-asistente propone y el usuario confirma antes de guardar.
+  const chat = { messages: [], proposal: null, busy: false };
+  const ASSIST_ERR = {
+    asistente_no_configurado: "El asistente todavía no está activo. Mientras tanto puedes usar el formulario.",
+    clave_invalida: "El asistente no está disponible en este momento. Usa el formulario y avisaremos al equipo.",
+    clave_sin_permiso: "El asistente no está disponible en este momento. Usa el formulario y avisaremos al equipo.",
+    ocupado: "Hay muchas consultas en este momento. Intenta de nuevo en un minuto.",
+    inicia_sesion: "Tu sesión expiró. Vuelve a entrar para seguir.",
+    mensaje_muy_largo: "Ese mensaje es muy largo. Divídelo en dos, por favor.",
+  };
+  const greeting = () => state.actor
+    ? `Hola. ¿Qué quieres publicar hoy en la red? Cuéntame qué ofreces o qué necesitas, con el detalle que tengas.`
+    : "Hola, soy el asistente de Red Conecta. Cuéntame en tus palabras quién eres o qué hace tu empresa, en qué ciudad está y qué ofreces o qué necesitas. Con eso armo tu perfil y tus primeras publicaciones.";
+
+  function viewAssistant() {
+    if (!requireAuth()) return;
+    if (!chat.messages.length) chat.messages.push({ role: "assistant", content: greeting(), local: true });
+    renderAssistant();
+  }
+
+  function renderAssistant() {
+    const p = chat.proposal;
+    const bubbles = chat.messages.map((m) => `<div class="bubble ${m.role === "user" ? "me" : "bot"}">${esc(m.display ?? m.content).replace(/\n/g, "<br>")}</div>`).join("");
+    const eco = (slug) => ecoBySlug(slug)?.name || slug;
+    const proposal = p ? `
+      <div class="card proposal" id="proposal">
+        <h3>Propuesta para revisar</h3>
+        ${p.resumen ? `<p class="muted">${esc(p.resumen)}</p>` : ""}
+        ${state.actor ? `<p class="small muted">Las publicaciones se agregan a tu perfil: <b>${esc(state.actor.display_name || state.actor.legal_name)}</b>.</p>` : `
+          <div class="prop-actor">
+            <h4>${esc(p.actor.display_name || p.actor.legal_name)}</h4>
+            <div class="meta"><span>${{ company: "Empresa", person: "Persona", entity: "Entidad" }[p.actor.kind]}</span>${p.actor.city || p.actor.region ? `<span>${esc([p.actor.city, p.actor.region].filter(Boolean).join(", "))}</span>` : ""}${p.actor.size ? `<span>${{ micro: "Micro", small: "Pequeña", medium: "Mediana", large: "Grande" }[p.actor.size]}</span>` : ""}${p.actor.ciiu_main ? `<span>CIIU ${esc(p.actor.ciiu_main)}</span>` : ""}</div>
+            ${p.actor.description ? `<p>${esc(p.actor.description)}</p>` : ""}
+          </div>`}
+        <div class="grid" style="gap:10px;margin:12px 0">${p.listings.map((l, i) => `
+          <label class="prop-li">
+            <input type="checkbox" data-li="${i}" checked>
+            <div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"><span class="pill ${l.side}">${l.side === "offer" ? "Oferta" : "Demanda"}</span><span class="pill">${esc(eco(l.ecosystem_slug))}</span><span class="pill">${esc(TYPES[l.type] || l.type)}</span></div>
+              <b>${esc(l.title)}</b>
+              <p class="small muted" style="margin:4px 0 0">${esc(l.description)}</p>
+              <div class="meta" style="margin-top:4px">${l.quantity ? `<span>${l.quantity} ${esc(l.unit || "")}</span>` : ""}${l.price_min || l.price_max ? `<span>${fmtCop(l.price_min)}${l.price_max ? " – " + fmtCop(l.price_max) : ""}</span>` : ""}${(l.tags || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div>
+            </div>
+          </label>`).join("") || '<p class="muted">Aún no hay publicaciones en la propuesta. Cuéntale al asistente qué ofreces o qué necesitas.</p>'}</div>
+        <div class="actions"><button class="btn primary" id="save-prop" ${p.listings.length ? "" : "disabled"}>${state.actor ? "Publicar" : "Crear mi perfil y publicar"}</button><button class="btn" id="edit-prop">Pedir cambios</button></div>
+      </div>` : "";
+    app.innerHTML = `
+      <div class="assist">
+        <div class="assist-head">
+          <div><h2>${state.actor ? "Publica conversando" : "Regístrate conversando"}</h2>
+          <p class="muted">Cuéntale al asistente qué haces y qué buscas. Él arma ${state.actor ? "tus publicaciones" : "tu perfil y tus publicaciones"}; tú revisas antes de guardar.</p></div>
+          <a class="btn ghost sm" href="${state.actor ? "#/publicar" : "#/registro"}">Prefiero el formulario</a>
+        </div>
+        <div class="chat" id="chat" aria-live="polite">${bubbles}${chat.busy ? '<div class="bubble bot typing" aria-label="El asistente está escribiendo"><span></span><span></span><span></span></div>' : ""}</div>
+        ${proposal}
+        <form id="say" class="say">
+          <label for="say-text" class="sr">Tu mensaje</label>
+          <textarea id="say-text" rows="2" maxlength="2000" placeholder="Ej.: Tenemos una tostadora de café en Pitalito y buscamos empaques compostables…" ${chat.busy ? "disabled" : ""}></textarea>
+          <button class="btn primary" ${chat.busy ? "disabled" : ""}>Enviar</button>
+        </form>
+        <p class="small muted">El asistente usa inteligencia artificial (Claude) y puede equivocarse. Nada se guarda hasta que tú lo confirmes. <a href="#" id="restart">Empezar de nuevo</a></p>
+      </div>`;
+    const box = document.getElementById("chat"); box.scrollTop = box.scrollHeight;
+    const form = document.getElementById("say"), ta = document.getElementById("say-text");
+    if (!chat.busy) ta.focus();
+    ta.addEventListener("keydown", (ev) => { if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); form.requestSubmit(); } });
+    form.onsubmit = (ev) => { ev.preventDefault(); const t = ta.value.trim(); if (t && !chat.busy) sendToAssistant(t); };
+    document.getElementById("restart").onclick = (ev) => { ev.preventDefault(); chat.messages = []; chat.proposal = null; viewAssistant(); };
+    const save = document.getElementById("save-prop");
+    if (save) save.onclick = () => saveProposal(save);
+    const edit = document.getElementById("edit-prop");
+    if (edit) edit.onclick = () => { ta.value = "Cambia "; ta.focus(); };
+  }
+
+  async function sendToAssistant(text) {
+    chat.messages.push({ role: "user", content: text });
+    chat.busy = true; renderAssistant();
+    const history = chat.messages.filter((m) => !m.local).map(({ role, content }) => ({ role, content }));
+    const { data, error } = await sb.functions.invoke("rc-asistente", { body: { messages: history } });
+    chat.busy = false;
+    if (error) {
+      let code = "";
+      try { code = (await error.context.json()).error; } catch { /* sin cuerpo */ }
+      chat.messages.push({ role: "assistant", content: ASSIST_ERR[code] || "No pude responder en este momento. Intenta de nuevo en un momento.", local: true });
+    } else {
+      if (data.proposal) chat.proposal = data.proposal;
+      // al modelo se le recuerda qué propuso, sin mostrarlo en la burbuja
+      chat.messages.push({ role: "assistant", content: data.reply + (data.proposal ? `\n\n(Propuesta enviada para revisión: ${data.proposal.resumen || data.proposal.listings.map((l) => l.title).join("; ")})` : ""), display: data.reply });
+    }
+    renderAssistant();
+  }
+
+  async function saveProposal(btn) {
+    const p = chat.proposal;
+    const chosen = [...app.querySelectorAll("input[data-li]:checked")].map((c) => p.listings[Number(c.dataset.li)]);
+    if (!chosen.length) return toast("Marca al menos una publicación", true);
+    btn.disabled = true; btn.textContent = "Guardando…";
+    try {
+      let actorId = state.actor?.id;
+      if (!actorId) {
+        if (!p.actor.legal_name) throw new Error("Falta el nombre de la empresa o persona. Pídeselo al asistente.");
+        const row = { ...p.actor, contact_email: state.user.email, created_by: state.user.id };
+        const { data, error } = await sb.from("rc_actors").insert(row).select().single(); if (error) throw error;
+        actorId = data.id;
+      }
+      const ecoIds = [...new Set(chosen.map((l) => ecoBySlug(l.ecosystem_slug)?.id).filter(Boolean))];
+      if (ecoIds.length) {
+        const { error } = await sb.from("rc_actor_ecosystems").upsert(ecoIds.map((e) => ({ actor_id: actorId, ecosystem_id: e })), { onConflict: "actor_id,ecosystem_id", ignoreDuplicates: true });
+        if (error) throw error;
+      }
+      const region = p.actor.region || state.actor?.region || null;
+      const rows = chosen.map((l) => ({ actor_id: actorId, ecosystem_id: ecoBySlug(l.ecosystem_slug).id, side: l.side, type: l.type, title: l.title,
+        description: l.description, ciiu: l.ciiu, tags: l.tags, region, quantity: l.quantity, unit: l.unit, price_min: l.price_min, price_max: l.price_max, status: "active" }));
+      const { error } = await sb.from("rc_listings").insert(rows); if (error) throw error;
+      const isNew = !state.actor;
+      await loadSession();
+      chat.messages = []; chat.proposal = null;
+      toast(isNew ? "Perfil creado y publicaciones activas. Estos son tus primeros matches." : "Publicaciones activas. Estos son tus matches.");
+      go("#/matches");
+    } catch (e) { btn.disabled = false; btn.textContent = state.actor ? "Publicar" : "Crear mi perfil y publicar"; fail(e); }
+  }
+
   // ---------- ruedas de negocio ----------
   const TZ = "America/Bogota";
   const fmtDay = (d) => new Date(d).toLocaleDateString("es-CO", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
@@ -684,7 +808,7 @@
   }
 
   // ---------- router ----------
-  const routes = { "": viewHome, "/": viewHome, "/explorar": viewExplore, "/ruedas": viewEvents, "/rueda": viewEvent, "/entrar": viewLogin, "/registro": viewRegister, "/publicar": viewPublish, "/mis-publicaciones": viewMine, "/matches": viewMatches, "/panel": viewPanel };
+  const routes = { "": viewHome, "/": viewHome, "/explorar": viewExplore, "/ruedas": viewEvents, "/asistente": viewAssistant, "/rueda": viewEvent, "/entrar": viewLogin, "/registro": viewRegister, "/publicar": viewPublish, "/mis-publicaciones": viewMine, "/matches": viewMatches, "/panel": viewPanel };
   async function route() {
     const h = location.hash.replace(/^#/, "");
     const [path, qs] = h.split("?");
