@@ -911,7 +911,7 @@ function proyCopiarIA(ev){
   if(!campos||!VDATA) return;
   const pers=VDATA.participantes||[], res=VDATA.respuestas||[];
   const idx={}; res.forEach(r=>{ idx[r.participante_id+'|'+r.bloque+'|'+r.campo]=r.valor; });
-  let t='Eres el facilitador de un entrenamiento en ventas consultivas en Makaia. '+
+  let t='Eres el facilitador del Diplomado Élite en Ventas de la Universidad EAN para el equipo comercial de Casalimpia (Módulo 4 · Sesión 1 · Métricas que mueven la venta). '+
     'Abajo están las respuestas del equipo comercial en el bloque "'+(VTIT[bq]||bq)+'". '+
     'Escríbeme en tres frases el consolidado del equipo: el patrón común, la diferencia que más importa '+
     'y el vacío que hay que nombrar en voz alta. Sin viñetas, sin repetir las respuestas textuales.\n\n';
