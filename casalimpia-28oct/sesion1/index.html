@@ -679,7 +679,7 @@ var slides,i,show;
   function prev(){window.show(i-1);}
   function fs(){try{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen();}catch(e){}}
   addEventListener('keydown',function(e){
-    if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){ if(e.key==='PageDown'||e.key==='PageUp'||e.key==='Escape'){ e.target.blur(); } if(e.key!=='PageDown'&&e.key!=='PageUp')return; }
     if(['ArrowRight','PageDown',' ','Enter'].indexOf(e.key)>=0){e.preventDefault();next();}
     else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>=0){e.preventDefault();prev();}
     else if(e.key==='f'||e.key==='F')fs();
@@ -1396,7 +1396,7 @@ function vivoNavPintar(){
       document.getElementById('vcla').focus();
     }
   }
-  else{ setTimeout(()=>{ if(!VCOD){ vivoAbrir(); document.getElementById('vcla').focus(); } },900); }
+  else{ setTimeout(()=>{ if(!VCOD){ vivoAbrir(); } },900); }
 })();
 
 /* ---------- informe para el cliente ---------------------------------- */
