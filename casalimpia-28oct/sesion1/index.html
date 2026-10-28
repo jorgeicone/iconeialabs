@@ -359,6 +359,13 @@ body.live .slide.sinvivo .manual{display:block}
   #vinf .resp,#vinf .sem{page-break-inside:avoid}
 }
 
+.ph{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;background-color:#04122a}
+.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,42,.97) 0%,rgba(4,18,42,.9) 45%,rgba(4,18,42,.62) 100%)}
+.ph.hero::after{background:linear-gradient(90deg,rgba(4,18,42,.95) 0%,rgba(4,18,42,.78) 50%,rgba(4,18,42,.25) 100%)}
+.slide>*:not(.ph){position:relative;z-index:1}
+.slide>.brand,.slide>.foot{position:absolute}
+.slide::after{z-index:1}
+.card{backdrop-filter:blur(6px);background:rgba(7,26,58,.55)}
 </style>
 </head>
 <body>
@@ -366,6 +373,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 1 PORTADA -->
 <section class="slide center" data-min="2" data-titulo="Portada" data-bloque="espera">
+  <div class="ph hero" style="background-image:url('https://t4.ftcdn.net/jpg/01/43/98/89/500_F_143988971_vCJSSs023Vj1xvT9qgz0uHsDWH6nkxsW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b><span>Educación Continua · Diplomado Élite en Ventas 2026</span></div>
   <div class="kick">Módulo 4 · Revenue Intelligence · Sesión 1 de 3</div>
   <h1>Métricas que<br><em>mueven la venta</em></h1>
@@ -377,6 +385,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 2 RUTA -->
 <section class="slide" data-min="2" data-titulo="La ruta de hoy" data-bloque="espera">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/05/20/68/52/500_F_520685228_kz6AYC4pxfEjl5lcquDDvcVsfWDVBLfc.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">La ruta de hoy · 2 horas</div>
   <h2>Cuatro paradas y una <em>decisión propia</em></h2>
@@ -392,6 +401,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 3 ARRANQUE -->
 <section class="slide center" data-min="8" data-titulo="Pregunta de arranque" data-bloque="arranque">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/03/20/85/39/500_F_320853933_2xRsiUraUC9dC6cYDhbmZ4TJn5TpaWkS.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Para arrancar · una línea cada uno</div>
   <div class="q">¿Cuál fue la última cuenta que se les fue…<br><em>y por qué creen que fue?</em></div>
@@ -402,6 +412,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 4 BRECHAS -->
 <section class="slide" data-min="3" data-titulo="Lo que dijo el diagnóstico" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/67/52/80/500_F_467528061_0BMhT1Bw2IJabQY4dBXPnekaqRFVCazI.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Lo que ustedes marcaron en el diagnóstico de entrada</div>
   <h2>Tres brechas, <em>tres sesiones</em></h2>
@@ -414,6 +425,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 5 RI -->
 <section class="slide" data-min="7" data-titulo="Qué es Revenue Intelligence" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/04/84/53/57/500_F_484535768_OTHpAE1h0tPALRpbwVsqxjPgFjXs2oWH.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Revenue Intelligence</div>
   <h2>Cruzar tres fuentes para decidir<br><em>dónde poner el tiempo de venta</em></h2>
@@ -427,6 +439,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 6 COMITE -->
 <section class="slide" data-min="6" data-titulo="El comité de compra" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/03/84/42/49/500_F_384424909_ckSEiI3PNSa2FOqDO4qtR0ZDdt47PMSs.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Decisión en comité</div>
   <h2>Cada silla decide con <em>un dato distinto</em></h2>
@@ -441,12 +454,14 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 7 FRASE -->
 <section class="slide center" data-min="2" data-titulo="Intuición o datos" data-bloque="mira">
+  <div class="ph hero" style="background-image:url('https://t4.ftcdn.net/jpg/06/43/99/09/500_F_643990951_bczLBazmvjFBxOqf7l1YVsi0YF2f79fZ.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="q" style="font-size:66px;font-weight:700">Vender por intuición es saber que una cuenta va bien.<br><br><em>Vender con datos es saber por qué… y qué hacer el lunes.</em></div>
 </section>
 
 <!-- 8 ANS -->
 <section class="slide" data-min="5" data-titulo="Del reporte al argumento" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/75/34/18/500_F_475341879_0jjxvCAvoHm5GsTDyhfQHHu4He8wfHe8.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Los ANS</div>
   <h2>Del reporte de operaciones<br><em>al argumento de la primera reunión</em></h2>
@@ -458,6 +473,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 9 LISTA ANS -->
 <section class="slide" data-min="7" data-titulo="ANS de facility" data-bloque="ans">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/06/32/40/92/500_F_632409249_7fE0NVxaozyjLhf521Y2M8WPVTnP2JIn.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">¿Cuáles de estos medimos en Casalimpia? ¿Cuáles faltan?</div>
   <h2>Indicadores de servicio <em>que venden</em></h2>
@@ -477,6 +493,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 10 CASO -->
 <section class="slide" data-min="3" data-titulo="Caso tipo" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/02/63/80/60/500_F_263806036_TgrSwjpUwQy3eN6zjvLGoA4ULji8Oobi.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Caso tipo · simulado para practicar</div>
   <h2>Centro Empresarial <em>Andino</em></h2>
@@ -489,6 +506,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 11 EJERCICIO -->
 <section class="slide" data-min="15" data-titulo="Ejercicio en parejas · ANS a frase de venta" data-bloque="frase">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/03/28/82/88/500_F_328828861_4E6Yk4Q81yx9dkyLG5V2aqA8EirfASb4.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Ejercicio en parejas · 15 minutos</div>
   <h2 style="margin-bottom:24px">Conviertan un ANS en <em>frase de venta</em></h2>
@@ -506,6 +524,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 12 PAUSA -->
 <section class="slide center" data-min="10" data-titulo="Pausa" data-pausa="1" data-bloque="pausa">
+  <div class="ph hero" style="background-image:url('https://t4.ftcdn.net/jpg/01/96/49/19/500_F_196491928_ZuN2pckB7uoAxfkExWGAhiySp53F2y6R.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Pausa</div>
   <div class="cd" id="pausaCd">10:00</div>
@@ -514,6 +533,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 13 METRICAS -->
 <section class="slide" data-min="6" data-titulo="Las tres métricas del embudo" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/05/54/83/97/500_F_554839723_7qNiSv09pOPp9c1FF6HYH24zrZH0sPYg.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Métricas de conversión</div>
   <h2>Tres números que <em>todo vendedor debería saber</em></h2>
@@ -526,6 +546,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 14 EMBUDO -->
 <section class="slide" data-min="8" data-titulo="Calcúlenlo · el embudo del caso" data-reveal="1" data-bloque="embudo">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/18/91/34/53/500_F_1891345356_4iUpG6oNJnR3ryAZAF8cotjqNPqCFXt3.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Calcúlenlo · el vendedor del caso, últimos 6 meses · ciclo promedio: 95 días</div>
   <h2 style="margin-bottom:26px">¿Dónde está el <em>cuello de botella</em>?</h2>
@@ -542,6 +563,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 15 PRECIO -->
 <section class="slide center" data-min="4" data-titulo="¿De verdad fue el precio?" data-bloque="mira">
+  <div class="ph hero" style="background-image:url('https://t4.ftcdn.net/jpg/02/12/86/29/500_F_212862972_WMCJSNLYl1rrUZ8xDac2469iXKMU6jfS.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">4 de 7 pérdidas «por precio»</div>
   <div class="q">¿De verdad fue el precio…<br><em>o comparamos solo tarifa y no costo total?</em></div>
@@ -550,6 +572,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 16 LLAMADA -->
 <section class="slide" data-min="7" data-titulo="Llamada ganadora o estancada" data-bloque="llamada">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/01/82/06/16/500_F_182061672_HoIBmQZTgaKOkI4fLEuS4fOajaoMJ5eR.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Piensen en su última reunión · ¿en qué columna cae?</div>
   <h2>Llamada ganadora <em>o llamada estancada</em></h2>
@@ -566,6 +589,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 17 INDICADOR -->
 <section class="slide center" data-min="12" data-titulo="Cierre · mi indicador más débil" data-bloque="indicador">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/12/15/09/41/500_F_1215094102_osQTfFCWSi7hgmeBXtpEaE1GKPXXYXlE.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Cierre · cada uno, por escrito</div>
   <div class="sent">Mi indicador más débil del embudo es <u>&nbsp;</u>.<br>Lo sé porque <u>&nbsp;</u>.<br>Esta semana voy a <u>&nbsp;</u>.</div>
@@ -576,6 +600,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 18 TAREA -->
 <section class="slide" data-min="3" data-titulo="Tarea para el 4 de noviembre" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/20/62/12/500_F_420621255_daTItzU3xeoHborJ0eNtaCfsqsn7b2I5.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Para el miércoles 4 de noviembre</div>
   <h2>Traigan los datos de <em>una cuenta</em></h2>
@@ -590,6 +615,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 19 EVALUACION -->
 <section class="slide" data-min="8" data-titulo="Evaluación de la sesión" data-bloque="evaluacion">
+  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/03/91/34/11/500_F_391341133_FZOqJ1EhhNWDOk0DMr0BNG6RmDcAtt8y.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Evaluación · 1 = el extremo malo · 10 = el bueno</div>
   <h2 style="margin-bottom:26px">Diez preguntas, <em>las mismas en todas las sesiones</em></h2>
@@ -611,6 +637,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 20 CIERRE -->
 <section class="slide center" data-min="2" data-titulo="Cierre" data-bloque="evaluacion">
+  <div class="ph hero" style="background-image:url('https://t3.ftcdn.net/jpg/02/77/17/46/500_F_277174624_M9In84RtNhcjHpW0RhtWvlq96y6esO25.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b><span>Educación Continua · Diplomado Élite en Ventas 2026</span></div>
   <div class="kick">Nos vemos el miércoles 4 de noviembre</div>
   <h1>Del dato<br><em>al argumento</em></h1>
@@ -620,6 +647,7 @@ body.live .slide.sinvivo .manual{display:block}
 
 <!-- 21 PLAN B -->
 <section class="slide" data-min="5" data-titulo="Plan B · prompt de Gemini" data-bloque="mira">
+  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/17/14/48/42/500_F_1714484246_onnkMvPrBDSbQsGwz5Y5ylVJ3L1io7Yv.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Si sobra tiempo · adelanto de la Sesión 3</div>
   <h2 style="margin-bottom:26px">Que Gemini <em>lea el embudo</em></h2>
