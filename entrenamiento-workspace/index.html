@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Entrenamiento Google Workspace corporativo · Ventas Élite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14213D; --ink2:#2F4A7A; --paper:#F6F4EF; --paper2:#EAE6DC; --card:#FFFDF8;
+  --line:#D5CFC2; --muted:#4A5568; --soft:#6B7280; --acc:#D9622B; --acc-d:#B8501F; --acc-l:#FBE3D5;
+  --ok:#1F6F4A; --ok-l:#E2F1E8; --bad:#A3362A; --bad-l:#F8E3DF; --blue:#2F6FB0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Public Sans',Arial,sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:'Space Grotesk',Arial,sans-serif;line-height:1.15;margin:0}
+button{font:inherit;cursor:pointer}
+a{color:var(--blue)}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+aside.nav{background:var(--ink);color:var(--paper);padding:24px 18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;line-height:1.2}
+.brand small{display:block;font-family:'Public Sans',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;color:#F2A477;margin-bottom:6px}
+.prog{margin:20px 0 18px}
+.bar{height:8px;background:#2F4A7A;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .4s}
+.prog p{margin:6px 0 0;font-size:13px;color:#C9D2E3}
+.nav ul{list-style:none;margin:0;padding:0}
+.nav li button{width:100%;text-align:left;background:none;border:0;color:#E3E8F2;padding:9px 10px;border-radius:8px;display:flex;gap:10px;align-items:center;font-size:14.5px}
+.nav li button:hover{background:#22325A}
+.nav li button.on{background:#2F4A7A;color:#fff}
+.dot{flex:0 0 26px;height:26px;border-radius:50%;border:2px solid #5A6E96;display:grid;place-items:center;font-size:12px;font-weight:700}
+.done .dot{background:var(--acc);border-color:var(--acc);color:var(--ink)}
+.sep{height:1px;background:#2F4A7A;margin:12px 0}
+main{padding:40px 56px 80px;max-width:1080px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--acc-d);text-transform:uppercase}
+.lead{font-size:18px;color:var(--muted);max-width:760px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 26px}
+.pill{background:var(--paper2);border-radius:999px;padding:5px 12px;font-size:13.5px;color:var(--ink)}
+.pill b{color:var(--acc-d)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:0 0 16px}
+.step{display:grid;grid-template-columns:44px 1fr;gap:14px}
+.num{width:40px;height:40px;border-radius:10px;background:var(--paper2);display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:18px}
+.step.ok .num{background:var(--ok);color:#fff}
+.step h3{font-size:19px;margin-bottom:6px}
+.where{font-size:13.5px;color:var(--soft);margin:2px 0 8px}
+.where code{background:var(--paper2);padding:1px 6px;border-radius:4px;font-size:13px;color:var(--ink)}
+.step p{margin:6px 0}
+.prompt{background:var(--ink);color:#F6F4EF;border-radius:10px;padding:12px 14px;margin:10px 0;font-family:'Courier New',monospace;font-size:14px;white-space:pre-wrap;position:relative}
+.copy{position:absolute;top:8px;right:8px;background:#2F4A7A;color:#fff;border:0;border-radius:6px;padding:3px 10px;font-family:'Public Sans';font-size:12px}
+.check{margin-top:10px;display:inline-flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:14px;font-weight:600}
+.step.ok .check{background:var(--ok-l);border-color:#9CCBB2;color:var(--ok)}
+.tip{background:var(--acc-l);border-left:5px solid var(--acc);border-radius:10px;padding:14px 18px;margin:20px 0}
+.tip b{color:var(--acc-d)}
+.sales{background:#E7EEF8;border-left:5px solid var(--blue);border-radius:10px;padding:14px 18px;margin:20px 0}
+h2.sec{font-size:24px;margin:32px 0 14px}
+.q{margin-bottom:18px}
+.q p.qt{font-weight:600;margin:0 0 8px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 14px;margin:6px 0;font-size:15px;color:var(--ink)}
+.opt:hover{border-color:var(--ink2)}
+.opt.right{background:var(--ok-l);border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.wrong{background:var(--bad-l);border-color:var(--bad);color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{font-size:14px;margin-top:6px;color:var(--muted)}
+.btn{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:12px 20px;font-weight:700}
+.btn.acc{background:var(--acc);color:var(--ink)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.mod{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:left;color:var(--ink)}
+.mod:hover{border-color:var(--ink2)}
+.mod .n{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--acc-d)}
+.mod h3{font-size:18px;margin:4px 0 6px}
+.mod p{margin:0;font-size:14px;color:var(--muted)}
+.mod .st{margin-top:10px;font-size:13px;font-weight:700}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.badge.ok{background:var(--ok-l);color:var(--ok)}
+.badge.no{background:var(--paper2);color:var(--soft)}
+.score{font-family:'Space Grotesk';font-size:56px;font-weight:700}
+.cert{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:40px;text-align:center;margin-top:20px}
+.cert h2{font-size:34px;margin:10px 0}
+.cert .who{font-family:'Space Grotesk';font-size:30px;color:var(--acc-d);margin:12px 0}
+input[type=text]{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;min-width:280px;background:#fff}
+table.t{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{background:var(--paper2)}
+.menu-btn{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  aside.nav{position:fixed;left:0;top:0;width:290px;z-index:20;transform:translateX(-100%);transition:transform .25s}
+  aside.nav.open{transform:none}
+  main{padding:72px 20px 60px}
+  .menu-btn{display:block;position:fixed;top:12px;left:12px;z-index:30;background:var(--ink);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:700}
+}
+</style>
+</head>
+<body>
+<button class="menu-btn" id="menuBtn">☰ Módulos</button>
+<div class="app">
+<aside class="nav" id="nav">
+  <div class="brand"><small>VENTAS ÉLITE</small>Google Workspace corporativo · entrenamiento paso a paso</div>
+  <div class="prog"><div class="bar"><i id="barFill"></i></div><p id="progTxt">0 de 10 módulos</p></div>
+  <ul id="navList"></ul>
+</aside>
+<main id="main"></main>
+</div>
+
+<script>
+const MODS = [
+{
+ id:1, title:"El ecosistema y tu edición", short:"Capas, ediciones y qué puedes usar",
+ time:"30 min", apps:"Cuenta de Google, consola (lectura)", edition:"Todas",
+ goal:"Saber qué edición tienes, qué está activado para ti y por qué una cuenta corporativa es distinta a una personal.",
+ steps:[
+  {t:"Identifica tu edición", w:"myaccount.google.com o pregúntale a tu administrador (él la ve en Facturación > Suscripciones)", d:"Anota si tienes Business Starter, Standard, Plus o Enterprise. De eso depende si ves Gemini en Docs, la grabación de Meet o Vault. Para el entrenamiento necesitas Business Standard o superior; si no la tienes, usa la cuenta de práctica."},
+  {t:"Abre el selector de apps y recorre las siete capas", w:"Icono de cuadrícula (9 puntos) arriba a la derecha en Gmail o Drive", d:"Ubica cada app en su capa: identidad, administración, comunicación (Gmail, Chat, Meet, Calendar), colaboración (Drive, Docs, Sheets, Slides, Forms, Sites, Vids), IA (Gemini, Gemini Notebook), automatización (Workspace Studio, AppSheet) y agentes."},
+  {t:"Verifica tu seguridad", w:"myaccount.google.com > Seguridad", d:"Confirma que tienes verificación en dos pasos y registra una llave de acceso (passkey) en tu celular. Es lo primero que se pide en cualquier empresa."},
+  {t:"Comprueba qué funciones de IA ves", w:"Abre un Doc nuevo y busca el icono de Gemini arriba a la derecha", d:"Si no aparece, no es un error: tu edición no lo incluye o tu administrador lo desactivó para tu unidad organizativa. Anótalo para pedirlo con nombre exacto."}
+ ],
+ tip:"Cuando algo no aparece en tu pantalla, el problema casi siempre está en la capa de administración, no en ti. Pide al área de TI la función con su nombre exacto y para un grupo piloto.",
+ sales:"Escribe en una frase qué herramienta usas hoy para guardar propuestas. Al final del programa la compararás con tu nuevo sistema.",
+ quiz:[
+  {q:"¿Cuál es la edición más económica que incluye Gemini en Docs, Sheets, Slides y Meet?", o:["Business Starter","Business Standard","Business Plus","Solo Enterprise"], a:1, e:"Business Standard (USD 14 por usuario al mes, anual, en EE. UU.) es la más barata con Gemini en todas las apps."},
+  {q:"No ves Workspace Studio en tu cuenta corporativa. ¿Qué es lo más probable?", o:["Tu navegador está desactualizado","Tu administrador no lo activó para tu unidad organizativa o tu edición no lo incluye","Google lo retiró","Necesitas instalar una extensión"], a:1, e:"Las funciones se activan por unidad organizativa o grupo en la consola de administración."},
+  {q:"¿Qué agregan Business Plus y Enterprise frente a Business Standard en IA?", o:["Un modelo de Gemini más potente","Nada nuevo en IA; agregan almacenamiento, Vault y seguridad","Gemini Notebook, que Standard no tiene","Traducción en Meet"], a:1, e:"Las filas de Gemini son iguales desde Standard; Plus y Enterprise suman almacenamiento, retención y controles de seguridad."}
+ ]
+},
+{
+ id:2, title:"Drive y la casa del cliente", short:"Unidades compartidas, permisos y etiquetas",
+ time:"45 min", apps:"Drive, unidades compartidas", edition:"Business Standard o superior",
+ goal:"Crear la estructura comercial del equipo en una unidad compartida y compartir con clientes sin perder el control.",
+ steps:[
+  {t:"Crea la unidad compartida «Comercial – práctica»", w:"Drive > Unidades compartidas > + Nuevo", d:"Recuerda: Mi unidad es de la persona; la unidad compartida es del equipo y sus archivos no se pierden cuando alguien sale."},
+  {t:"Arma las cinco carpetas", w:"Dentro de la unidad > Nuevo > Carpeta", d:"01 Catálogo y precios · 02 Plantillas · 03 Clientes · 04 Pipeline y reportes · 05 Capacitación. Dentro de 03, crea «2026-10 Andina» como cliente de ejemplo."},
+  {t:"Asigna niveles de acceso", w:"Clic derecho en la unidad > Gestionar miembros", d:"Agrega a un compañero como Colaborador. Luego entra a 01 Catálogo y deja a los vendedores como Lector para que nadie edite la lista de precios por error."},
+  {t:"Sube una propuesta y etiquétala", w:"Archivo > clic derecho > Etiquetas (si tu edición las tiene)", d:"Aplica la etiqueta Confidencial. Las etiquetas sirven para buscar y para que las reglas de prevención de pérdida de datos actúen."},
+  {t:"Comparte con un cliente con vencimiento", w:"Botón Compartir > escribe el correo > rol Comentador > Fecha de caducidad", d:"Nunca «cualquier persona con el enlace» para datos de clientes. Pon 30 días de acceso."},
+  {t:"Pide a Gemini que te encuentre algo", w:"Drive > icono de Gemini", p:"Busca la última propuesta que enviamos a Andina y resume precio, plazo y condiciones.", d:"Gemini solo ve lo que tú puedes abrir: por eso los permisos bien puestos también protegen la IA."}
+ ],
+ tip:"Nombra igual en todas partes: AAAA-MM Cliente – Documento (2026-10 Andina – Propuesta). La misma palabra en la carpeta, la etiqueta de Gmail y el espacio de Chat.",
+ sales:"Mueve a la unidad compartida los archivos de tu cliente más importante que hoy están en tu Mi unidad o en el escritorio.",
+ quiz:[
+  {q:"Un vendedor renuncia. ¿Dónde deberían estar sus propuestas para que no se pierdan?", o:["En su Mi unidad","Adjuntas en sus correos","En una unidad compartida del equipo","En su escritorio"], a:2, e:"Los archivos de una unidad compartida pertenecen al equipo, no a la persona."},
+  {q:"¿Qué acceso le das a un cliente para revisar una propuesta?", o:["Editor sin vencimiento","Comentador o Lector con fecha de caducidad","Cualquier persona con el enlace","Administrador de contenido"], a:1, e:"Acceso mínimo y con vencimiento: Lector o Comentador."},
+  {q:"¿Por qué importan los permisos para Gemini?", o:["Gemini ignora los permisos","Gemini solo puede ver lo que el usuario ya puede abrir","Gemini lee toda la empresa","Gemini no funciona en Drive"], a:1, e:"Un archivo mal compartido queda al alcance del Gemini de quien lo recibió."}
+ ]
+},
+{
+ id:3, title:"Gmail comercial", short:"Etiquetas, filtros, plantillas y Gemini",
+ time:"40 min", apps:"Gmail", edition:"Todas (combinación de correspondencia desde Standard)",
+ goal:"Convertir la bandeja en un tablero comercial y responder más rápido con Gemini sin perder tu voz.",
+ steps:[
+  {t:"Crea etiquetas por etapa", w:"Gmail > barra lateral > Etiquetas > Crear", d:"Prospecto, Propuesta, Negociación, Cliente. Dales colores distintos."},
+  {t:"Crea un filtro automático", w:"Barra de búsqueda > icono de opciones > De: @dominiocliente.com > Crear filtro > Aplicar etiqueta", d:"Así cada correo del cliente cae solo en su etiqueta."},
+  {t:"Activa bandejas múltiples", w:"Configuración > Ver toda la configuración > Recibidos > Bandejas múltiples", p:"label:propuesta is:unread", d:"Pon esa búsqueda como primera sección: verás de un vistazo las propuestas con respuesta pendiente."},
+  {t:"Resume un hilo con Gemini", w:"Abre un hilo largo > icono de Gemini", p:"Resume este hilo y dime qué me pide el cliente, qué prometí y qué falta.", d:"Usa @ para citar un archivo de Drive en la pregunta."},
+  {t:"Redacta con Ayúdame a escribir", w:"Redactar > icono de lápiz con chispa", p:"Escribe un seguimiento breve y consultivo para Andina recordando la reunión del martes y proponiendo dos horarios esta semana.", d:"Revisa cifras, nombres y fechas antes de enviar. Gemini propone; tú firmas."},
+  {t:"Guarda una plantilla de objeción", w:"Configuración > Avanzado > Plantillas: Habilitar. Luego Redactar > ⋮ > Plantillas > Guardar", d:"Crea «Objeción de precio» con tu mejor respuesta. Reutilízala en segundos."},
+  {t:"Programa el envío", w:"Flecha junto a Enviar > Programar envío", d:"Envía la propuesta a las 7:30 a. m. del cliente, cuando revisa el correo."}
+ ],
+ tip:"La AI Inbox (resumen de tareas y plazos de la bandeja) llegó a ediciones pagas en octubre de 2026, pero al lanzamiento solo en EE. UU. y en inglés. Mientras llega en español, las bandejas múltiples hacen ese trabajo.",
+ sales:"Aplica etiqueta y filtro a tus tres clientes activos y deja programado el próximo seguimiento de cada uno.",
+ quiz:[
+  {q:"¿Qué herramienta de Gmail envía un correo individual y personalizado a cada fila de una hoja?", o:["Responder a todos","Combinación de correspondencia","Modo confidencial","Bandejas múltiples"], a:1, e:"La combinación de correspondencia (desde Business Standard) usa campos como @nombre desde Sheets."},
+  {q:"¿Cuál es la conducta correcta con un borrador de Gemini?", o:["Enviarlo tal cual","Revisar cifras, nombres y compromisos antes de enviar","No usar Gemini con clientes","Pedir a Gemini que lo envíe"], a:1, e:"La IA redacta, la persona decide."},
+  {q:"¿Qué hace un filtro de Gmail?", o:["Bloquea virus","Aplica acciones automáticas (etiquetar, archivar, reenviar) a los correos que cumplen una condición","Traduce correos","Resume hilos"], a:1, e:"Los filtros automatizan la organización de la bandeja."}
+ ]
+},
+{
+ id:4, title:"Calendar y páginas de reserva", short:"Agenda que se llena sola",
+ time:"30 min", apps:"Calendar", edition:"Business Standard o superior",
+ goal:"Publicar una página de reserva que califique al prospecto y organizar el tiempo comercial.",
+ steps:[
+  {t:"Crea una página de reserva", w:"Calendar > Crear > Agenda de citas", d:"Nombre: «Diagnóstico comercial de 30 minutos». Duración 30 min, disponibilidad martes a jueves, con descanso de 15 min entre citas."},
+  {t:"Añade preguntas de calificación", w:"Formulario de reserva > Agregar elemento", d:"Pregunta tamaño de la empresa y presupuesto aproximado. Llegarás preparado."},
+  {t:"Incluye Meet y recordatorios", w:"Ubicación y conferencias > Google Meet · Confirmaciones y recordatorios", d:"El cliente recibe enlace y recordatorio sin que tú hagas nada."},
+  {t:"Bloquea tiempo de concentración", w:"Crear > Tiempo de concentración", d:"Dos horas diarias para prospectar, con rechazo automático de reuniones."},
+  {t:"Configura ubicación de trabajo", w:"Configuración > Horario laboral y ubicación", d:"Indica días de campo y de oficina; el equipo agenda sin preguntarte."},
+  {t:"Pon el enlace en tu firma", w:"Gmail > Configuración > Firma", d:"«Agenda aquí un diagnóstico de 30 minutos» con el enlace de la página."}
+ ],
+ tip:"Cambio de octubre de 2026: un calendario secundario se elimina si se borra la cuenta de su dueño. Antes de que alguien salga, transfiere la propiedad del calendario comercial del equipo.",
+ sales:"Comparte tu página de reserva con un compañero y pídele que agende. Verifica que el evento llegue con Meet y recordatorio.",
+ quiz:[
+  {q:"¿Qué ventaja comercial tiene añadir preguntas a la página de reserva?", o:["Ninguna","Llegas preparado y calificas al prospecto antes de la reunión","Cobra la cita","Bloquea a la competencia"], a:1, e:"Las preguntas previas te dan contexto para la reunión."},
+  {q:"¿Qué hace el tiempo de concentración en Calendar?", o:["Silencia el celular","Bloquea un espacio y puede rechazar reuniones automáticamente","Graba la pantalla","Envía reportes"], a:1, e:"Protege bloques de trabajo profundo como la prospección."},
+  {q:"Un compañero dueño del calendario «Ferias 2026» va a salir. ¿Qué haces?", o:["Nada","Transferir la propiedad del calendario antes de borrar su cuenta","Imprimirlo","Copiar los eventos a mano después"], a:1, e:"Los calendarios secundarios siguen la vida de su dueño."}
+ ]
+},
+{
+ id:5, title:"Meet y Chat con IA", short:"Reuniones que se documentan solas",
+ time:"45 min", apps:"Meet, Chat, Tasks", edition:"Business Standard o superior",
+ goal:"Usar las notas automáticas de Gemini, coordinar al equipo de cuenta en Chat y convertir compromisos en tareas.",
+ steps:[
+  {t:"Avisa y pide consentimiento", w:"Al inicio de la reunión, en voz alta", d:"«Voy a usar notas automáticas para no perder ningún compromiso, ¿estás de acuerdo?». La Ley 1581 de 2012 exige autorización para tratar datos personales."},
+  {t:"Activa Tomar notas por mí", w:"Meet > icono de lápiz (Tomar notas con Gemini) o Actividades > Notas de la reunión", d:"Gemini transcribe, resume, saca decisiones y próximos pasos, y guarda el documento adjunto al evento. Puedes elegir las secciones: Resumen, Decisiones, Próximos pasos y Detalles."},
+  {t:"Pregúntale a Gemini durante la llamada", w:"Meet > panel de Gemini", p:"¿Qué objeciones ha planteado el cliente hasta ahora y qué le respondí?", d:"Es privado: los demás no ven tus preguntas."},
+  {t:"Prueba las notas en una reunión presencial", w:"Pantalla de inicio de Meet (web o móvil) > Tomar notas", d:"Desde agosto de 2026 funciona en sala, sin videollamada. Úsalo en visitas, siempre con permiso."},
+  {t:"Crea el espacio de la cuenta en Chat", w:"Chat > + Nuevo chat > Crear un espacio", d:"«Cuenta Andina – equipo» con vendedor, preventa, logística y cartera. Fija la propuesta desde Drive."},
+  {t:"Asigna una tarea desde Chat", w:"En el espacio > pestaña Tareas > Agregar tarea", d:"«Validar descuento con cartera», con responsable y fecha. Aparece en Google Tasks del responsable."},
+  {t:"Pide un resumen del espacio", w:"Chat > icono de Gemini", p:"Resume lo que se habló esta semana en el espacio de Andina y lista los pendientes con responsable.", d:"Así el gerente se pone al día en un minuto."}
+ ],
+ tip:"Haz el juego de rol en tríos: vendedor, cliente y observador. Compara el resumen de Gemini con las notas del observador. ¿Capturó la objeción principal y el siguiente paso con fecha? Corrige el documento: la responsabilidad es tuya.",
+ sales:"En tu próxima reunión real con un cliente, usa notas automáticas (con permiso) y envía el seguimiento en menos de una hora.",
+ quiz:[
+  {q:"¿Dónde quedan las notas de «Tomar notas por mí»?", o:["Solo en el correo del anfitrión","En un documento de Drive adjunto al evento de Calendar","En WhatsApp","No se guardan"], a:1, e:"Se guardan en Drive, se adjuntan al evento y se envía un resumen por correo."},
+  {q:"¿Las preguntas que haces a Gemini durante una llamada las ven los demás?", o:["Sí, todos","No, son privadas","Solo el anfitrión","Solo los externos"], a:1, e:"Preguntar a Gemini en Meet funciona como un asesor privado."},
+  {q:"¿Qué debes hacer antes de tomar notas automáticas con un cliente en Colombia?", o:["Nada","Avisar y obtener su autorización","Pedirle que firme un contrato","Desactivar el micrófono"], a:1, e:"La Ley 1581 de 2012 exige autorización para tratar datos personales."}
+ ]
+},
+{
+ id:6, title:"Sheets: pipeline con IA", short:"Tablas, =AI() y análisis",
+ time:"50 min", apps:"Sheets, Forms", edition:"Business Standard o superior",
+ goal:"Construir un pipeline comercial vivo y usar la IA para clasificar, resumir y explicar los datos.",
+ steps:[
+  {t:"Crea el pipeline con Gemini", w:"Sheets en blanco > icono de Gemini", p:"Crea una tabla de seguimiento de oportunidades con columnas: cliente, contacto, etapa (desplegable: prospecto, propuesta, negociación, ganada, perdida), valor en COP, fecha de cierre, última objeción.", d:"Revisa que la columna de etapa quede como desplegable."},
+  {t:"Conviértelo en tabla", w:"Formato > Convertir en tabla", d:"Las tablas dan columnas tipadas, filtros y nombres. Carga 15 oportunidades de práctica."},
+  {t:"Clasifica objeciones con =AI()", w:"Nueva columna «Tipo de objeción» > en la primera celda", p:'=AI("Clasifica la objeción en precio, tiempo, confianza o necesidad. Responde con una palabra", F2)', d:"Arrastra hacia abajo. Consume el cupo de Gemini de tu usuario: úsalo en rangos razonables."},
+  {t:"Pide un gráfico por etapa", w:"Panel de Gemini", p:"Crea un gráfico de barras con el valor total por etapa.", d:"Verifica que el total coincida con una suma hecha por ti: la IA puede equivocarse."},
+  {t:"Pide una explicación", w:"Panel de Gemini", p:"¿Qué tipo de objeción aparece más en las oportunidades perdidas y qué valor representan?", d:"Esto convierte la hoja en una conversación de gestión."},
+  {t:"Crea una vista con filtro propio", w:"Datos > Crear vista con filtro", d:"Cada vendedor ve solo sus oportunidades sin desordenar la vista de los demás."},
+  {t:"Conecta un formulario de diagnóstico", w:"Forms > Nuevo con Gemini > Respuestas > Vincular con Hojas de cálculo", d:"Cinco preguntas de calificación. Cada respuesta cae como fila nueva."}
+ ],
+ tip:"Una sola fuente de verdad: el pipeline vive en esta hoja (o en el CRM), nunca repartido en correos. Todo lo demás —reportes, diapositivas, agentes— lee de aquí.",
+ sales:"Traslada a esta plantilla tus oportunidades reales del trimestre y pregúntale a Gemini cuál tiene más riesgo de caerse.",
+ quiz:[
+  {q:"¿Qué hace la función =AI() en Sheets?", o:["Suma rangos","Aplica una instrucción de Gemini celda a celda para clasificar, resumir o extraer texto","Crea tablas dinámicas","Importa datos de la web"], a:1, e:"=AI(\"instrucción\", rango) trae la IA a cada celda."},
+  {q:"¿Para qué sirve una vista con filtro?", o:["Para borrar filas","Para que cada persona filtre sin cambiar lo que ven los demás","Para imprimir","Para proteger con contraseña"], a:1, e:"Las vistas con filtro son personales."},
+  {q:"Gemini te da un total por etapa. ¿Qué haces?", o:["Lo pegas en el informe sin revisar","Lo contrastas con una suma propia antes de usarlo","Lo descartas siempre","Le pides que lo envíe al gerente"], a:1, e:"Verifica las cifras: la IA puede equivocarse."}
+ ]
+},
+{
+ id:7, title:"Docs y Slides: la propuesta", short:"Propuesta, firma y pitch",
+ time:"50 min", apps:"Docs, Slides", edition:"Business Standard o superior",
+ goal:"Pasar de un correo del cliente a una propuesta firmable y a un pitch visual en una sola tarde.",
+ steps:[
+  {t:"Parte de la plantilla de la empresa", w:"Drive > 02 Plantillas > clic derecho > Hacer una copia en 03 Clientes > Andina", d:"Nunca empieces de cero ni edites la plantilla original."},
+  {t:"Redacta con Ayúdame a escribir", w:"Docs > icono de Gemini o lápiz con chispa", p:"Con base en @Notas de la reunión con Andina y @Pipeline, redacta la sección de necesidad del cliente y la solución propuesta en tono consultivo, máximo 250 palabras.", d:"La arroba cita archivos concretos y le da contexto real a Gemini."},
+  {t:"Refina el texto", w:"Selecciona un párrafo > Ayúdame a refinar", d:"Pide más claridad, más concisión o un tono más formal. Compara antes de aceptar."},
+  {t:"Inserta bloques útiles", w:"Escribe @ en una línea vacía", d:"Inserta un chip de fecha para la vigencia de la oferta y un chip de persona para el responsable."},
+  {t:"Pide revisión al gerente", w:"Comentario con +nombre del gerente, o Archivo > Aprobaciones", d:"Asignar un comentario crea una tarea; la aprobación deja constancia formal."},
+  {t:"Prepara la firma electrónica", w:"Herramientas > Firma electrónica (desde Business Standard)", d:"Agrega los campos de firma y fecha para el cliente."},
+  {t:"Crea el pitch en Slides", w:"Slides > panel de Gemini", p:"Resume esta propuesta en tres diapositivas: problema del cliente, solución y siguiente paso con fecha.", d:"Usa Ayúdame a visualizar para una infografía y vincula el gráfico del pipeline desde Sheets."}
+ ],
+ tip:"Un dato, tres usos, cero copias: el gráfico vinculado de Sheets se actualiza en Slides con un clic, y la propuesta cita la hoja con @. Si copias y pegas, en una semana tienes tres versiones distintas.",
+ sales:"Prepara la propuesta para tu oportunidad más grande y mide cuánto tiempo te tomó frente a la última que hiciste sin IA.",
+ quiz:[
+  {q:"¿Para qué sirve escribir @ y el nombre de un archivo en el panel de Gemini?", o:["Para enviarlo por correo","Para citar ese archivo como contexto de la respuesta","Para borrarlo","Para traducirlo"], a:1, e:"Gemini usa el archivo citado como fuente."},
+  {q:"¿Qué edición mínima tiene firma electrónica en Docs?", o:["Business Starter","Business Standard","Solo Enterprise Plus","Ninguna"], a:1, e:"La firma electrónica está desde Business Standard."},
+  {q:"¿Por qué vincular un gráfico de Sheets en Slides?", o:["Porque pesa menos","Porque se actualiza con un clic cuando cambian los datos","Porque se ve en 3D","Porque es obligatorio"], a:1, e:"El vínculo mantiene una sola fuente de verdad."}
+ ]
+},
+{
+ id:8, title:"Gemini, Gemini Notebook y skills", short:"Conocimiento reutilizable",
+ time:"50 min", apps:"App de Gemini, Gemini Notebook, Vids", edition:"Business y Enterprise",
+ goal:"Preparar visitas con la app de Gemini, entrenar al equipo con Gemini Notebook y guardar tus mejores instrucciones como skills.",
+ steps:[
+  {t:"Distingue las tres formas de Gemini", w:"Recordatorio", d:"Gemini en cada app trabaja sobre el archivo abierto; la app de Gemini cruza correo, Drive, Calendar, Chat y la web; Gemini Notebook (antes NotebookLM) responde solo con las fuentes que le das."},
+  {t:"Prepara una visita con la app de Gemini", w:"gemini.google.com con tu cuenta corporativa > activa las apps conectadas", p:"Prepárame para la reunión de mañana con Andina: quién es cada asistente, qué les hemos enviado, qué quedó pendiente y tres preguntas de descubrimiento.", d:"Revisa que cite correos y archivos reales."},
+  {t:"Investiga el sector con Deep Research", w:"App de Gemini > Deep Research", p:"Investiga tendencias 2026 del sector de alimentos procesados en Colombia que afecten la compra de [tu producto]. Cita fuentes.", d:"Úsalo antes de prospectar una cuenta nueva. Verifica las fuentes antes de citarlas al cliente."},
+  {t:"Crea un cuaderno de producto", w:"notebooklm.google (ahora Gemini Notebook) > Nuevo cuaderno", d:"Sube tres fichas técnicas, un caso de éxito y la lista de objeciones frecuentes. Comparte el cuaderno con el equipo."},
+  {t:"Genera material de entrenamiento", w:"Gemini Notebook > Studio", d:"Pide un cuestionario de 10 preguntas y un resumen en audio. Desde octubre de 2026 las presentaciones y los videos se arman paso a paso para que tú dirijas el estilo."},
+  {t:"Crea tu primer skill", w:"App de Gemini > Skills > Crear", p:"Nombre: Correo de seguimiento Élite\nInstrucciones: Redacta correos de seguimiento comercial en español de Colombia, tono consultivo y cercano, máximo 120 palabras, un único llamado a la acción con fecha concreta. Nunca inventes precios ni condiciones: si faltan, deja [corchetes].", d:"Los skills reemplazan a los Gems. Ojo: los skills de la app de Gemini no se sincronizan con los de Workspace; hay que crearlos en cada lado."},
+  {t:"Graba un video de 60 segundos en Vids", w:"Vids > Ayúdame a crear", p:"Video de 60 segundos para invitar a un gerente de compras a un diagnóstico gratuito de 30 minutos.", d:"Gemini propone guion, escenas y locución. Ajusta subtítulos con el estilo de marca."}
+ ],
+ tip:"No crees Gems nuevos. Google anunció su reemplazo por skills el 30 de septiembre de 2026: el 17 de noviembre de 2026 pasan a Configuración y, en ediciones Business y Enterprise, dejan de funcionar no antes de marzo de 2027. Inventaría los Gems importantes y recréalos como skills.",
+ sales:"Crea un skill para tu tarea comercial más repetida (por ejemplo, respuesta a solicitud de cotización) y úsalo toda la semana.",
+ quiz:[
+  {q:"Quieres que un vendedor nuevo aprenda el portafolio respondiendo solo con fichas oficiales. ¿Qué usas?", o:["Ayúdame a escribir en Gmail","Gemini Notebook con las fichas como fuentes","Deep Research en la web","Un filtro de Gmail"], a:1, e:"Gemini Notebook responde solo con tus fuentes y cita cada dato."},
+  {q:"¿Qué reemplaza a los Gems?", o:["Workspace Studio","Skills","AppSheet","Plantillas de Gmail"], a:1, e:"Los skills son instrucciones reutilizables que se pueden apilar."},
+  {q:"¿Cómo se llama hoy NotebookLM?", o:["Gemini Notebook","Google Keep AI","Gemini Docs","Sigue igual"], a:0, e:"Se renombró el 16 de julio de 2026; misma dirección y mismos cuadernos."}
+ ]
+},
+{
+ id:9, title:"Workspace Studio: tu primer agente", short:"Automatización sin código",
+ time:"60 min", apps:"Workspace Studio, Gmail, Sheets, Chat", edition:"Business y Enterprise (activado por el administrador)",
+ goal:"Construir y probar un agente que trabaje solo, con revisión humana antes de tocar a un cliente.",
+ steps:[
+  {t:"Entiende las tres piezas", w:"Recordatorio", d:"Disparador (cuándo arranca), pasos (qué hace) y variables (los datos que viajan entre pasos). Límites: hasta 100 agentes por usuario y 20 pasos por agente."},
+  {t:"Abre Workspace Studio", w:"Selector de apps > Workspace Studio (también desde la configuración de Gmail)", d:"Si no aparece, pídele a tu administrador que lo active para tu grupo piloto."},
+  {t:"Describe el agente en lenguaje natural", w:"Studio > Crear agente > describe lo que quieres", p:"Cuando llegue un correo a ventas@ que parezca un cliente potencial con urgencia alta, aplícale la etiqueta Urgente, avísame en Chat con un resumen de dos líneas y deja un borrador de respuesta para que yo lo apruebe.", d:"Studio arma el flujo con Gemini. Revisa cada paso que propone."},
+  {t:"Ajusta el disparador", w:"Paso de inicio", d:"Restringe a correos que llegan a ventas@ y activa la opción de ignorar respuestas de seguimiento, para que el agente solo reaccione a correos nuevos."},
+  {t:"Agrega una condición", w:"+ Paso > Condición", d:"Si Gemini califica la urgencia como alta → etiqueta y aviso; si no → solo etiqueta Prospecto. Desde octubre de 2026 puedes anidar condiciones."},
+  {t:"Asegura la revisión humana", w:"Paso de correo", d:"Elige «Crear borrador», no «Enviar». Ningún agente escribe a un cliente sin revisión hasta probarlo con casos reales."},
+  {t:"Prueba con tres correos", w:"Envía tres correos de prueba a ventas@ desde otra cuenta", d:"Uno urgente, uno normal y uno irrelevante. Revisa el historial de ejecuciones y corrige."},
+  {t:"Construye el segundo agente (opcional)", w:"Studio > Crear agente", p:"Cuando llegue una respuesta al formulario de diagnóstico, agrega una fila al pipeline, pide a Gemini un resumen de la necesidad y crea la carpeta del cliente en la unidad compartida Comercial.", d:"Este agente une Forms, Sheets, Gemini y Drive."}
+ ],
+ tip:"Empieza por el peldaño más bajo que resuelva el problema: si basta un skill, no construyas un agente; si basta un agente, no construyas una app en AppSheet.",
+ sales:"Mide cuántos minutos por semana te ahorra el agente durante dos semanas. Ese número es tu argumento para escalarlo al equipo.",
+ quiz:[
+  {q:"¿Cuáles son las tres piezas de un agente en Workspace Studio?", o:["Usuario, clave y servidor","Disparador, pasos y variables","Correo, chat y documento","Prompt, modelo y token"], a:1, e:"El disparador inicia, los pasos actúan y las variables llevan datos."},
+  {q:"Tu agente responde correos de clientes. ¿Cómo debe empezar?", o:["Enviando directamente","Creando borradores para revisión humana","Reenviando a todos","Sin probarlo"], a:1, e:"Primero borradores; solo tras pruebas con casos reales se evalúa más autonomía."},
+  {q:"¿Cuántos pasos admite como máximo un agente de Workspace Studio?", o:["5","20","100","Ilimitados"], a:1, e:"Hasta 20 pasos por agente y 100 agentes por usuario."}
+ ]
+},
+{
+ id:10, title:"Armonización y seguridad", short:"Un solo sistema comercial",
+ time:"45 min", apps:"Todas", edition:"Todas",
+ goal:"Encadenar todo lo aprendido en el flujo de diez etapas y operar con los hábitos de seguridad y la política de IA.",
+ steps:[
+  {t:"Recorre el flujo de diez etapas", w:"Con una oportunidad ficticia", d:"Atraer (Sites, Forms, Vids) → Calificar (Sheets =AI(), Gmail) → Agendar (página de reserva) → Preparar (app de Gemini, Notebook) → Descubrir (Meet) → Proponer (Docs, Slides) → Negociar (Chat, comentarios) → Cerrar (firma electrónica) → Fidelizar (espacio de cuenta, Forms) → Medir (Sheets, Looker Studio)."},
+  {t:"Encuentra las costuras rotas", w:"En cada etapa pregunta: ¿qué dato sale y dónde queda?", d:"Si la respuesta es «en mi cabeza» o «en WhatsApp», ahí hay una costura rota. Anota cuál automatizarías primero."},
+  {t:"Aplica la regla «el cliente tiene casa»", w:"Drive + Gmail + Chat", d:"Confirma que tu cliente principal tiene carpeta, etiqueta y espacio con el mismo nombre."},
+  {t:"Revisa lo compartido fuera", w:"Drive > búsqueda avanzada > Compartido con personas externas", d:"Quita accesos que ya no sirvan y pon vencimiento a los que queden. Hazlo cada trimestre."},
+  {t:"Firma la política mínima de uso de IA", w:"Con tu equipo", d:"La IA redacta, resume y analiza; no compromete precios, plazos ni condiciones sin revisión. Se avisa al cliente cuando se graba. Toda automatización que escribe a clientes empieza en borrador."},
+  {t:"Prepara tu proyecto final", w:"Presentación de 5 minutos", d:"Muestra tu unidad compartida, tu pipeline con IA, tu página de reserva, tu skill y tu agente funcionando. Luego presenta el examen final."}
+ ],
+ tip:"Cinco reglas: una fuente de verdad por dato; enlaces, no adjuntos; el cliente tiene casa; nombrar igual en todas partes; la IA redacta y la persona decide.",
+ sales:"Define tu plan de 12 semanas: base (1–3), IA personal (4–6), IA de equipo (7–9) y automatización (10–12), con un indicador por fase.",
+ quiz:[
+  {q:"¿Cuál de estas es una costura rota?", o:["El lead del formulario cae en el pipeline","La propuesta aprobada se envía por WhatsApp como PDF y no queda en Drive","Las notas de Meet se adjuntan al evento","El reporte semanal se publica en Chat"], a:1, e:"Un archivo que vive fuera de Workspace rompe la cadena y escapa al control de la empresa."},
+  {q:"¿Qué significa «enlaces, no adjuntos»?", o:["No enviar correos","Compartir el archivo de Drive con permisos en lugar de adjuntar copias","Usar solo enlaces públicos","Adjuntar en PDF siempre"], a:1, e:"La copia adjunta se desactualiza y sale del control de la empresa."},
+  {q:"¿Cada cuánto conviene revisar lo compartido con externos?", o:["Nunca","Cada trimestre","Solo cuando hay un incidente","Cada cinco años"], a:1, e:"Una revisión trimestral mantiene los accesos al mínimo."}
+ ]
+}
+];
+
+// Reordena las opciones de forma estable (misma posición en cada visita) para que la respuesta correcta no caiga siempre en el mismo lugar.
+(function(){
+  function seed(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+  function rng(s){ return function(){ s=(s+0x6D2B79F5)|0; let t=Math.imul(s^(s>>>15),1|s); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+  MODS.forEach(m=>m.quiz.forEach(q=>{
+    const r = rng(seed(q.q)); const idx = q.o.map((_,i)=>i);
+    for(let i=idx.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+    const correct = q.o[q.a]; q.o = idx.map(i=>q.o[i]); q.a = q.o.indexOf(correct);
+  }));
+})();
+
+// ---------- estado ----------
+const KEY = "gw-elite-v1";
+let S = {steps:{}, quiz:{}, exam:null, name:""};
+function load(){ try{ const r = localStorage.getItem(KEY); if(r) S = Object.assign(S, JSON.parse(r)); }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+load();
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function stepsDone(m){ return m.steps.filter((_,i)=>S.steps[m.id+"-"+i]).length; }
+function quizOk(m){ const r = S.quiz[m.id]; return r && r.correct === m.quiz.length; }
+function modDone(m){ return stepsDone(m) === m.steps.length && quizOk(m); }
+
+function renderNav(route){
+  const done = MODS.filter(modDone).length;
+  $("#barFill").style.width = (done*10)+"%";
+  $("#progTxt").textContent = done + " de 10 módulos completos" + (S.exam && S.exam.pass ? " · certificado" : "");
+  let h = `<li><button data-go="inicio" class="${route==='inicio'?'on':''}"><span class="dot">⌂</span>Inicio</button></li><div class="sep"></div>`;
+  MODS.forEach(m=>{
+    h += `<li class="${modDone(m)?'done':''}"><button data-go="modulo-${m.id}" class="${route==='modulo-'+m.id?'on':''}"><span class="dot">${modDone(m)?'✓':m.id}</span>${esc(m.title)}</button></li>`;
+  });
+  h += `<div class="sep"></div><li class="${S.exam&&S.exam.pass?'done':''}"><button data-go="examen" class="${route==='examen'?'on':''}"><span class="dot">★</span>Examen final y certificado</button></li>`;
+  $("#navList").innerHTML = h;
+}
+
+function home(){
+  const done = MODS.filter(modDone).length;
+  let h = `<p class="eyebrow">Diplomado Ventas Élite · Ecosistema de Google</p>
+  <h1 style="font-size:40px;margin:8px 0 12px">Domina Google Workspace corporativo, paso a paso</h1>
+  <p class="lead">Diez módulos prácticos para operar tu ciclo comercial completo dentro de la cuenta de tu empresa: de la casa del cliente en Drive a un agente de Workspace Studio que trabaja por ti.</p>
+  <div class="meta"><span class="pill"><b>${done}/10</b> módulos completos</span><span class="pill">Unas 7 horas de práctica</span><span class="pill">Examen final de 30 preguntas · aprobación 80 %</span></div>
+  <div class="card"><h3 style="font-size:19px;margin-bottom:8px">Cómo funciona</h3>
+  <p style="margin:4px 0">1. Abre un módulo y sigue cada paso en tu cuenta corporativa (o en la cuenta de práctica). Marca <b>Hecho</b> al terminar cada uno.</p>
+  <p style="margin:4px 0">2. Responde las tres preguntas de control. El módulo se completa con todos los pasos hechos y las tres respuestas correctas.</p>
+  <p style="margin:4px 0">3. Al terminar, presenta el examen final y obtén tu certificado.</p>
+  <p style="margin:8px 0 0;font-size:14px;color:var(--soft)">Tu progreso se guarda en este navegador. Información verificada a octubre de 2026: las funciones de Google cambian cada semana y algunas dependen de tu edición y de tu administrador.</p></div>
+  <h2 class="sec">Módulos</h2><div class="grid">`;
+  MODS.forEach(m=>{
+    const sd = stepsDone(m);
+    h += `<button class="mod" data-go="modulo-${m.id}"><div class="n">MÓDULO ${m.id} · ${esc(m.time)}</div><h3>${esc(m.title)}</h3><p>${esc(m.short)}</p>
+    <div class="st">${modDone(m)?'<span class="badge ok">Completo</span>':`<span class="badge no">${sd}/${m.steps.length} pasos${quizOk(m)?' · control ok':''}</span>`}</div></button>`;
+  });
+  h += `</div>`;
+  return h;
+}
+
+function moduleView(m){
+  const qr = S.quiz[m.id] || {answers:{}};
+  let h = `<p class="eyebrow">Módulo ${m.id} de 10</p><h1 style="font-size:36px;margin:8px 0 10px">${esc(m.title)}</h1>
+  <p class="lead">${esc(m.goal)}</p>
+  <div class="meta"><span class="pill">⏱ ${esc(m.time)}</span><span class="pill">Apps: ${esc(m.apps)}</span><span class="pill">Edición: ${esc(m.edition)}</span><span class="pill"><b>${stepsDone(m)}/${m.steps.length}</b> pasos</span></div>
+  <h2 class="sec">Paso a paso</h2>`;
+  m.steps.forEach((s,i)=>{
+    const k = m.id+"-"+i, ok = !!S.steps[k];
+    h += `<div class="card step ${ok?'ok':''}"><div class="num">${ok?'✓':i+1}</div><div>
+      <h3>${esc(s.t)}</h3>
+      <div class="where">Dónde: <code>${esc(s.w)}</code></div>
+      ${s.p?`<div class="prompt"><button class="copy" data-copy="${esc(s.p)}">Copiar</button>${esc(s.p)}</div>`:''}
+      <p>${esc(s.d)}</p>
+      <button class="check" data-step="${k}">${ok?'✓ Hecho':'Marcar como hecho'}</button>
+    </div></div>`;
+  });
+  h += `<div class="tip"><b>Consejo élite.</b> ${esc(m.tip)}</div>
+  <div class="sales"><b>Aplícalo a tu venta.</b> ${esc(m.sales)}</div>
+  <h2 class="sec">Control del módulo</h2>`;
+  m.quiz.forEach((q,qi)=>{
+    const ans = qr.answers ? qr.answers[qi] : undefined;
+    h += `<div class="card q"><p class="qt">${qi+1}. ${esc(q.q)}</p>`;
+    q.o.forEach((o,oi)=>{
+      let cls = "";
+      if(ans!==undefined){ if(oi===q.a) cls="right"; else if(oi===ans) cls="wrong"; }
+      h += `<button class="opt ${cls}" data-mq="${m.id}|${qi}|${oi}" ${ans!==undefined?'disabled':''}>${esc(o)}</button>`;
+    });
+    if(ans!==undefined) h += `<p class="fb">${ans===q.a?'✓ Correcto.':'✗ No es esa.'} ${esc(q.e)}</p>`;
+    h += `</div>`;
+  });
+  const answered = qr.answers ? Object.keys(qr.answers).length : 0;
+  if(answered===m.quiz.length && !quizOk(m)) h += `<div class="row" style="margin-bottom:16px"><button class="btn ghost" data-retry="${m.id}">Intentar el control de nuevo</button></div>`;
+  h += `<div class="row" style="margin-top:24px">`;
+  if(m.id>1) h += `<button class="btn ghost" data-go="modulo-${m.id-1}">← Módulo ${m.id-1}</button>`;
+  h += m.id<10 ? `<button class="btn acc" data-go="modulo-${m.id+1}">Siguiente: módulo ${m.id+1} →</button>` : `<button class="btn acc" data-go="examen">Ir al examen final →</button>`;
+  h += `</div>`;
+  if(modDone(m)) h = `<div class="tip" style="background:var(--ok-l);border-color:var(--ok)"><b style="color:var(--ok)">Módulo completo.</b> Todos los pasos hechos y control aprobado.</div>` + h;
+  return h;
+}
+
+// ---------- examen ----------
+let EX = null;
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function newExam(){
+  const pool = [];
+  MODS.forEach(m=>m.quiz.forEach(q=>pool.push(Object.assign({mod:m.id},q))));
+  EX = {qs:shuffle(pool), answers:{}, finished:false};
+}
+function examView(){
+  const done = MODS.filter(modDone).length;
+  if(S.exam && S.exam.pass && !EX) return certView();
+  if(!EX) newExam();
+  let h = `<p class="eyebrow">Evaluación</p><h1 style="font-size:36px;margin:8px 0 10px">Examen final</h1>
+  <p class="lead">30 preguntas sobre los diez módulos, en orden aleatorio. Necesitas 24 correctas (80 %) para obtener el certificado.</p>`;
+  if(done<10) h += `<div class="tip"><b>Recomendación.</b> Llevas ${done} de 10 módulos completos. Puedes presentar el examen, pero te irá mejor si terminas primero los módulos.</div>`;
+  if(EX.finished){
+    const c = EX.qs.filter((q,i)=>EX.answers[i]===q.a).length;
+    const pass = c>=24;
+    h += `<div class="card" style="text-align:center"><div class="score">${c}/30</div><p style="font-size:18px">${pass?'¡Aprobado! Ya puedes generar tu certificado.':'Aún no alcanzas el 80 %. Repasa los módulos marcados abajo y vuelve a intentarlo.'}</p>
+    <div class="row" style="justify-content:center">${pass?'<button class="btn acc" data-cert="1">Ver mi certificado</button>':''}<button class="btn ghost" data-newexam="1">Presentar de nuevo</button></div></div>`;
+    const weak = {};
+    EX.qs.forEach((q,i)=>{ if(EX.answers[i]!==q.a) weak[q.mod]=(weak[q.mod]||0)+1; });
+    const wk = Object.keys(weak);
+    if(wk.length) h += `<div class="card"><h3 style="font-size:18px;margin-bottom:8px">Módulos para repasar</h3>${wk.map(k=>`<button class="btn ghost" style="margin:4px" data-go="modulo-${k}">Módulo ${k}: ${esc(MODS[k-1].title)} (${weak[k]} errores)</button>`).join('')}</div>`;
+    return h;
+  }
+  EX.qs.forEach((q,qi)=>{
+    const ans = EX.answers[qi];
+    h += `<div class="card q"><p class="qt">${qi+1}. ${esc(q.q)}</p>`;
+    q.o.forEach((o,oi)=>{
+      let cls = "";
+      if(ans!==undefined){ if(oi===q.a) cls="right"; else if(oi===ans) cls="wrong"; }
+      h += `<button class="opt ${cls}" data-eq="${qi}|${oi}" ${ans!==undefined?'disabled':''}>${esc(o)}</button>`;
+    });
+    if(ans!==undefined) h += `<p class="fb">${ans===q.a?'✓ Correcto.':'✗ No es esa.'} ${esc(q.e)}</p>`;
+    h += `</div>`;
+  });
+  const n = Object.keys(EX.answers).length;
+  h += `<div class="row"><button class="btn acc" data-finish="1" ${n<30?'disabled style="opacity:.5"':''}>Ver resultado (${n}/30 respondidas)</button></div>`;
+  return h;
+}
+function certView(){
+  const sc = S.exam ? S.exam.score : 0;
+  const date = S.exam ? S.exam.date : "";
+  return `<p class="eyebrow">Certificado</p><h1 style="font-size:36px;margin:8px 0 10px">Tu certificado</h1>
+  <div class="row"><input type="text" id="nameIn" placeholder="Escribe tu nombre completo" value="${esc(S.name||'')}"><button class="btn" data-savename="1">Poner mi nombre</button></div>
+  <div class="cert"><p class="eyebrow">Diplomado Ventas Élite</p><h2>Certificado de competencia</h2>
+  <p>Se certifica que</p><div class="who">${esc(S.name||'[Tu nombre]')}</div>
+  <p>completó el entrenamiento paso a paso <b>Google Workspace corporativo para vendedores élite</b><br>y aprobó el examen final con <b>${sc}/30</b> respuestas correctas.</p>
+  <p style="color:var(--soft);font-size:14px;margin-top:18px">${esc(date)}</p></div>
+  <div class="row" style="margin-top:16px"><button class="btn ghost" data-copycert="1">Copiar texto del certificado</button><button class="btn ghost" data-newexam="1">Presentar el examen otra vez</button></div>
+  <p style="font-size:13.5px;color:var(--soft)">Para guardarlo, toma una captura de pantalla o copia el texto y pégalo en un Doc.</p>`;
+}
+
+// ---------- router ----------
+function route(){
+  const h = (location.hash||"").replace("#","") || "inicio";
+  let html;
+  if(h==="examen") html = examView();
+  else if(/^modulo-(\d+)$/.test(h)){ const m = MODS[parseInt(h.split("-")[1],10)-1]; html = m ? moduleView(m) : home(); }
+  else html = home();
+  $("#main").innerHTML = html;
+  renderNav(h);
+}
+function go(r, keepScroll){ if(location.hash!=="#"+r) location.hash = r; else route(); if(!keepScroll) window.scrollTo(0,0); $("#nav").classList.remove("open"); }
+window.addEventListener("hashchange", ()=>{ route(); window.scrollTo(0,0); });
+
+document.addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t) return;
+  const d = t.dataset;
+  if(d.go){ if(d.go==="examen" && S.exam && S.exam.pass) EX = null; go(d.go); return; }
+  if(d.step){ S.steps[d.step] = !S.steps[d.step]; save(); const y=window.scrollY; route(); window.scrollTo(0,y); return; }
+  if(d.mq){ const [mid,qi,oi] = d.mq.split("|").map(Number); const r = S.quiz[mid] || {answers:{}, correct:0}; if(r.answers[qi]!==undefined) return; r.answers[qi]=oi; r.correct = MODS[mid-1].quiz.filter((q,i)=>r.answers[i]===q.a).length; S.quiz[mid]=r; save(); const y=window.scrollY; route(); window.scrollTo(0,y); return; }
+  if(d.retry){ delete S.quiz[d.retry]; save(); const y=window.scrollY; route(); window.scrollTo(0,y); return; }
+  if(d.eq){ const [qi,oi] = d.eq.split("|").map(Number); if(EX.answers[qi]!==undefined) return; EX.answers[qi]=oi; const y=window.scrollY; route(); window.scrollTo(0,y); return; }
+  if(d.finish){ if(Object.keys(EX.answers).length<30) return; EX.finished=true; const c = EX.qs.filter((q,i)=>EX.answers[i]===q.a).length; if(c>=24 && (!S.exam || !S.exam.pass || c>S.exam.score)){ S.exam={pass:true,score:c,date:new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'})}; save(); } route(); window.scrollTo(0,0); return; }
+  if(d.newexam){ EX=null; newExam(); route(); window.scrollTo(0,0); return; }
+  if(d.cert){ EX=null; route(); window.scrollTo(0,0); return; }
+  if(d.savename){ S.name = ($("#nameIn").value||"").trim(); save(); route(); return; }
+  if(d.copy || d.copycert){
+    const txt = d.copy ? d.copy : `Certificado de competencia · Diplomado Ventas Élite. Se certifica que ${S.name||'[Tu nombre]'} completó el entrenamiento paso a paso Google Workspace corporativo para vendedores élite y aprobó el examen final con ${S.exam?S.exam.score:0}/30 respuestas correctas. ${S.exam?S.exam.date:''}`;
+    const old = t.textContent;
+    try{ navigator.clipboard.writeText(txt).then(()=>{ t.textContent="Copiado ✓"; setTimeout(()=>t.textContent=old,1500); }).catch(()=>{ t.textContent="Selecciona y copia a mano"; setTimeout(()=>t.textContent=old,2000); }); }catch(err){ t.textContent="Selecciona y copia a mano"; setTimeout(()=>t.textContent=old,2000); }
+    return;
+  }
+});
+$("#menuBtn").addEventListener("click", ()=>$("#nav").classList.toggle("open"));
+route();
+</script>
+<!-- vx:20261029-entrenamiento-workspace -->
+</body>
+</html>
