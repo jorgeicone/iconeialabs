@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- vx:20261029-0515 -->
+<title>Revisión de arquitectura v3 · Módulos 4, 5 y 8 · Casalimpia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--navy:#14213D;--navy2:#2F4A7A;--crema:#F6F4EF;--arena:#EAE6DC;--naranja:#D9622B;--naranja2:#FBE3D5;--gris:#5B6474;--linea:#D5CFC2;--ok:#1F7A4D;--okbg:#DDF1E6;--aj:#B8501F}
+*{box-sizing:border-box}button,textarea{font-family:inherit}
+body{margin:0;background:var(--crema);color:var(--navy);font:16px/1.5 'Public Sans',Arial,sans-serif}
+h1,h2,h3{font-family:'Space Grotesk',Arial,sans-serif;margin:0}
+header{background:var(--navy);color:var(--crema);padding:22px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+header .t{flex:1;min-width:260px}
+header .eb{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#F2A477;font-weight:700}
+header h1{font-size:24px;margin-top:4px}
+.estado{background:#2F4A7A;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+.estado.ap{background:var(--ok)}.estado.aj{background:var(--naranja)}
+.prog{min-width:220px}
+.barra{height:8px;background:#2F4A7A;border-radius:8px;overflow:hidden;margin-top:6px}
+.barra i{display:block;height:100%;background:#F2A477;width:0;transition:width .3s}
+.prog small{font-size:13px;color:#C9D2E3}
+.wrap{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 92px)}
+nav{background:var(--arena);border-right:1px solid var(--linea);padding:16px 10px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
+nav button{display:flex;width:100%;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:9px 10px;border-radius:10px;font:inherit;color:var(--navy);cursor:pointer}
+nav button:hover{background:#fff8}
+nav button.on{background:#fff;box-shadow:0 1px 0 var(--linea)}
+nav .n{flex:none;width:26px;height:26px;border-radius:50%;background:#fff;border:1.5px solid var(--linea);display:grid;place-items:center;font-size:12px;font-weight:700}
+nav .done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+nav .part .n{border-color:var(--naranja);color:var(--naranja)}
+nav .lb{flex:1;font-size:14px;line-height:1.25}
+nav .lb small{display:block;color:var(--gris);font-size:12px}
+nav .c{font-size:11px;color:var(--gris)}
+main{padding:32px clamp(18px,4vw,56px) 80px;max-width:1060px}
+.sub{color:var(--naranja);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+main h2{font-size:34px;margin:6px 0 4px}
+.nombre{font-size:20px;color:var(--navy2);font-family:'Space Grotesk';margin-bottom:8px}
+.intro{color:#33405A;max-width:760px;margin:10px 0 22px}
+.acc{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.btn{border:1.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:999px;padding:8px 16px;font:600 14px 'Public Sans';cursor:pointer}
+.btn.pri{background:var(--navy);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.item{background:#fff;border:1px solid var(--linea);border-left:5px solid var(--linea);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.item.ok{border-left-color:var(--ok)}.item.aj{border-left-color:var(--naranja)}
+.item h3{font-size:17px;font-family:'Public Sans';font-weight:700}
+.item p{margin:6px 0 0;color:#33405A;font-size:15px}
+.tag{display:inline-block;background:var(--naranja2);color:var(--aj);font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:8px}
+.ctl{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.ch{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:6px 14px;font:600 13px 'Public Sans';cursor:pointer;color:var(--navy)}
+.ch.okon{background:var(--ok);border-color:var(--ok);color:#fff}
+.ch.ajon{background:var(--naranja);border-color:var(--naranja);color:#fff}
+textarea{width:100%;margin-top:10px;border:1.5px solid var(--linea);border-radius:10px;padding:10px 12px;font:15px 'Public Sans';min-height:64px;resize:vertical;background:#FFFDF9}
+textarea:focus{outline:2px solid #F2A477;border-color:transparent}
+.preg{background:var(--navy);color:var(--crema);border-radius:14px;padding:20px 22px;margin:22px 0 14px}
+.preg h3{font-family:'Public Sans';font-size:17px;margin-bottom:10px}
+.preg .eb{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#F2A477;font-weight:700;margin-bottom:6px}
+.op{display:block;width:100%;text-align:left;border:1.5px solid #3D5A8C;background:#1B2B4D;color:var(--crema);border-radius:10px;padding:10px 14px;margin:6px 0;font:15px 'Public Sans';cursor:pointer}
+.op.on{background:#F2A477;border-color:#F2A477;color:var(--navy);font-weight:700}
+.preg textarea{background:#1B2B4D;color:var(--crema);border-color:#3D5A8C}
+.dec{display:grid;gap:12px;margin:18px 0}
+.dec button{text-align:left;border:2px solid var(--linea);background:#fff;border-radius:14px;padding:18px 20px;font:16px 'Public Sans';cursor:pointer;color:var(--navy)}
+.dec button b{display:block;font-family:'Space Grotesk';font-size:20px;margin-bottom:2px}
+.dec button.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.res{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin-top:20px}
+.res h3{font-size:18px;margin-bottom:8px}
+.res li{margin:4px 0}
+.nav2{display:flex;justify-content:space-between;margin-top:28px}
+.guard{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border-radius:999px;padding:8px 14px;font-size:13px;opacity:.92}
+footer{padding:22px 28px;color:var(--gris);font-size:13px;border-top:1px solid var(--linea)}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}nav{position:static;max-height:none;display:flex;overflow-x:auto;gap:4px;padding:8px}nav button{width:auto;flex:none}nav .lb small,nav .c{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="t"><div class="eb">ICONEialabs · Diplomado Ventas Élite · Casalimpia</div><h1>Revisión de la arquitectura v3 · Módulos 4, 5 y 8</h1></div>
+  <div class="prog"><small id="progTxt">0 de 0 revisados</small><div class="barra"><i id="bar"></i></div></div>
+  <input id="revisor" placeholder="Tu nombre" aria-label="Tu nombre" style="border:0;border-radius:999px;padding:7px 14px;font:600 14px 'Public Sans';width:170px"><button class="btn" id="copiar" style="border-color:#F2A477">Copiar mis respuestas</button><span class="estado" id="estado">Pendiente de revisión</span>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<footer>© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados. Documento interno: arquitectura v3.0 del 29 de octubre de 2026.</footer>
+<div class="guard" id="guard">Cargando…</div>
+<script>
+const PASOS = [{"id": "paso1", "titulo": "Qué cambió", "sub": "v2.0 → v3.0", "intro": "Crucé tus dos artefactos de Google Workspace (los 10 módulos y las 17 láminas) con las 11 expectativas, las 12 promesas y el temario. Verifiqué en las fuentes de Google lo que más mueve la arquitectura: los Gems se reemplazan por skills y Workspace Studio ya está disponible desde Business Starter. Estos son los nueve cambios.", "items": [{"id": "c1", "t": "Los seis Gems pasan a ser skills (plan B: Gem)", "d": "Google lo anunció el 30 de septiembre de 2026. Los skills llegaron a Workspace el 5 de octubre y a la app de Gemini el 13 de octubre. El 17 de noviembre los Gems pasan a Configuración y en Business y Enterprise dejan de funcionar desde el 1 de marzo de 2027. Un skill es Markdown estándar (SKILL.md): el mismo archivo corre en Gemini ① y en Claude ②.", "tag": "P2 · P6 · E11"}, {"id": "c2", "t": "M8 se construye con Workspace Studio como ①; Make baja a ④", "d": "Studio arma agentes en lenguaje natural con disparador, pasos y variables (20 pasos por agente, 100 agentes por usuario). Se conecta con Salesforce. P7 se cumple sin salir de Google y Make se muestra 3 minutos como «lo mismo fuera de Google».", "tag": "P7 · E7 · E9"}, {"id": "c3", "t": "El flujo de 10 etapas es la columna vertebral", "d": "Viene de tu lámina «Armonización». M4 cubre Calificar, Preparar y Proponer. M5 cubre Atraer, Agendar, Descubrir y Fidelizar. M8 cubre las costuras y Medir. Cada ficha dice qué etapa deja resuelta.", "tag": "R1"}, {"id": "c4", "t": "Ruta Google asíncrona con tus 10 módulos", "d": "Se asignan como nivelación entre sesiones (unas 7 horas en total) y cierran con el examen de 30 preguntas y el certificado en M8·S4. Así el 80 % en Google no depende solo de las horas presenciales.", "tag": "R1"}, {"id": "c5", "t": "Herramientas de Google nuevas en las fichas", "d": "Son =AI() en Sheets, Forms con Gemini, páginas de reserva, combinación de correspondencia y bandejas múltiples, «Tomar notas por mí» en Meet, espacios de Chat con Tareas, firma electrónica, Vids, Gemini Notebook con Studio, Deep Research, Canvas y Looker Studio.", "tag": "E1 · E3 · E5 · E6 · P3 · P5"}, {"id": "c6", "t": "Comprobación de edición en el minuto 0 del 4 de noviembre", "d": "Cada participante marca si ve Gemini en Docs, Studio y Vids. Así el pendiente de la licencia se resuelve con datos del grupo. Business Standard es el piso para casi todo.", "tag": "⚠️ licencia"}, {"id": "c7", "t": "NotebookLM aparece como «Gemini Notebook (antes NotebookLM)»", "d": "Se renombró el 16 de julio de 2026. P4 se prometió con el nombre viejo.", "tag": "P4"}, {"id": "c8", "t": "Política mínima de uso de IA en el cierre del M8", "d": "Incluye borradores antes que envíos, consentimiento para grabar (Ley 1581) y revisión trimestral de lo compartido fuera. Viene de tu módulo 10 y es lo que TI necesita para autorizar agentes.", "tag": "Regla 6"}, {"id": "c9", "t": "No se promete AI Inbox de Gmail", "d": "Por ahora solo está en EE. UU. y en inglés. En su lugar se usan bandejas múltiples (tu módulo 3).", "tag": "E3"}], "preguntas": [{"id": "q1", "t": "P2 prometía un «Gem Super Prompt». ¿Cómo lo cumplimos el 6 de noviembre?", "ops": ["Como skill, diciendo en voz alta por qué cambió, con el Gem como plan B (recomendado)", "Como Gem, tal como se prometió, y la migración a skill queda para el M8", "Los dos en vivo: primero el Gem y luego el mismo texto como skill"], "rec": 0}, {"id": "q2", "t": "P7 prometía automatizaciones con Make. ¿Qué peso le damos a Make?", "ops": ["Studio ① y Make ④ en 3 minutos, como «lo mismo fuera de Google» (recomendado)", "Studio ① y Make en un tramo propio de 20 minutos", "Solo Studio; Make sale de la arquitectura"], "rec": 0}], "tabla": null}, {"id": "paso2", "titulo": "Reglas y flujo", "sub": "Capas que valen para las 9 sesiones", "intro": "Pasan de cuatro a seis reglas: se suman el peldaño más bajo y «la IA redacta, la persona decide». Las dos vienen de tu entrenamiento.", "items": [{"id": "r1", "t": "1 · Todo tema termina en IA", "d": "El orden es concepto → «así se hace con IA» → «ahora hazlo tú». Ningún tramo se queda en teoría.", "tag": ""}, {"id": "r2", "t": "2 · Orden fijo ① Google → ② Claude → ③ ChatGPT → ④ el resto", "d": "Las rutas ②, ③ y ④ van como alternativa de 1 a 3 minutos o solo en la guía. El diseño apunta a 85–90 % del tiempo en Google.", "tag": ""}, {"id": "r3", "t": "3 · Compromiso nombrado", "d": "En la lámina: «Lo pidieron N de ustedes el 28 de octubre». Los nombres van solo en la guía.", "tag": ""}, {"id": "r4", "t": "4 · Una línea, tres módulos", "d": "M4 aporta datos y cálculo. M5 aporta atracción y seguimiento siempre activos. M8 aporta agentes medidos en horas recuperadas.", "tag": ""}, {"id": "r5", "t": "5 · Peldaño más bajo (nueva)", "d": "El orden es pregunta → skill → agente de Studio → AppSheet → Apps Script → Gemini Enterprise. No se construye un agente donde basta un skill.", "tag": ""}, {"id": "r6", "t": "6 · La IA redacta, la persona decide (nueva)", "d": "Todo agente que escribe a un cliente empieza dejando borradores. Para grabar se pide permiso. Las cifras de la IA se contrastan.", "tag": ""}, {"id": "r7", "t": "Flujo de 10 etapas repartido por sesión", "d": "1 Atraer: M5·S2, S3 · 2 Calificar: M4·S2, M5·S2 · 3 Agendar: M5·S2 · 4 Preparar: M4·S3, M5·S1, S3 · 5 Descubrir: M5·S1, M8·S3 · 6 Proponer: M4·S2, S3, M5·S3 · 7 Negociar: M5·S2 · 8 Cerrar: M5·S3 · 9 Fidelizar: M5·S1, M8·S3 · 10 Medir: M8·S1, S4.", "tag": ""}, {"id": "r8", "t": "Privacidad", "d": "Nada de nombres en pantalla y evaluación solo en agregado. Las herramientas ④ se usan con el caso tipo. Los datos reales van en Gemini corporativo. Meet graba solo con autorización expresa.", "tag": ""}], "preguntas": [{"id": "q3", "t": "¿Qué meta de tiempo en Google fijamos?", "ops": ["85–90 % (recomendado; la Ruta asíncrona lo permite)", "80 %, como pidió Rocío", "Cerca del 100 %: Claude y ChatGPT solo en la guía"], "rec": 0}], "tabla": null}, {"id": "paso3", "titulo": "Compromisos", "sub": "Las 11 expectativas, R1 y las 12 promesas", "intro": "Cada compromiso del 28 de octubre tiene sesión y herramienta ①. En pantalla se muestra la cifra; los nombres van en la guía.", "items": [{"id": "kE1", "t": "E1 · Seguimiento, recordatorios y alertas · 7", "d": "M4·S2 cuentas enfriadas · M4·S3 Gmail · M5·S2 tablero + Chat y Tareas + secuencia · M8·S3 agente de recontacto en Studio", "tag": ""}, {"id": "kE2", "t": "E2 · Propuestas personalizadas · 5", "d": "M4·S3 patrón ganador con @archivos · M5·S3 Docs + Slides + Vids con firma", "tag": ""}, {"id": "kE3", "t": "E3 · Correo: 80–100 al día · 5", "d": "M4·S3 etiquetas, filtros, bandejas múltiples, plantillas · M8·S2 agente de triaje", "tag": ""}, {"id": "kE4", "t": "E4 · Licitaciones · 4", "d": "M4·S3 skill Lector de pliegos · M8·S2 dupla en Studio", "tag": ""}, {"id": "kE5", "t": "E5 · Costeos y pedidos autogestionados · 3", "d": "M4·S2 Sheets + =AI() · M8·S3 Forms → Sheets → agente", "tag": ""}, {"id": "kE6", "t": "E6 · Prospección por sector · 3", "d": "M4·S3 «Prepárame» + Deep Research · M5·S1 nicho · M5·S2 página de reserva", "tag": ""}, {"id": "kE7", "t": "E7 · Agentes para tareas repetitivas · 4", "d": "M8·S1, S2, S4 con Workspace Studio", "tag": ""}, {"id": "kE8", "t": "E8 · Venta cruzada y experiencia · 2", "d": "M5·S1 Canvas + Sheets · M5·S3 contenido", "tag": ""}, {"id": "kE9", "t": "E9 · CRM Salesforce sin digitar · 2", "d": "M8·S3 notas de Meet → Studio → Salesforce ⚠️ TI (plan B: Sheet de carga)", "tag": ""}, {"id": "kE10", "t": "E10 · Menú visual Healthy · 1", "d": "M5·S3 imágenes en Gemini + Vids + Slides «Ayúdame a visualizar»", "tag": ""}, {"id": "kE11", "t": "E11 · Saber pedirle a la IA · 2", "d": "M4·S3 skill Super Prompt", "tag": ""}, {"id": "kR1", "t": "R1 · 80 % Google (Rocío)", "d": "Todas las sesiones + Ruta Google asíncrona", "tag": ""}, {"id": "kP1", "t": "P1 · Gmail: carpetas, reglas, hilos", "d": "M4·S3 tramo completo de Gmail", "tag": ""}, {"id": "kP2", "t": "P2 · Gem Super Prompt", "d": "M4·S3 como skill (plan B: Gem)", "tag": ""}, {"id": "kP3", "t": "P3 · Presentaciones con audio", "d": "M5·S3 Vids + Slides + audio de Gemini Notebook · ④ ElevenLabs", "tag": ""}, {"id": "kP4", "t": "P4 · NotebookLM a fondo", "d": "M5·S3 Gemini Notebook con Studio", "tag": ""}, {"id": "kP5", "t": "P5 · Canvas compartido y enlace que alimenta una base", "d": "M5·S1 Canvas · M5·S2 Forms → Sheets · M8·S3 el formulario dispara un agente", "tag": ""}, {"id": "kP6", "t": "P6 · Auditores e inversos", "d": "M4·S3 skill Cliente inverso · M8·S2 encadenado en Studio", "tag": ""}, {"id": "kP7", "t": "P7 · Make", "d": "M8·S2 y S3 con Studio ① · Make ④", "tag": ""}, {"id": "kP8", "t": "P8 · Comparar IAs", "d": "Ruta ②③④ en cada tramo · M8·S1 el mismo SKILL.md en Gemini y Claude, a ciegas", "tag": ""}, {"id": "kP9", "t": "P9 · Zapia", "d": "M8·S3, 10 minutos, cuenta personal", "tag": ""}, {"id": "kP10", "t": "P10 · Horas recuperadas", "d": "M8·S1 línea base · M8·S4 resultado en Looker Studio", "tag": ""}, {"id": "kP11", "t": "P11 · Mapa de experiencia", "d": "M5·S1 Canvas de la app de Gemini", "tag": ""}, {"id": "kP12", "t": "P12 · MVP propio", "d": "M8·S4 agente o skill funcionando", "tag": ""}], "preguntas": [], "tabla": null}, {"id": "paso4", "titulo": "M4 · S2", "sub": "Mié 4 nov · 6:30–8:30 p. m. · Teams · CLM4S2", "nombre": "«Del dato al costeo»", "intro": "Etapas: Calificar · Proponer. Éxito: al menos el 70 % termina el Sheet de costeo y escribe su cifra mensual de pérdida.", "items": [{"id": "paso4-t0", "t": "0–10 min · ¿Qué ves en tu cuenta? (Gemini en Docs, Studio, Vids) + retorno de Moge, Arena y Zapia", "d": "bloque edicion · conteo", "tag": "Licencia ⚠️"}, {"id": "paso4-t1", "t": "10–30 min · Mi embudo en 3 números + cuentas enfriadas; =AI() clasifica los motivos de pérdida", "d": "① Sheets =AI() + Gemini · ② Claude · ③ ChatGPT", "tag": "Temario S1 · E1"}, {"id": "paso4-t2", "t": "30–45 min · El ANS que vende, en parejas comercial + operaciones", "d": "① App de Gemini", "tag": "Temario S1"}, {"id": "paso4-t3", "t": "45–90 min · Costeo completo con la nómina 2026 en tabla de Sheets; Gemini revisa y se contrasta con una suma propia", "d": "① Sheets + Gemini ⚠️ · ② artefacto de Claude · ③ ChatGPT", "tag": "Temario S2 · E5"}, {"id": "paso4-t4", "t": "90–105 min · Casalimpia vs. barato vs. seguir igual, en pesos al mes", "d": "① Sheets + Gemini", "tag": "Temario S2"}, {"id": "paso4-t5", "t": "105–120 min · Cierre · expectativa · evaluación · tarea: Ruta módulos 1 y 2", "d": "—", "tag": "—"}], "preguntas": [{"id": "q4", "t": "¿Abrimos la sesión con el bloque «¿Qué ves en tu cuenta?» para resolver la licencia con datos?", "ops": ["Sí, en el minuto 0 (recomendado)", "Sí, pero como tarea previa por el kit", "No; espero la respuesta de TI"], "rec": 0}], "tabla": null}, {"id": "paso5", "titulo": "M4 · S3", "sub": "Vie 6 nov · 2–6 p. m. · presencial · CLM4S3", "nombre": "«Gemini como analista comercial»", "intro": "Etapas: Preparar · Proponer. Éxito: skill Super Prompt y skill Caso de ahorro funcionando, y la cuenta presentada en 60 segundos.", "items": [{"id": "paso5-t0", "t": "0–15 min · Apertura: cuenta del día", "d": "—", "tag": "—"}, {"id": "paso5-t1", "t": "15–55 min · Skill Creador de Super Prompt + «del Gem al skill» + «Prepárame para la reunión» + Deep Research", "d": "① Skill en la app de Gemini · ② el mismo SKILL.md en Claude · ③ GPT · ④ Arena", "tag": "P2 · E11 · E6"}, {"id": "paso5-t2", "t": "65–120 min · Propuesta ganadora vs. perdida y licitación: @archivos, Lector de pliegos → Sheets, Cliente inverso", "d": "① App de Gemini + skills · ② Proyecto de Claude · ③ ChatGPT", "tag": "E4 · P6 · E2"}, {"id": "paso5-t3", "t": "120–165 min · Skill Caso de ahorro Casalimpia sobre el Sheet de la S2", "d": "① Skill + @Sheet · ② skill de Claude", "tag": "Temario S3"}, {"id": "paso5-t4", "t": "175–225 min · Gmail comercial: etiquetas, filtro por dominio, bandejas múltiples, resumen, «Ayúdame a escribir», plantilla de objeción, programar envío", "d": "① Gmail + Gemini ⚠️ · ② Claude conector · ④ Zapia", "tag": "P1 · E3 · E1"}, {"id": "paso5-t5", "t": "225–240 min · Cuenta en 60 s · expectativa · evaluación · tarea: Ruta módulos 3 y 6", "d": "—", "tag": "Temario S3"}], "preguntas": [], "tabla": null}, {"id": "paso6", "titulo": "M5 · S1", "sub": "Mié 11 nov · Teams · CLM5S1", "nombre": "«El embudo de facility que no se apaga»", "intro": "Etapas: Preparar · Descubrir · Fidelizar.", "items": [{"id": "paso6-t0", "t": "0–10 min · Retorno: qué movieron con el skill de ahorro", "d": "—", "tag": "—"}, {"id": "paso6-t1", "t": "10–40 min · Investigar el nicho con Deep Research → informe en Docs, verificando fuentes", "d": "① Deep Research · ② Claude · ③ ChatGPT · ④ Moge", "tag": "E6 · E8"}, {"id": "paso6-t2", "t": "40–75 min · Mapa de experiencia en Canvas (compartido) + 2 paquetes de venta cruzada", "d": "① Canvas · ② artefacto de Claude · ④ Miro", "tag": "P11 · E8 · P5"}, {"id": "paso6-t3", "t": "75–105 min · Embudo del nicho con el skill Arquitecto de embudo, con cada etapa unida a una herramienta de Google", "d": "① Skill", "tag": "Temario M5"}, {"id": "paso6-t4", "t": "105–120 min · Expectativa · evaluación · tarea: Ruta módulo 4", "d": "—", "tag": "—"}], "preguntas": [], "tabla": null}, {"id": "paso7", "titulo": "M5 · S2", "sub": "Jue 12 nov · Teams · CLM5S2", "nombre": "«El imán, la agenda y la secuencia»", "intro": "Etapas: Atraer · Calificar · Agendar · Negociar.", "items": [{"id": "paso7-t0", "t": "10–45 min · Imán: Forms con Gemini → Sheet de costeo + página de reserva «Diagnóstico de ahorro, 30 min»", "d": "① Forms + Sheets + Calendar + Sites ⚠️ · ② artefacto de Claude · ④ Moge", "tag": "P5 · E6"}, {"id": "paso7-t1", "t": "45–85 min · Secuencia de 4 correos: «Ayúdame a escribir» + combinación de correspondencia + programar envío + enlace de reserva en la firma", "d": "① Gmail ⚠️ · ④ Brevo", "tag": "E1 · E3"}, {"id": "paso7-t2", "t": "85–110 min · Tablero de seguimiento (tabla, vista con filtro, formato condicional) + espacio de Chat de la cuenta con Tareas", "d": "① Sheets + Chat + Tasks", "tag": "E1"}, {"id": "paso7-t3", "t": "110–120 min · Expectativa · evaluación · tarea: Ruta módulo 7", "d": "—", "tag": "—"}], "preguntas": [], "tabla": null}, {"id": "paso8", "titulo": "M5 · S3", "sub": "Vie 13 nov · 2–6 p. m. · presencial · CLM5S3", "nombre": "«Propuestas y contenido que se presentan solos»", "intro": "Etapas: Preparar · Proponer · Cerrar · Atraer.", "items": [{"id": "paso8-t0", "t": "15–70 min · Gemini Notebook (antes NotebookLM): cuaderno de la cuenta; cuestionario del comité, audio y presentación paso a paso", "d": "① Gemini Notebook · ② Proyecto de Claude", "tag": "P4"}, {"id": "paso8-t1", "t": "80–150 min · Propuesta que se presenta sola: Docs con @, firma electrónica, pitch en Slides con gráfico vinculado y Vids con locución", "d": "① Docs + Slides + Vids ⚠️ · ④ ElevenLabs, Gamma", "tag": "P3 · E2 · Cerrar"}, {"id": "paso8-t2", "t": "160–220 min · Kit de contenido del mes: 5 piezas, video de 60 s, imágenes en Gemini, menú visual", "d": "① Gemini + Vids + Slides · ④ Canva", "tag": "E10 · E8"}, {"id": "paso8-t3", "t": "220–240 min · Embudo en 60 s · evaluación · tarea: Ruta módulos 5, 8 y 9 + registro de horas · aviso del 17 nov (Gems)", "d": "—", "tag": "—"}], "preguntas": [], "tabla": null}, {"id": "paso9", "titulo": "M8 · S1", "sub": "Vie 4 dic · 2–4 p. m. · presencial · CLM8S1", "nombre": "«Mapa de procesos y tiempo recuperado»", "intro": "Etapa: Medir.", "items": [{"id": "paso9-t0", "t": "0–15 min · El indicador: horas recuperadas por semana (línea base)", "d": "—", "tag": "P10"}, {"id": "paso9-t1", "t": "15–50 min · Mapear el proceso y buscar costuras rotas", "d": "① Sheets + Gemini · ④ Miro", "tag": "E7"}, {"id": "paso9-t2", "t": "50–85 min · Qué IA para qué: el mismo SKILL.md en Gemini y en Claude, más ChatGPT, comparados a ciegas", "d": "① ② ③ · ④ Arena", "tag": "P8"}, {"id": "paso9-t3", "t": "85–120 min · Escalera de decisión + proyecto con el skill Diseñador de agentes", "d": "① Skill", "tag": "E7 · P12"}], "preguntas": [], "tabla": null}, {"id": "paso10", "titulo": "M8 · S2", "sub": "Mié 9 dic · Teams · CLM8S2", "nombre": "«Tu primer agente en Workspace Studio»", "intro": "Etapas: Calificar · Negociar.", "items": [{"id": "paso10-t0", "t": "10–60 min · Agente de triaje de correo: Gemini califica urgencia → etiqueta, aviso en Chat y borrador; se prueba con 3 correos", "d": "① Studio ⚠️ admin · ② Claude conector · ④ Make", "tag": "E3 · E7 · P7"}, {"id": "paso10-t1", "t": "60–100 min · Lector de pliegos + auditor encadenados con pasos de skill en Studio", "d": "① Studio + skills", "tag": "E4 · P6"}, {"id": "paso10-t2", "t": "100–120 min · Avance del proyecto · evaluación", "d": "—", "tag": "P12"}], "preguntas": [], "tabla": null}, {"id": "paso11", "titulo": "M8 · S3", "sub": "Jue 10 dic · Teams · CLM8S3", "nombre": "«El seguimiento que se mueve solo»", "intro": "Etapas: Descubrir · Fidelizar.", "items": [{"id": "paso11-t0", "t": "10–45 min · Agente de recontacto (por fecha o fila del tablero → Chat + borrador)", "d": "① Studio · ④ Make 3 min", "tag": "E1 · P7"}, {"id": "paso11-t1", "t": "45–75 min · Pedidos autogestionados: Forms → Sheets → agente que resume y crea la carpeta", "d": "① Forms + Studio", "tag": "E5 · P5"}, {"id": "paso11-t2", "t": "75–105 min · CRM sin digitar: «Tomar notas por mí» (con permiso) → Studio → Salesforce o Sheet de carga", "d": "① Meet + Studio ⚠️ TI · ④ Make", "tag": "E9"}, {"id": "paso11-t3", "t": "105–120 min · Zapia como asistente personal · evaluación", "d": "④ Zapia", "tag": "P9"}], "preguntas": [{"id": "q5", "t": "CRM (E9): si TI no responde a tiempo sobre el conector de Salesforce, ¿qué hacemos?", "ops": ["Sheet de carga con el mismo flujo; Salesforce en demostración (recomendado)", "Solo demostración del docente con Salesforce", "Sacar Salesforce y dejar solo el Sheet"], "rec": 0}], "tabla": null}, {"id": "paso12", "titulo": "M8 · S4", "sub": "Vie 11 dic · 2–4 p. m. · presencial · CLM8S4", "nombre": "«Muestra final»", "intro": "Cierre del programa.", "items": [{"id": "paso12-t0", "t": "0–75 min · Muestra de proyectos: qué resuelve, qué peldaño usa, horas recuperadas vs. línea base", "d": "—", "tag": "P10 · P12 · E7"}, {"id": "paso12-t1", "t": "75–95 min · Tablero «Lo prometido el 28 de octubre» en Looker Studio o Sheets", "d": "① Looker Studio", "tag": "Todas"}, {"id": "paso12-t2", "t": "95–108 min · Política mínima de uso de IA + revisión de lo compartido fuera", "d": "—", "tag": "Regla 6"}, {"id": "paso12-t3", "t": "108–120 min · Evaluación final · certificado Ruta Google · cierre con la EAN", "d": "—", "tag": "—"}], "preguntas": [{"id": "q6", "t": "¿Incluimos la política mínima de uso de IA en el cierre?", "ops": ["Sí, 13 minutos y firmada por el equipo (recomendado)", "Sí, pero solo como documento en el kit", "No"], "rec": 0}], "tabla": null}, {"id": "paso13", "titulo": "Skills", "sub": "Los seis Gems ahora son skills", "intro": "El texto completo de cada skill está en la arquitectura v3 (§5). Se crea en la app de Gemini; si se usa en Docs, Sheets o Studio, se crea también en Workspace, porque no se sincronizan. El mismo texto se carga como skill de Claude.", "items": [{"id": "ks1", "t": "Creador de Super Prompt", "d": "Hace hasta 5 preguntas sobre contexto, objetivo, formato y restricciones, y entrega un único prompt con las secciones Rol · Contexto · Tarea · Formato · Criterios · Lo que no debe hacer. Si el prompt sirve para cada semana, sugiere convertirlo en skill.", "tag": "M4·S3"}, {"id": "ks2", "t": "Caso de ahorro Casalimpia", "d": "Con el Sheet citado con @ calcula el costo propio, el de Casalimpia, el del competidor barato y la pérdida mensual. Entrega una frase por silla del comité, marca los supuestos y nunca inventa un dato.", "tag": "M4·S3"}, {"id": "ks3", "t": "Cliente inverso", "d": "Como comité de compras, califica de 0 a 100 en cinco criterios. Por cada uno bajo 80 dice qué frase falta y dónde va, y termina con las 3 preguntas del comité.", "tag": "M4·S3 · M8·S2"}, {"id": "ks4", "t": "Arquitecto de embudo", "d": "Diseña 4 etapas, cada una con su herramienta de Google (Forms, página de reserva, combinación de correspondencia, Chat, firma, Vids), el imán y la venta cruzada.", "tag": "M5·S1"}, {"id": "ks5", "t": "Lector de pliegos", "d": "Arma una tabla con requisito, tipo, numeral, documento y estado. Copia la condición exacta y cierra con las fechas y los riesgos de descalificación.", "tag": "M4·S3 · M8·S2"}, {"id": "ks6", "t": "Diseñador de agentes", "d": "Elige el peldaño más bajo (pregunta, skill, Studio, AppSheet, Apps Script), con pasos, revisión humana y horas que ahorra, y da una alternativa con Claude y otra con ChatGPT.", "tag": "M8·S1"}], "preguntas": [], "tabla": null}, {"id": "paso14", "titulo": "Ruta Google", "sub": "Tus 10 módulos como nivelación", "intro": "Tu entrenamiento de 10 módulos (unas 7 horas) entra como tarea entre sesiones. El progreso se guarda solo en el navegador de cada persona; por eso el bloque «retorno» de cada sesión pregunta qué módulos completó.", "items": [{"id": "rg0", "t": "Antes de M4·S3 · 6 nov", "d": "1 El ecosistema y tu edición · 2 Drive y la casa del cliente", "tag": "75 min"}, {"id": "rg1", "t": "Antes de M5·S1 · 11 nov", "d": "3 Gmail comercial · 6 Sheets: pipeline con IA", "tag": "90 min"}, {"id": "rg2", "t": "Antes de M5·S2 · 12 nov", "d": "4 Calendar y páginas de reserva", "tag": "30 min"}, {"id": "rg3", "t": "Antes de M5·S3 · 13 nov", "d": "7 Docs y Slides: la propuesta", "tag": "50 min"}, {"id": "rg4", "t": "Antes de M8·S1 · 4 dic", "d": "5 Meet y Chat con IA · 8 Gemini, Notebook y skills", "tag": "95 min"}, {"id": "rg5", "t": "Antes de M8·S2 · 9 dic", "d": "9 Workspace Studio: tu primer agente", "tag": "60 min"}, {"id": "rg6", "t": "Antes de M8·S4 · 11 dic", "d": "10 Armonización y seguridad + examen de 30 preguntas (80 %)", "tag": "45 min + examen"}], "preguntas": [{"id": "q7", "t": "¿Cómo entra la Ruta Google?", "ops": ["Obligatoria, con certificado al cierre (recomendado)", "Opcional, como refuerzo", "No la usamos"], "rec": 0}, {"id": "q8", "t": "¿Cómo la compartimos con el grupo?", "ops": ["La publico en iconeialabs.com/casa-limpia/ruta-google (recomendado)", "Comparto el enlace del artefacto de claude.ai", "La paso a un Google Site de la EAN"], "rec": 0}], "tabla": null}, {"id": "paso15", "titulo": "Riesgos y pendientes", "sub": "Planes B y lo que falta decidir", "intro": "Lo que puede fallar y lo que depende de otros.", "items": [{"id": "g1", "t": "Edición Business Starter (sin Gemini en Docs, Sheets ni Slides)", "d": "Plan B: app de Gemini con @archivos de Drive, que está en todas las ediciones, y los mismos skills.", "tag": "Riesgo"}, {"id": "g2", "t": "Studio no activado para el grupo", "d": "Pedir a TI un grupo piloto con el nombre exacto. Mientras tanto, demostración del docente y Make o Apps Script con el caso tipo.", "tag": "Riesgo"}, {"id": "g3", "t": "Skills no visibles en el dominio el 6 de noviembre", "d": "Gem con las mismas instrucciones; se migra antes del M8.", "tag": "Riesgo"}, {"id": "g4", "t": "TI no autoriza Salesforce ni herramientas ④ con datos reales", "d": "Sheet de carga y caso tipo.", "tag": "Riesgo"}, {"id": "g5", "t": "Pendiente: licencia de Workspace, Studio y skills activados", "d": "Lo preguntas hoy. El bloque «edicion» del 4 de noviembre lo confirma con datos.", "tag": "Pendiente"}, {"id": "g6", "t": "Pendiente: fusionar la rama de privacidad de la consola", "d": "Lista en privacidad-consola-v1; falta el merge y sincronizar la skill.", "tag": "Pendiente"}, {"id": "g7", "t": "Pendiente: permisos de la base", "d": "Migración aparte en icone-aula; la decisión es tuya.", "tag": "Pendiente"}, {"id": "g8", "t": "Pendiente: hub casa-limpia.iconeialabs.com", "d": "Requiere red hacia Cloudflare. Mientras tanto: iconeialabs.com vía GitHub.", "tag": "Pendiente"}], "preguntas": [], "tabla": null}, {"id": "paso16", "titulo": "Tu decisión", "sub": "Aprobar, pedir ajustes o volver atrás", "intro": "Cuando termines de revisar, deja aquí tu decisión. Todo lo que marcaste se guarda y yo lo leo directamente para hacer la v3.1.", "items": [], "preguntas": [], "tabla": null}];
+const KEY = "rev-arq-v3";
+let S = {items:{}, preg:{}, decision:null, notaFinal:"", revisor:"", actualizado:null};
+const SB_URL="https://nvgkhdrrxqdgxktfkioa.supabase.co", SB_KEY="sb_publishable_d1RrtE7S-9a8e8mGKRRjxQ_4HU_nkDl", PIEZA="casalimpia-arquitectura-v3";
+let CLAVE=null; try{ CLAVE=localStorage.getItem(KEY+"-clave"); if(!CLAVE){ CLAVE=(crypto.randomUUID?crypto.randomUUID():"10000000-1000-4000-8000-100000000000".replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16))); localStorage.setItem(KEY+"-clave",CLAVE);} }catch(e){}
+let db = null, docRef = null, tGuardar = null;
+try{ const r = localStorage.getItem(KEY); if(r) S = Object.assign(S, JSON.parse(r)); }catch(e){}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const totalItems = () => PASOS.reduce((a,p)=>a+p.items.length+p.preguntas.length,0);
+function revisadosPaso(p){ return p.items.filter(i=>S.items[i.id]&&S.items[i.id].v).length + p.preguntas.filter(q=>S.preg[q.id]&&S.preg[q.id].v!=null).length; }
+function totalPaso(p){ return p.items.length + p.preguntas.length; }
+
+function guardar(){
+  S.actualizado = new Date().toISOString();
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+  clearTimeout(tGuardar);
+  $("#guard").textContent = "Guardando…";
+  tGuardar = setTimeout(async ()=>{
+    if(!docRef){
+      try{
+        const r = await fetch(SB_URL+"/rest/v1/rpc/arq_guardar_revision",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_pieza:PIEZA,p_clave:CLAVE,p_revisor:S.revisor||null,p_estado:S})});
+        $("#guard").textContent = r.ok ? "Guardado · "+new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}) : "Guardado en este navegador · usa «Copiar mis respuestas»";
+      }catch(e){ $("#guard").textContent = "Guardado en este navegador · usa «Copiar mis respuestas»"; }
+      return;
+    }
+    try{ await docRef.set(JSON.parse(JSON.stringify(S))); $("#guard").textContent = "Guardado · "+new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}); }
+    catch(e){ $("#guard").textContent = "No se pudo guardar en la nube; queda en este navegador"; }
+  }, 700);
+  cabecera(); navegacion();
+}
+
+function cabecera(){
+  const t = totalItems(), r = PASOS.reduce((a,p)=>a+revisadosPaso(p),0);
+  $("#progTxt").textContent = r+" de "+t+" revisados";
+  $("#bar").style.width = (t? r*100/t : 0)+"%";
+  const e = $("#estado");
+  e.className = "estado";
+  if(S.decision==="apruebo"){ e.textContent="Aprobada"; e.classList.add("ap"); }
+  else if(S.decision==="ajustes"){ e.textContent="Ajustes pedidos"; e.classList.add("aj"); }
+  else if(S.decision==="volver"){ e.textContent="Volver a la v2.0"; e.classList.add("aj"); }
+  else e.textContent = "Pendiente de revisión";
+}
+
+function actual(){ const h = location.hash.replace("#",""); return PASOS.find(p=>p.id===h) ? h : "paso1"; }
+
+function navegacion(){
+  const on = actual();
+  $("#nav").innerHTML = PASOS.map((p,i)=>{
+    const r = revisadosPaso(p), t = totalPaso(p);
+    const cls = p.id==="paso16" ? (S.decision?"done":"") : (t && r===t ? "done" : (r? "part":""));
+    return `<button class="${cls} ${p.id===on?'on':''}" data-go="${p.id}"><span class="n">${cls==="done"?"✓":i+1}</span><span class="lb">${esc(p.titulo)}<small>${esc(p.nombre||p.sub)}</small></span>${t?`<span class="c">${r}/${t}</span>`:""}</button>`;
+  }).join("");
+}
+
+function vistaItem(i){
+  const st = S.items[i.id] || {};
+  return `<div class="item ${st.v==='ok'?'ok':st.v==='ajustar'?'aj':''}">
+    <h3>${esc(i.t)}</h3><p>${esc(i.d)}</p>${i.tag?`<span class="tag">${esc(i.tag)}</span>`:""}
+    <div class="ctl"><button class="ch ${st.v==='ok'?'okon':''}" data-it="${i.id}" data-v="ok">✓ OK</button><button class="ch ${st.v==='ajustar'?'ajon':''}" data-it="${i.id}" data-v="ajustar">✎ Ajustar</button></div>
+    ${st.v==='ajustar' || st.n ? `<textarea data-nota="${i.id}" placeholder="¿Qué cambio, qué quito o qué agrego?">${esc(st.n||"")}</textarea>` : ""}
+  </div>`;
+}
+
+function vistaPreg(q){
+  const st = S.preg[q.id] || {};
+  return `<div class="preg"><div class="eb">Pregunta para ti</div><h3>${esc(q.t)}</h3>
+    ${q.ops.map((o,k)=>`<button class="op ${st.v===k?'on':''}" data-pq="${q.id}" data-k="${k}">${esc(o)}</button>`).join("")}
+    <textarea data-pn="${q.id}" placeholder="Otra opción o comentario (opcional)">${esc(st.n||"")}</textarea></div>`;
+}
+
+function resumen(){
+  const aj = [];
+  PASOS.forEach(p=>p.items.forEach(i=>{ const s=S.items[i.id]; if(s&&s.v==="ajustar") aj.push(`<li><b>${esc(p.titulo)}</b> · ${esc(i.t)}${s.n?` — ${esc(s.n)}`:""}</li>`); }));
+  const pr = [];
+  PASOS.forEach(p=>p.preguntas.forEach(q=>{ const s=S.preg[q.id]; pr.push(`<li>${esc(q.t)} → <b>${s&&s.v!=null?esc(q.ops[s.v]):"sin responder"}</b>${s&&s.n?` — ${esc(s.n)}`:""}</li>`); }));
+  const sin = totalItems() - PASOS.reduce((a,p)=>a+revisadosPaso(p),0);
+  return `<div class="res"><h3>Ajustes que pediste (${aj.length})</h3>${aj.length?`<ul>${aj.join("")}</ul>`:"<p>Ninguno por ahora.</p>"}</div>
+  <div class="res"><h3>Tus respuestas</h3><ul>${pr.join("")}</ul></div>
+  ${sin?`<div class="res"><p>Quedan <b>${sin}</b> puntos sin marcar. Puedes decidir igual; los que no marques los tomo como OK.</p></div>`:""}`;
+}
+
+function pintar(){
+  const id = actual(), i = PASOS.findIndex(p=>p.id===id), p = PASOS[i];
+  let h = `<div class="sub">${esc(p.sub)}</div><h2>${esc(p.titulo)}</h2>${p.nombre?`<div class="nombre">${esc(p.nombre)}</div>`:""}<p class="intro">${esc(p.intro)}</p>`;
+  if(p.items.length) h += `<div class="acc"><button class="btn" data-todo="${p.id}">Marcar todas como OK</button></div>` + p.items.map(vistaItem).join("");
+  h += p.preguntas.map(vistaPreg).join("");
+  if(p.id==="paso16"){
+    const D = [["apruebo","Apruebo","Construyo M4·S2 con esta arquitectura y los ajustes que marcaste."],["ajustes","Pido ajustes","Hago la v3.1 con tus notas y te la vuelvo a subir aquí."],["volver","Volver a la propuesta inicial","Retomo la v2.0 (con Gems y Make) y solo aplico lo que marcaste."]];
+    h += `<div class="dec">${D.map(d=>`<button class="${S.decision===d[0]?'on':''}" data-dec="${d[0]}"><b>${d[1]}</b>${d[2]}</button>`).join("")}</div>
+      <textarea id="notaFinal" placeholder="Algo más que quieras sumar a la arquitectura">${esc(S.notaFinal)}</textarea>` + resumen();
+  }
+  h += `<div class="nav2">${i>0?`<button class="btn" data-go="${PASOS[i-1].id}">← ${esc(PASOS[i-1].titulo)}</button>`:"<span></span>"}${i<PASOS.length-1?`<button class="btn pri" data-go="${PASOS[i+1].id}">${esc(PASOS[i+1].titulo)} →</button>`:""}</div>`;
+  $("#main").innerHTML = h;
+  navegacion(); cabecera();
+}
+
+document.addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.go){ location.hash = b.dataset.go; window.scrollTo(0,0); return; }
+  if(b.dataset.it){ const s = S.items[b.dataset.it] || (S.items[b.dataset.it]={}); s.v = s.v===b.dataset.v ? null : b.dataset.v; guardar(); pintar(); return; }
+  if(b.dataset.todo){ const p = PASOS.find(x=>x.id===b.dataset.todo); p.items.forEach(i=>{ const s = S.items[i.id] || (S.items[i.id]={}); if(!s.v) s.v="ok"; }); guardar(); pintar(); return; }
+  if(b.dataset.pq){ const s = S.preg[b.dataset.pq] || (S.preg[b.dataset.pq]={}); const k=+b.dataset.k; s.v = s.v===k ? null : k; guardar(); pintar(); return; }
+  if(b.dataset.dec){ S.decision = S.decision===b.dataset.dec ? null : b.dataset.dec; guardar(); pintar(); return; }
+});
+document.addEventListener("input", e=>{
+  const t = e.target;
+  if(t.dataset.nota){ (S.items[t.dataset.nota] || (S.items[t.dataset.nota]={})).n = t.value; guardar(); }
+  else if(t.dataset.pn){ (S.preg[t.dataset.pn] || (S.preg[t.dataset.pn]={})).n = t.value; guardar(); }
+  else if(t.id==="notaFinal"){ S.notaFinal = t.value; guardar(); }
+});
+function textoRespuestas(){
+  const L=["Revisión de arquitectura v3 · Casalimpia M4-M5-M8","Revisor: "+(S.revisor||"(sin nombre)"),"Decisión: "+({apruebo:"Apruebo",ajustes:"Pido ajustes",volver:"Volver a la propuesta inicial"}[S.decision]||"sin decidir"),""];
+  PASOS.forEach(p=>{ const a=[];
+    p.items.forEach(i=>{ const s=S.items[i.id]; if(s&&(s.v==="ajustar"||s.n)) a.push("  ✎ "+i.t+(s.n?" — "+s.n:"")); });
+    p.preguntas.forEach(q=>{ const s=S.preg[q.id]; if(s&&(s.v!=null||s.n)) a.push("  ? "+q.t+" → "+(s.v!=null?q.ops[s.v]:"")+(s.n?" — "+s.n:"")); });
+    const r=revisadosPaso(p), tt=totalPaso(p);
+    if(a.length||tt) L.push(p.titulo+(p.nombre?" "+p.nombre:"")+" · "+r+"/"+tt+" revisados", ...a);
+  });
+  if(S.notaFinal) L.push("","Nota final: "+S.notaFinal);
+  return L.join("\n");
+}
+document.getElementById("copiar").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText(textoRespuestas()); $("#guard").textContent="Copiado: pégalo en el chat con Claude"; }
+  catch(e){ $("#guard").textContent="No se pudo copiar"; }
+});
+const inpR=document.getElementById("revisor"); inpR.value=S.revisor||""; inpR.addEventListener("input",()=>{ S.revisor=inpR.value; guardar(); });
+window.addEventListener("hashchange", pintar);
+pintar();
+$("#guard").textContent = "Guardado solo en este navegador";
+
+(async ()=>{
+  try{
+    if(!window.claude || !window.claude.use) return;
+    db = await window.claude.use("db");
+    if(!db) return;
+    docRef = db.doc("revision/jorge");
+    const snap = await docRef.get();
+    const nube = snap && (typeof snap.data==="function" ? snap.data() : snap);
+    if(nube && nube.actualizado && (!S.actualizado || nube.actualizado > S.actualizado)){ S = Object.assign({items:{},preg:{},decision:null,notaFinal:""}, nube); pintar(); }
+    $("#guard").textContent = "Conectado · se guarda en la nube";
+    if(S.actualizado && (!nube || !nube.actualizado || S.actualizado > nube.actualizado)) guardar();
+  }catch(e){ $("#guard").textContent = "Guardado solo en este navegador"; }
+})();
+</script>
+</body>
+</html>
