@@ -691,8 +691,7 @@ var slides,i,show;
   document.getElementById('bf').onclick=function(e){e.stopPropagation();fs();};
   document.getElementById('vp').addEventListener('click',function(e){(e.clientX>innerWidth*0.35)?next():prev();});
   var tx=null;
-  addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
-  addEventListener('touchend',function(e){if(tx===null)return;var d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50){d<0?next():prev();}tx=null;});
+
   setInterval(function(){
     var s=Math.floor((Date.now()-t0)/1000),m=+slides[i].getAttribute('data-min')||0,el=document.getElementById('tm');
     el.textContent=Math.floor(s/60)+':'+('0'+s%60).slice(-2)+(m?' / '+m+' min':'');
@@ -1393,7 +1392,7 @@ function vivoNavPintar(){
         'presentación es la <b>'+vesc(V_COD_DECK)+'</b>. No te conecté sola: '+
         'ya te puse el código correcto, revisa la clave y abre la consola.';
       vchip('err','revisa el código'); vivoAbrir();
-      document.getElementById('vcla').focus();
+      document.getElementById('vcla').value='';
     }
   }
   else{ setTimeout(()=>{ if(!VCOD){ vivoAbrir(); } },900); }
