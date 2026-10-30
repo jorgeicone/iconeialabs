@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Entrenamiento Microsoft 365 corporativo · Ventas Élite</title>
+<title>Entrenamiento Microsoft 365 corporativo con Copilot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -114,7 +114,7 @@ details.alt summary{cursor:pointer;font-weight:600;color:#1F4E86}
 <button class="menu-btn" id="menuBtn">☰ Módulos</button>
 <div class="app">
 <aside class="nav" id="nav">
-  <div class="brand"><small>VENTAS ÉLITE</small>Microsoft 365 corporativo · entrenamiento paso a paso</div>
+  <div class="brand"><small>ECOSISTEMA MICROSOFT 365</small>Microsoft 365 corporativo · entrenamiento paso a paso</div>
   <div class="prog"><div class="bar"><i id="barFill"></i></div><p id="progTxt">0 de 10 módulos</p></div>
   <p class="navlv" id="navLv"></p>
   <ul id="navList"></ul>
@@ -148,11 +148,11 @@ const MODS = [
 {
  id:2, title:"SharePoint y la casa del cliente", short:"Sitio del equipo, permisos y vínculos",
  time:"45 min", apps:"Teams, SharePoint, OneDrive", edition:"Todas",
- goal:"Crear la estructura comercial del equipo en un sitio de SharePoint y compartir con clientes sin perder el control.",
+ goal:"Crear la estructura de trabajo del equipo en un sitio de SharePoint y compartir con clientes sin perder el control.",
  steps:[
-  {n:"t", t:"Crea el equipo «Comercial – práctica»", w:"Teams > Equipos > + > Crear equipo > Desde cero > Privado", d:"Al crear el equipo nace su sitio de SharePoint. OneDrive es de la persona; el sitio es del equipo y sus archivos no se pierden cuando alguien sale."},
-  {n:"t", t:"Arma las cinco carpetas", w:"Canal General > pestaña Archivos (o Abrir en SharePoint) > + Nuevo > Carpeta", d:"01 Catálogo y precios · 02 Plantillas · 03 Clientes · 04 Pipeline y reportes · 05 Capacitación. Dentro de 03, crea «2026-10 Andina» como cliente de ejemplo."},
-  {n:"t", t:"Asigna niveles de acceso", w:"Equipo > ⋯ > Administrar equipo > Miembros · En 01 Catálogo: ⋯ > Administrar acceso", d:"Agrega a un compañero como miembro. En 01 Catálogo deja a los vendedores con «Puede ver», para que nadie edite la lista de precios por error."},
+  {n:"t", t:"Crea el equipo «Equipo – práctica»", w:"Teams > Equipos > + > Crear equipo > Desde cero > Privado", d:"Al crear el equipo nace su sitio de SharePoint. OneDrive es de la persona; el sitio es del equipo y sus archivos no se pierden cuando alguien sale."},
+  {n:"t", t:"Arma las cinco carpetas", w:"Canal General > pestaña Archivos (o Abrir en SharePoint) > + Nuevo > Carpeta", d:"01 Catálogo y precios · 02 Plantillas · 03 Clientes · 04 Seguimiento y reportes · 05 Capacitación. Dentro de 03, crea «2026-10 Andina» como cliente de ejemplo."},
+  {n:"t", t:"Asigna niveles de acceso", w:"Equipo > ⋯ > Administrar equipo > Miembros · En 01 Catálogo: ⋯ > Administrar acceso", d:"Agrega a un compañero como miembro. En 01 Catálogo deja al equipo con «Puede ver», para que nadie edite la lista de precios por error."},
   {n:"t", t:"Comparte con un cliente sin perder el control", w:"Archivo > Compartir > Configuración del vínculo > Personas específicas > Puede ver o Puede revisar", d:"Nunca «Cualquier persona con el vínculo» para datos de clientes. Si tu empresa lo permite, pon fecha de expiración; si no, agenda quitar el acceso en 30 días."},
   {n:"t", t:"Marca lo confidencial", w:"Archivo abierto > Inicio > Confidencialidad (Business Premium o superior)", d:"Aplica la etiqueta Confidencial. Si tu plan no tiene etiquetas, restringe el acceso y empieza el nombre con [CONFIDENCIAL]."},
   {n:"p", t:"Pide a Copilot que te encuentre algo", w:"Copilot Chat > pestaña Trabajo", p:"Busca la última propuesta que enviamos a Andina y resume precio, plazo y condiciones.", d:"Copilot Pro busca en todo lo que tú puedes abrir: por eso los permisos bien puestos también protegen la IA.",
@@ -161,17 +161,17 @@ const MODS = [
  tip:"Nombra igual en todas partes: AAAA-MM Cliente – Documento (2026-10 Andina – Propuesta). La misma palabra en la carpeta de SharePoint, la categoría de Outlook y el canal de Teams.",
  sales:"Mueve al sitio del equipo los archivos de tu cliente más importante que hoy están en tu OneDrive personal o en el escritorio.",
  quiz:[
-  {q:"Un vendedor renuncia. ¿Dónde deberían estar sus propuestas para que no se pierdan?", o:["En su OneDrive","Adjuntas en sus correos","En el sitio de SharePoint del equipo","En su escritorio"], a:2, e:"Los archivos del sitio del equipo pertenecen a la empresa, no a la persona."},
+  {q:"Alguien del equipo renuncia. ¿Dónde deberían estar sus propuestas para que no se pierdan?", o:["En su OneDrive","Adjuntas en sus correos","En el sitio de SharePoint del equipo","En su escritorio"], a:2, e:"Los archivos del sitio del equipo pertenecen a la empresa, no a la persona."},
   {q:"¿Qué acceso le das a un cliente para revisar una propuesta?", o:["Puede editar, sin límite","Personas específicas con «Puede ver» o «Puede revisar»","Cualquier persona con el vínculo","Propietario del sitio"], a:1, e:"Acceso mínimo y solo para las personas que lo necesitan."},
   {q:"¿Por qué importan los permisos para Copilot?", o:["Copilot ignora los permisos","Copilot solo puede ver lo que el usuario ya puede abrir","Copilot lee toda la empresa","Copilot no funciona en SharePoint"], a:1, e:"Un archivo mal compartido queda al alcance del Copilot de quien lo recibió."}
  ]
 },
 {
- id:3, title:"Outlook comercial", short:"Categorías, reglas, plantillas y Copilot",
+ id:3, title:"Outlook productivo", short:"Categorías, reglas, plantillas y Copilot",
  time:"40 min", apps:"Outlook", edition:"Todas · Copilot en Outlook también en el básico",
- goal:"Convertir la bandeja en un tablero comercial y responder más rápido con Copilot sin perder tu voz.",
+ goal:"Convertir la bandeja en un tablero de pendientes y responder más rápido con Copilot sin perder tu voz.",
  steps:[
-  {n:"t", t:"Crea categorías por etapa", w:"Outlook > clic derecho en un correo > Categorizar > Nueva categoría", d:"Prospecto, Propuesta, Negociación, Cliente. Dales colores distintos."},
+  {n:"t", t:"Crea categorías por etapa", w:"Outlook > clic derecho en un correo > Categorizar > Nueva categoría", d:"Nuevo, En curso, Propuesta, Cerrado. Dales colores distintos."},
   {n:"t", t:"Crea una regla automática", w:"Configuración (engranaje) > Correo > Reglas > + Agregar nueva regla", d:"Condición: el remitente contiene @dominiocliente.com. Acción: Categorizar como Propuesta. Así cada correo del cliente queda marcado solo."},
   {n:"t", t:"Fija tu tablero de pendientes", w:"Panel de carpetas > Categorías > clic derecho en Propuesta > Agregar a Favoritos", d:"Combínalo con Filtrar > No leído: verás de un vistazo las propuestas con respuesta pendiente."},
   {n:"b", t:"Resume un hilo con Copilot", w:"Abre un hilo largo > Resumir (arriba del correo) o ícono de Copilot", p:"Resume este hilo y dime qué me pide el cliente, qué prometí y qué falta.", d:"Funciona con el Copilot básico."},
@@ -191,9 +191,9 @@ const MODS = [
 {
  id:4, title:"Bookings y calendario", short:"Agenda que se llena sola",
  time:"30 min", apps:"Calendario de Outlook, Bookings", edition:"Planes Business (TI debe habilitar Bookings)",
- goal:"Publicar una página de reservas que califique al prospecto y organizar el tiempo comercial.",
+ goal:"Publicar una página de reservas que califique a quien agenda y organizar tu tiempo de trabajo.",
  steps:[
-  {n:"t", t:"Crea tu página de reservas", w:"Calendario de Outlook > Bookings personal (outlook.office.com/bookwithme)", d:"Tipo de reunión: «Diagnóstico comercial de 30 minutos», martes a jueves, con 15 minutos de margen entre citas."},
+  {n:"t", t:"Crea tu página de reservas", w:"Calendario de Outlook > Bookings personal (outlook.office.com/bookwithme)", d:"Tipo de reunión: «Diagnóstico de 30 minutos», martes a jueves, con 15 minutos de margen entre citas."},
   {n:"t", t:"Añade preguntas de calificación", w:"Tipo de reunión > Preguntas personalizadas (o la página compartida de Bookings del equipo si la personal no las muestra)", d:"Pregunta tamaño de la empresa y presupuesto aproximado. Llegarás preparado."},
   {n:"t", t:"Incluye Teams y recordatorios", w:"Tipo de reunión > Reunión de Teams · Recordatorios por correo", d:"El cliente recibe el enlace y el recordatorio sin que tú hagas nada."},
   {n:"t", t:"Bloquea tiempo de prospección", w:"Calendario > Nuevo evento «Prospección», que se repite, Mostrar como: Ocupado", d:"Dos horas diarias. Si tu empresa tiene Viva Insights, usa su opción de tiempo de concentración."},
@@ -201,12 +201,12 @@ const MODS = [
   {n:"b", t:"Prepara la cita con Copilot", w:"Outlook > abre el evento > ícono de Copilot", p:"Prepárame para esta reunión: quién asiste, qué correos hemos cruzado y qué quedó pendiente.", d:"En el básico funciona sobre tu bandeja y tu calendario. En Pro también cruza archivos, chats y reuniones anteriores."},
   {n:"t", t:"Pon el enlace en tu firma", w:"Configuración > Cuentas > Firmas", d:"«Agenda aquí un diagnóstico de 30 minutos», con el enlace de tu página."}
  ],
- tip:"El calendario comercial del equipo (ferias, visitas, cierres) va en el grupo de Microsoft 365 ventas@, no en el calendario personal de alguien: así no desaparece cuando esa persona sale.",
+ tip:"El calendario del equipo (eventos, visitas, entregas) va en el grupo de Microsoft 365 equipo@, no en el calendario personal de alguien: así no desaparece cuando esa persona sale.",
  sales:"Comparte tu página de reservas con un compañero y pídele que agende. Verifica que el evento llegue con enlace de Teams y recordatorio.",
  quiz:[
-  {q:"¿Qué ventaja comercial tiene añadir preguntas a la página de reservas?", o:["Ninguna","Llegas preparado y calificas al prospecto antes de la reunión","Cobra la cita","Bloquea a la competencia"], a:1, e:"Las preguntas previas te dan contexto para la reunión."},
+  {q:"¿Qué ventaja tiene añadir preguntas a la página de reservas?", o:["Ninguna","Llegas preparado y calificas a la persona antes de la reunión","Cobra la cita","Bloquea a otros"], a:1, e:"Las preguntas previas te dan contexto para la reunión."},
   {q:"¿Puede un usuario con Copilot básico prepararse para una reunión desde Outlook?", o:["No, eso es solo Pro","Sí: Copilot en Outlook razona sobre su bandeja y su calendario","Solo si paga por uso","Solo en el celular"], a:1, e:"Copilot en Outlook está incluido en el básico; Pro agrega archivos, chats y reuniones."},
-  {q:"¿Dónde conviene crear el calendario «Ferias 2026» del equipo?", o:["En el calendario personal del gerente","En el grupo de Microsoft 365 del equipo","En una hoja impresa","En WhatsApp"], a:1, e:"El grupo pertenece a la empresa y sobrevive a la salida de cualquier persona."}
+  {q:"¿Dónde conviene crear el calendario «Eventos 2026» del equipo?", o:["En el calendario personal del gerente","En el grupo de Microsoft 365 del equipo","En una hoja impresa","En WhatsApp"], a:1, e:"El grupo pertenece a la empresa y sobrevive a la salida de cualquier persona."}
  ]
 },
 {
@@ -219,12 +219,12 @@ const MODS = [
   {n:"t", t:"Usa las notas colaborativas", w:"Reunión > Notas (en la invitación o durante la llamada)", d:"Agenda, notas y tareas en un componente de Loop que todos editan. Las tareas asignadas llegan al responsable."},
   {n:"p", t:"Resume la reunión con IA", w:"Calendario > reunión terminada > Resumen (Recap) · o activa Facilitator durante la reunión", p:"¿Qué objeciones planteó el cliente y qué le respondí?", d:"El recap trae capítulos, notas de IA y tareas. Facilitator toma notas en tiempo real que ven todos los asistentes internos.",
    b:{w:"Chat de la reunión > Resumen > Transcripción > Descargar (.docx) · luego Copilot Chat > sube el archivo", p:"Con esta transcripción, resume en cinco viñetas: necesidad del cliente, objeciones, acuerdos y próximos pasos con responsable y fecha.", d:"Mismo resultado, dos clics más. Si no eres el organizador, pídele la transcripción."}},
-  {n:"t", t:"Crea el canal de la cuenta", w:"Equipo Comercial > ⋯ > Agregar canal > «Cuenta Andina»", d:"Con vendedor, preventa, logística y cartera. Fija la propuesta del sitio como pestaña del canal."},
+  {n:"t", t:"Crea el canal de la cuenta", w:"Equipo > ⋯ > Agregar canal > «Cuenta Andina»", d:"Con las personas de cada área que atienden la cuenta. Fija la propuesta del sitio como pestaña del canal."},
   {n:"t", t:"Convierte un mensaje en tarea", w:"En el mensaje del canal > ⋯ > Más acciones > Crear tarea (Planner)", d:"«Validar descuento con cartera», con responsable y fecha. Aparece en Planner del responsable."},
   {n:"p", t:"Ponte al día con el canal", w:"Teams > canal > Copilot", p:"Resume lo que se habló esta semana en el canal de Andina y lista los pendientes con responsable.", d:"Copilot Pro lee el canal y te pone al día en un minuto.",
    b:{w:"Planner > plan del canal > vista Tablero, agrupada por Asignado a", d:"Sin IA, el gerente ve los pendientes en un solo tablero. Por eso cada compromiso debe convertirse en tarea."}}
  ],
- tip:"Juego de rol en tríos: vendedor, cliente y observador, con transcripción. Los básicos resumen subiendo la transcripción a Copilot Chat; si en el trío hay un Pro, comparen con su recap. ¿Capturaron la objeción principal y el siguiente paso con fecha? La responsabilidad del resumen es tuya.",
+ tip:"Juego de rol en tríos: anfitrión, cliente y observador, con transcripción. Los básicos resumen subiendo la transcripción a Copilot Chat; si en el trío hay un Pro, comparen con su recap. ¿Capturaron la objeción principal y el siguiente paso con fecha? La responsabilidad del resumen es tuya.",
  sales:"En tu próxima reunión real con un cliente, transcribe (con permiso), resume con Copilot y envía el seguimiento en menos de una hora.",
  quiz:[
   {q:"Tienes Copilot básico. ¿Cómo obtienes un resumen con IA de la reunión con el cliente?", o:["No se puede","Descargas la transcripción y la subes a Copilot Chat","Pagas Teams Premium cada vez","Le pides el resumen al cliente"], a:1, e:"La transcripción está disponible para todos; Copilot Chat la resume."},
@@ -233,21 +233,21 @@ const MODS = [
  ]
 },
 {
- id:6, title:"Excel: pipeline con IA", short:"Tablas, listas y análisis con Copilot",
+ id:6, title:"Excel: tablero de seguimiento con IA", short:"Tablas, listas y análisis con Copilot",
  time:"50 min", apps:"Excel, Forms, Copilot Chat", edition:"Todas · Copilot dentro de la hoja: Pro",
- goal:"Construir un pipeline comercial vivo y usar la IA para clasificar, resumir y explicar los datos.",
+ goal:"Construir un tablero de seguimiento vivo y usar la IA para clasificar, resumir y explicar los datos.",
  steps:[
-  {n:"t", t:"Crea el pipeline", w:"Sitio Comercial > 04 Pipeline y reportes > + Nuevo > Libro de Excel", d:"Columnas: cliente, contacto, etapa, valor en COP, fecha de cierre, última objeción. Guárdalo en el sitio, no en tu OneDrive."},
-  {n:"t", t:"Conviértelo en tabla con lista desplegable", w:"Insertar > Tabla · columna Etapa > Datos > Validación de datos > Lista", d:"Opciones: prospecto, propuesta, negociación, ganada, perdida. Carga 15 oportunidades de práctica."},
+  {n:"t", t:"Crea el tablero de seguimiento", w:"Sitio del equipo > 04 Seguimiento y reportes > + Nuevo > Libro de Excel", d:"Columnas: cliente, contacto, etapa, valor en COP, fecha de cierre, última objeción. Guárdalo en el sitio, no en tu OneDrive."},
+  {n:"t", t:"Conviértelo en tabla con lista desplegable", w:"Insertar > Tabla · columna Etapa > Datos > Validación de datos > Lista", d:"Opciones: nuevo, en curso, propuesta, ganado, perdido. Carga 15 oportunidades de práctica."},
   {n:"p", t:"Clasifica objeciones con IA", w:"Excel > Copilot (en la cinta Inicio)", p:"Agrega una columna «Tipo de objeción» que clasifique la columna F en precio, tiempo, confianza o necesidad.", d:"Copilot propone la columna dentro de la hoja; revisa y acepta.",
    b:{w:"Copilot Chat > agente de Excel (o sube el archivo al chat)", p:"Con este archivo, clasifica cada objeción de la columna F en precio, tiempo, confianza o necesidad y devuélveme la tabla con la columna «Tipo».", d:"Descarga el resultado o copia la columna en tu hoja. Nota: la función =COPILOT() se retiró el 14 de septiembre de 2026; no la busques."}},
   {n:"t", t:"Arma el resumen por etapa", w:"Insertar > Tabla dinámica > Filas: Etapa · Valores: suma de Valor > Insertar > Gráfico", d:"Hazlo a mano una vez: así sabrás verificar cualquier total que te dé la IA."},
   {n:"p", t:"Pide una explicación", w:"Excel > Copilot", p:"¿Qué tipo de objeción aparece más en las oportunidades perdidas y qué valor representan?", d:"Esto convierte la hoja en una conversación de gestión.",
    b:{w:"Copilot Chat > sube el libro", p:"¿Qué tipo de objeción aparece más en las oportunidades perdidas y qué valor representan?", d:"Contrasta la cifra con tu tabla dinámica: la IA puede equivocarse."}},
-  {n:"t", t:"Crea tu vista personal", w:"Vista > Vista de hoja > Nueva", d:"Cada vendedor filtra sus oportunidades sin desordenar lo que ven los demás."},
+  {n:"t", t:"Crea tu vista personal", w:"Vista > Vista de hoja > Nueva", d:"Cada persona filtra sus casos sin desordenar lo que ven los demás."},
   {n:"t", t:"Conecta un formulario de diagnóstico", w:"Forms > Nuevo formulario > Respuestas > Abrir en Excel", d:"Cinco preguntas de calificación. Cada respuesta cae como fila nueva."}
  ],
- tip:"Una sola fuente de verdad: el pipeline vive en este Excel del sitio (o en el CRM), nunca repartido en correos. Todo lo demás —reportes, diapositivas, flujos— lee de aquí.",
+ tip:"Una sola fuente de verdad: el tablero de seguimiento vive en este Excel del sitio (o en el CRM), nunca repartido en correos. Todo lo demás —reportes, diapositivas, flujos— lee de aquí.",
  sales:"Traslada a esta plantilla tus oportunidades reales del trimestre y pregúntale a Copilot cuál tiene más riesgo de caerse.",
  quiz:[
   {q:"¿Qué pasó con la función =COPILOT() de Excel?", o:["Es gratuita para todos","Se retiró el 14 de septiembre de 2026","Reemplazó a BUSCARV","Solo funciona en Mac"], a:1, e:"Microsoft la retiró; la IA en Excel se usa con Copilot (Pro) o con el agente de Excel y el chat (básico)."},
@@ -260,15 +260,15 @@ const MODS = [
  time:"50 min", apps:"Word, PowerPoint, Copilot Chat", edition:"Todas · Copilot dentro de Word y PowerPoint: Pro",
  goal:"Pasar de una reunión con el cliente a una propuesta revisada y a un pitch visual en una sola tarde.",
  steps:[
-  {n:"t", t:"Parte de la plantilla de la empresa", w:"Sitio Comercial > 02 Plantillas > ⋯ > Copiar a > 03 Clientes > 2026-10 Andina", d:"Nunca empieces de cero ni edites la plantilla original."},
-  {n:"p", t:"Redacta la sección clave", w:"Word > Copilot (panel)", p:"Con base en /Notas de la reunión con Andina y /Pipeline, redacta la sección de necesidad del cliente y la solución propuesta en tono consultivo, máximo 250 palabras.", d:"La barra / cita archivos concretos y le da contexto real a Copilot.",
+  {n:"t", t:"Parte de la plantilla de la empresa", w:"Sitio del equipo > 02 Plantillas > ⋯ > Copiar a > 03 Clientes > 2026-10 Andina", d:"Nunca empieces de cero ni edites la plantilla original."},
+  {n:"p", t:"Redacta la sección clave", w:"Word > Copilot (panel)", p:"Con base en /Notas de la reunión con Andina y /Seguimiento, redacta la sección de necesidad del cliente y la solución propuesta en tono consultivo, máximo 250 palabras.", d:"La barra / cita archivos concretos y le da contexto real a Copilot.",
    b:{w:"Copilot Chat > agente de Word · adjunta la transcripción y tu propuesta", p:"Con estos dos archivos, redacta la sección de necesidad del cliente y la solución propuesta en tono consultivo, máximo 250 palabras.", d:"Copia el texto a tu propuesta del sitio. Si tu empresa tiene menos de 2.000 usuarios, quizá veas Copilot dentro de Word con acceso estándar: úsalo igual."}},
   {n:"b", t:"Refina el texto", w:"Copilot Chat (o Copilot en Word si lo tienes) > pega el párrafo", p:"Haz este párrafo más claro y conciso, en tono formal, sin cambiar cifras ni compromisos.", d:"Compara antes de aceptar."},
   {n:"t", t:"Activa el control de cambios", w:"Revisar > Control de cambios > Para todos", d:"Cada edición queda marcada antes de que el gerente apruebe."},
   {n:"t", t:"Pide revisión al gerente", w:"Comentario con @nombre del gerente > Asignar a", d:"Asignar un comentario crea una tarea. Para dejar constancia formal, usa Aprobaciones en Teams."},
   {n:"t", t:"Prepara la firma", w:"Archivo > Exportar a PDF > herramienta de firma de tu empresa (o Solicitar firma en SharePoint, si TI la habilitó)", d:"La firma electrónica de SharePoint es de pago por uso; pregunta a TI cuál usa la empresa."},
-  {n:"p", t:"Crea el pitch en PowerPoint", w:"PowerPoint > Copilot > Crear presentación a partir de un archivo", p:"Resume esta propuesta en tres diapositivas: problema del cliente, solución y siguiente paso con fecha.", d:"Luego pega el gráfico del pipeline desde Excel con Pegado especial > Pegar vínculo.",
-   b:{w:"Copilot Chat > agente de PowerPoint · adjunta la propuesta", p:"Resume esta propuesta en tres diapositivas: problema del cliente, solución y siguiente paso con fecha.", d:"Abre el resultado en PowerPoint y pega el gráfico del pipeline con Pegado especial > Pegar vínculo."}}
+  {n:"p", t:"Crea el pitch en PowerPoint", w:"PowerPoint > Copilot > Crear presentación a partir de un archivo", p:"Resume esta propuesta en tres diapositivas: problema del cliente, solución y siguiente paso con fecha.", d:"Luego pega el gráfico del tablero de seguimiento desde Excel con Pegado especial > Pegar vínculo.",
+   b:{w:"Copilot Chat > agente de PowerPoint · adjunta la propuesta", p:"Resume esta propuesta en tres diapositivas: problema del cliente, solución y siguiente paso con fecha.", d:"Abre el resultado en PowerPoint y pega el gráfico del tablero de seguimiento con Pegado especial > Pegar vínculo."}}
  ],
  tip:"Un dato, tres usos, cero copias: el gráfico vinculado de Excel se actualiza en PowerPoint, y la propuesta vive en el sitio con su historial de versiones. Si copias y pegas, en una semana tienes tres versiones distintas.",
  sales:"Prepara la propuesta para tu oportunidad más grande y mide cuánto tiempo te tomó frente a la última que hiciste sin IA.",
@@ -287,14 +287,14 @@ const MODS = [
   {n:"b", t:"Prepara una visita", w:"Outlook > ícono de Copilot", p:"Prepárame para la reunión de mañana con Andina: quién asiste, qué les hemos enviado, qué quedó pendiente y tres preguntas de descubrimiento.", d:"Revisa que cite correos reales. Con Pro, hazlo desde Copilot Chat para que también cruce archivos y chats."},
   {n:"b", t:"Investiga el sector", w:"Copilot Chat > pestaña Web", p:"Investiga tendencias 2026 del sector de alimentos procesados en Colombia que afecten la compra de [tu producto]. Cita fuentes.", d:"Verifica las fuentes antes de citarlas al cliente. Con Pro, el agente Researcher arma un informe más profundo."},
   {n:"b", t:"Crea un Notebook de producto", w:"App de Microsoft 365 Copilot (m365.cloud.microsoft) > Notebooks > Nuevo notebook", d:"Sube tres fichas técnicas, un caso de éxito y la lista de objeciones frecuentes, y compártelo con el equipo. Desde junio de 2026 está en el básico, con fuentes estándar y un tope de fuentes por notebook."},
-  {n:"b", t:"Genera material de entrenamiento", w:"Dentro del Notebook > chat", p:"Crea un cuestionario de 10 preguntas sobre el portafolio, con respuestas, usando solo estas fuentes.", d:"Prueba también la guía de estudio y el mapa mental para un vendedor nuevo."},
-  {n:"b", t:"Crea tu primer agente", w:"App de Copilot > Agentes > Crear agente > Configurar", p:"Nombre: Correo de seguimiento Élite\nInstrucciones: Redacta correos de seguimiento comercial en español de Colombia, tono consultivo y cercano, máximo 120 palabras, un único llamado a la acción con fecha concreta. Nunca inventes precios ni condiciones: si faltan, deja [corchetes].", d:"Usa solo instrucciones (y, si quieres, el sitio web de tu empresa): así lo puede usar cualquier compañero, básico o Pro. Si le pones SharePoint como fuente, los básicos ya no podrán usarlo. Compártelo con tu trío."},
+  {n:"b", t:"Genera material de entrenamiento", w:"Dentro del Notebook > chat", p:"Crea un cuestionario de 10 preguntas sobre el portafolio, con respuestas, usando solo estas fuentes.", d:"Prueba también la guía de estudio y el mapa mental para una persona nueva."},
+  {n:"b", t:"Crea tu primer agente", w:"App de Copilot > Agentes > Crear agente > Configurar", p:"Nombre: Correo de seguimiento\nInstrucciones: Redacta correos de seguimiento con clientes en español de Colombia, tono consultivo y cercano, máximo 120 palabras, un único llamado a la acción con fecha concreta. Nunca inventes precios ni condiciones: si faltan, deja [corchetes].", d:"Usa solo instrucciones (y, si quieres, el sitio web de tu empresa): así lo puede usar cualquier compañero, básico o Pro. Si le pones SharePoint como fuente, los básicos ya no podrán usarlo. Compártelo con tu trío."},
   {n:"t", t:"Graba un video de 60 segundos", w:"Clipchamp > Crear un video > formato vertical", d:"Invita a un gerente de compras a un diagnóstico gratuito de 30 minutos. Activa los subtítulos automáticos y usa los colores de tu marca."}
  ],
  tip:"No compres licencias Pro para tener «un mejor chat». Pro se justifica cuando la persona necesita a Copilot dentro de Word, Excel y Teams, y sobre los datos de la empresa, todos los días.",
- sales:"Crea un agente para tu tarea comercial más repetida (por ejemplo, respuesta a solicitud de cotización) y úsalo toda la semana.",
+ sales:"Crea un agente para tu tarea más repetida (por ejemplo, respuesta a solicitud de cotización) y úsalo toda la semana.",
  quiz:[
-  {q:"Quieres que un vendedor nuevo aprenda el portafolio respondiendo solo con las fichas oficiales. ¿Qué usas?", o:["Una regla de Outlook","Un Copilot Notebook con las fichas como fuentes","Una búsqueda web","Una plantilla de correo"], a:1, e:"El Notebook responde solo con las fuentes que le das, y desde junio de 2026 está en el básico."},
+  {q:"Quieres que una persona nueva aprenda el portafolio respondiendo solo con las fichas oficiales. ¿Qué usas?", o:["Una regla de Outlook","Un Copilot Notebook con las fichas como fuentes","Una búsqueda web","Una plantilla de correo"], a:1, e:"El Notebook responde solo con las fuentes que le das, y desde junio de 2026 está en el básico."},
   {q:"Un compañero Pro crea un agente con una carpeta de SharePoint como fuente y lo comparte. ¿Qué pasa con los usuarios básicos?", o:["Lo usan igual","No pueden usarlo, salvo que TI habilite pago por uso","Lo ven en Excel","Se convierten en Pro"], a:1, e:"Los agentes con datos de la empresa requieren Pro o pago por uso. Con solo instrucciones y web, sirven para todos."},
   {q:"¿Qué es un agente de Agent Builder?", o:["Un virus","Un Copilot con instrucciones, tono y fuentes fijas que se puede compartir","Una macro de Excel","Una licencia"], a:1, e:"Es tu mejor prompt convertido en herramienta del equipo."}
  ]
@@ -306,12 +306,12 @@ const MODS = [
  steps:[
   {n:"t", t:"Entiende las tres piezas", w:"Recordatorio", d:"Desencadenador (cuándo arranca), acciones (qué hace) y contenido dinámico (los datos que viajan entre acciones). Con tu plan vienen los conectores estándar: Outlook, Teams, SharePoint, Excel, Forms, Planner y Aprobaciones."},
   {n:"t", t:"Abre Power Automate", w:"Iniciador de aplicaciones > Power Automate (make.powerautomate.com)", d:"Si no aparece, pídele a TI que lo habilite para tu grupo piloto."},
-  {n:"t", t:"Describe el flujo en lenguaje natural", w:"Inicio > cuadro «Describe lo que quieres automatizar» (o Crear > Flujo de nube automatizado)", p:"Cuando llegue un correo al buzón compartido ventas@ con la palabra cotización en el asunto, publica un mensaje en el canal Comercial de Teams y crea una tarea en Planner para el vendedor de turno.", d:"El asistente de Power Automate arma el flujo. Revisa cada acción que propone."},
+  {n:"t", t:"Describe el flujo en lenguaje natural", w:"Inicio > cuadro «Describe lo que quieres automatizar» (o Crear > Flujo de nube automatizado)", p:"Cuando llegue un correo al buzón compartido equipo@ con la palabra cotización en el asunto, publica un mensaje en el canal General de Teams y crea una tarea en Planner para la persona de turno.", d:"El asistente de Power Automate arma el flujo. Revisa cada acción que propone."},
   {n:"t", t:"Ajusta el desencadenador", w:"Paso «Cuando llega un correo electrónico nuevo a un buzón compartido» > Filtro de asunto", d:"Escribe cotización en el filtro para que el flujo solo reaccione a lo que importa."},
-  {n:"t", t:"Agrega una condición", w:"+ > Agregar una acción > Control > Condición", d:"Si el remitente es de un cliente actual → mensaje al canal de su cuenta; si no → canal Prospectos."},
+  {n:"t", t:"Agrega una condición", w:"+ > Agregar una acción > Control > Condición", d:"Si el remitente es de un cliente actual → mensaje al canal de su cuenta; si no → canal Nuevos contactos."},
   {n:"t", t:"Asegura la revisión humana", w:"Acciones del flujo", d:"No uses «Enviar un correo» al cliente. Publica en Teams o crea tareas. Más adelante, pon una Aprobación antes de cualquier envío."},
-  {n:"t", t:"Prueba con tres correos", w:"Probar > Manualmente · envía tres correos a ventas@ desde otra cuenta", d:"Uno con cotización, uno normal y uno irrelevante. Revisa el historial de ejecuciones y corrige."},
-  {n:"t", t:"Construye el segundo flujo (opcional)", w:"Crear > Flujo de nube automatizado", p:"Cuando llegue una respuesta al formulario de diagnóstico, agrega una fila a la tabla del pipeline en Excel, crea la carpeta del cliente en el sitio Comercial y avísame en Teams.", d:"Une Forms, Excel, SharePoint y Teams, todos conectores estándar. Con Copilot Studio (Pro o pago por uso), el flujo podría pedirle a la IA que califique el lead."}
+  {n:"t", t:"Prueba con tres correos", w:"Probar > Manualmente · envía tres correos a equipo@ desde otra cuenta", d:"Uno con cotización, uno normal y uno irrelevante. Revisa el historial de ejecuciones y corrige."},
+  {n:"t", t:"Construye el segundo flujo (opcional)", w:"Crear > Flujo de nube automatizado", p:"Cuando llegue una respuesta al formulario de diagnóstico, agrega una fila a la tabla del tablero de seguimiento en Excel, crea la carpeta del cliente en el sitio del equipo y avísame en Teams.", d:"Une Forms, Excel, SharePoint y Teams, todos conectores estándar. Con Copilot Studio (Pro o pago por uso), el flujo podría pedirle a la IA que clasifique la solicitud."}
  ],
  tip:"Empieza por el peldaño más bajo que resuelva el problema: si basta un agente, no construyas un flujo; si basta un flujo, no pidas Copilot Studio. Los conectores premium (Salesforce, HubSpot, HTTP) requieren Power Automate Premium.",
  sales:"Mide cuántos minutos por semana te ahorra el flujo durante dos semanas. Ese número es tu argumento para escalarlo al equipo.",
@@ -322,7 +322,7 @@ const MODS = [
  ]
 },
 {
- id:10, title:"Armonización y seguridad", short:"Un solo sistema comercial",
+ id:10, title:"Armonización y seguridad", short:"Un solo sistema de trabajo",
  time:"45 min", apps:"Todas", edition:"Todas",
  goal:"Encadenar todo lo aprendido en el flujo de diez etapas, operar con los hábitos de seguridad y decidir con datos quién necesita Pro.",
  steps:[
@@ -332,12 +332,12 @@ const MODS = [
   {n:"t", t:"Revisa lo compartido fuera", w:"OneDrive > Compartido > Compartido por ti · en cada archivo: ⋯ > Administrar acceso", d:"Quita accesos que ya no sirvan. Hazlo cada trimestre, también en el sitio del equipo."},
   {n:"t", t:"Firma la política mínima de uso de IA", w:"Con tu equipo", d:"Copilot redacta, resume y analiza; no compromete precios, plazos ni condiciones sin revisión. Solo con la cuenta de trabajo. Se avisa al cliente cuando se transcribe. Todo flujo que toca clientes empieza avisando, no enviando."},
   {n:"t", t:"Arma tu caso para Pro (o descártalo)", w:"Con tus indicadores", d:"Escribe en tres líneas qué tarea concreta harías con Pro que hoy no puedes hacer con el básico, cuántas horas por semana ahorraría y cuánto vale. Así se compran licencias con datos."},
-  {n:"t", t:"Prepara tu proyecto final", w:"Presentación de 5 minutos", d:"Muestra tu sitio Comercial, tu pipeline, tu página de reservas, tu agente y tu flujo funcionando. Luego presenta el examen final."}
+  {n:"t", t:"Prepara tu proyecto final", w:"Presentación de 5 minutos", d:"Muestra tu sitio del equipo, tu tablero de seguimiento, tu página de reservas, tu agente y tu flujo funcionando. Luego presenta el examen final."}
  ],
  tip:"Cinco reglas: una fuente de verdad por dato; vínculos, no adjuntos; el cliente tiene casa; nombrar igual en todas partes; Copilot redacta y la persona decide.",
  sales:"Define tu plan de 12 semanas: base (1–3), IA personal (4–6), IA de equipo (7–9) y automatización (10–12), con un indicador por fase.",
  quiz:[
-  {q:"¿Cuál de estas es una costura rota?", o:["El lead del formulario cae en el pipeline","La propuesta aprobada se envía por WhatsApp como PDF y no queda en el sitio","La transcripción queda en el chat de la reunión","El reporte semanal se publica en Teams"], a:1, e:"Un archivo que vive fuera de Microsoft 365 rompe la cadena y escapa al control de la empresa."},
+  {q:"¿Cuál de estas es una costura rota?", o:["La solicitud del formulario cae en el tablero de seguimiento","La propuesta aprobada se envía por WhatsApp como PDF y no queda en el sitio","La transcripción queda en el chat de la reunión","El reporte semanal se publica en Teams"], a:1, e:"Un archivo que vive fuera de Microsoft 365 rompe la cadena y escapa al control de la empresa."},
   {q:"¿Qué significa «vínculos, no adjuntos»?", o:["No enviar correos","Compartir el archivo del sitio con permisos en lugar de adjuntar copias","Usar solo vínculos públicos","Adjuntar en PDF siempre"], a:1, e:"La copia adjunta se desactualiza y sale del control de la empresa."},
   {q:"¿Cómo debería decidir la empresa a quién comprarle licencias Pro?", o:["A todos por igual","Por antigüedad","Con datos: a quien demuestre una tarea diaria que el básico no resuelve y el tiempo que ahorraría","Nunca"], a:2, e:"Pro cuesta entre USD 21 y 30 por usuario al mes: se asigna donde el valor está demostrado."}
  ]
@@ -395,9 +395,9 @@ function nivelCard(){
 
 function home(){
   const done = MODS.filter(modDone).length;
-  let h = `<p class="eyebrow">Diplomado Ventas Élite · Ecosistema Microsoft</p>
+  let h = `<p class="eyebrow">Ecosistema Microsoft 365 · entrenamiento corporativo</p>
   <h1 style="font-size:40px;margin:8px 0 12px">Domina Microsoft 365 corporativo, paso a paso</h1>
-  <p class="lead">Diez módulos prácticos para operar tu ciclo comercial completo dentro de la cuenta de tu empresa: del sitio del equipo en SharePoint a un flujo de Power Automate que trabaja por ti. Pensado para el Copilot básico que ya tienes, con ruta Pro para quien tenga licencia.</p>
+  <p class="lead">Diez módulos prácticos para operar tu trabajo con clientes dentro de la cuenta de tu empresa: del sitio del equipo en SharePoint a un flujo de Power Automate que trabaja por ti. Pensado para el Copilot básico que ya tienes, con ruta Pro para quien tenga licencia.</p>
   <div class="meta"><span class="pill"><b>${done}/10</b> módulos completos</span><span class="pill">Unas 7 horas de práctica</span><span class="pill">Examen final de 30 preguntas · aprobación 80 %</span></div>
   ${nivelCard()}
   <div class="card"><h3 style="font-size:19px;margin-bottom:8px">Cómo funciona</h3>
@@ -446,8 +446,8 @@ function moduleView(m){
       <button class="check" data-step="${k}">${ok?'✓ Hecho':'Marcar como hecho'}</button>
     </div></div>`;
   });
-  h += `<div class="tip"><b>Consejo élite.</b> ${esc(m.tip)}</div>
-  <div class="sales"><b>Aplícalo a tu venta.</b> ${esc(m.sales)}</div>
+  h += `<div class="tip"><b>Consejo clave.</b> ${esc(m.tip)}</div>
+  <div class="sales"><b>Aplícalo a tu trabajo.</b> ${esc(m.sales)}</div>
   <h2 class="sec">Control del módulo</h2>`;
   m.quiz.forEach((q,qi)=>{
     const ans = qr.answers ? qr.answers[qi] : undefined;
@@ -516,9 +516,9 @@ function certView(){
   const date = S.exam ? S.exam.date : "";
   return `<p class="eyebrow">Certificado</p><h1 style="font-size:36px;margin:8px 0 10px">Tu certificado</h1>
   <div class="row"><input type="text" id="nameIn" placeholder="Escribe tu nombre completo" value="${esc(S.name||'')}"><button class="btn" data-savename="1">Poner mi nombre</button></div>
-  <div class="cert"><p class="eyebrow">Diplomado Ventas Élite</p><h2>Certificado de competencia</h2>
+  <div class="cert"><p class="eyebrow">Ecosistema Microsoft 365</p><h2>Certificado de competencia</h2>
   <p>Se certifica que</p><div class="who">${esc(S.name||'[Tu nombre]')}</div>
-  <p>completó el entrenamiento paso a paso <b>Microsoft 365 corporativo para vendedores élite</b> por la ruta <b>${esc(nivelTxt().replace(' (sin confirmar)',''))}</b><br>y aprobó el examen final con <b>${sc}/30</b> respuestas correctas.</p>
+  <p>completó el entrenamiento paso a paso <b>Microsoft 365 corporativo con Copilot</b> por la ruta <b>${esc(nivelTxt().replace(' (sin confirmar)',''))}</b><br>y aprobó el examen final con <b>${sc}/30</b> respuestas correctas.</p>
   <p style="color:var(--soft);font-size:14px;margin-top:18px">${esc(date)}</p></div>
   <div class="row" style="margin-top:16px"><button class="btn ghost" data-copycert="1">Copiar texto del certificado</button><button class="btn ghost" data-newexam="1">Presentar el examen otra vez</button></div>
   <p style="font-size:13.5px;color:var(--soft)">Para guardarlo, toma una captura de pantalla o copia el texto y pégalo en un documento de Word.</p>`;
@@ -551,7 +551,7 @@ document.addEventListener("click", e=>{
   if(d.cert){ EX=null; route(); window.scrollTo(0,0); return; }
   if(d.savename){ S.name = ($("#nameIn").value||"").trim(); save(); route(); return; }
   if(d.copy || d.copycert){
-    const txt = d.copy ? d.copy : `Certificado de competencia · Diplomado Ventas Élite. Se certifica que ${S.name||'[Tu nombre]'} completó el entrenamiento paso a paso Microsoft 365 corporativo para vendedores élite por la ruta ${nivelTxt().replace(' (sin confirmar)','')} y aprobó el examen final con ${S.exam?S.exam.score:0}/30 respuestas correctas. ${S.exam?S.exam.date:''}`;
+    const txt = d.copy ? d.copy : `Certificado de competencia · Microsoft 365 corporativo. Se certifica que ${S.name||'[Tu nombre]'} completó el entrenamiento paso a paso Microsoft 365 corporativo con Copilot por la ruta ${nivelTxt().replace(' (sin confirmar)','')} y aprobó el examen final con ${S.exam?S.exam.score:0}/30 respuestas correctas. ${S.exam?S.exam.date:''}`;
     const old = t.textContent;
     try{ navigator.clipboard.writeText(txt).then(()=>{ t.textContent="Copiado ✓"; setTimeout(()=>t.textContent=old,1500); }).catch(()=>{ t.textContent="Selecciona y copia a mano"; setTimeout(()=>t.textContent=old,2000); }); }catch(err){ t.textContent="Selecciona y copia a mano"; setTimeout(()=>t.textContent=old,2000); }
     return;
@@ -560,6 +560,6 @@ document.addEventListener("click", e=>{
 $("#menuBtn").addEventListener("click", ()=>$("#nav").classList.toggle("open"));
 route();
 </script>
-<!-- vx:20261030-entrenamiento-m365 -->
+<!-- vx:20261030b-entrenamiento-m365 -->
 </body>
 </html>
