@@ -13,7 +13,7 @@
   const STATUS = { proposed:["Propuesto","purple"], review:["En revisión del gestor",""], mutual:["Interés mutuo","ok"], meeting:["Cita agendada","ok"], negotiating:["En negociación","ok"], closed_won:["Negocio cerrado","ok"], closed_lost:["No se concretó","bad"], dismissed:["Descartado","bad"] };
   const SIGNALS = { semantic:["Semántica",30], taxonomy:["Taxonomía",20], capacity:["Capacidad",15], territory:["Territorio",10], trust:["Confianza",15], behavior:["Comportamiento",10] };
 
-  const state = { user:null, actor:null, manager:null, ecosystems:[], tags:[] };
+  const state = { user:null, actor:null, manager:null, ecosystems:[], tags:[], progress:null };
 
   // ---------- utilidades ----------
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
@@ -25,6 +25,7 @@
     const t = document.getElementById("toast");
     t.textContent = msg; t.classList.toggle("err", !!err); t.hidden = false;
     clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 4200);
+    if (!err && state.actor) setTimeout(() => refreshCoins(), 900); // cada acción puede sumar monedas
   }
   function fail(e) { console.error(e); toast(e?.message || "Algo falló", true); }
   const go = (h) => { location.hash = h; };
@@ -54,7 +55,7 @@
       who.innerHTML = `<a class="btn sm primary" href="#/entrar">Entrar</a>`;
     } else {
       const name = state.actor ? (state.actor.display_name || state.actor.legal_name) : state.user.email;
-      who.innerHTML = `<span>${esc(name)}</span>${state.manager ? '<span class="pill purple">gestor</span>' : ""}<button class="btn sm ghost" id="logout">Salir</button>`;
+      who.innerHTML = `${state.actor ? `<a class="coins" href="#/" title="Tus monedas Managers: suman cuando publicas, conectas y cierras negocios"><img src="img/fm-coin.webp" alt="" width="26" height="26"><span id="coins-n">${state.progress ? state.progress.coins : "·"}</span><small>monedas</small></a>` : ""}<span>${esc(name)}</span>${state.manager ? '<span class="pill purple">gestor</span>' : ""}<button class="btn sm ghost" id="logout">Salir</button>`;
       document.getElementById("logout").onclick = async () => { await sb.auth.signOut(); await loadSession(); go("#/"); };
     }
   }
@@ -75,59 +76,148 @@
     return true;
   }
 
+  // ---------- mi jugada: monedas, niveles y confeti ----------
+  const LEVELS = [["Debutante", 0], ["Titular", 30], ["Capitán", 70], ["Crack", 130]];
+  async function loadProgress() {
+    if (!state.user || !state.actor) { state.progress = null; return null; }
+    const aid = state.actor.id;
+    const [{ count: nList }, { data: ms }] = await Promise.all([
+      sb.from("rc_listings").select("id", { count: "exact", head: true }).eq("actor_id", aid).eq("status", "active"),
+      sb.from("rc_matches").select("status, accepted_by_demand, accepted_by_offer, demand:rc_listings!rc_matches_demand_id_fkey(actor_id), offer:rc_listings!rc_matches_offer_id_fkey(actor_id)"),
+    ]);
+    const mine = (ms || []).filter((m) => m.demand?.actor_id === aid || m.offer?.actor_id === aid);
+    const accepted = mine.filter((m) => (m.demand?.actor_id === aid ? m.accepted_by_demand : m.accepted_by_offer) === true).length;
+    const mutual = mine.filter((m) => ["mutual", "meeting", "negotiating", "closed_won"].includes(m.status)).length;
+    const won = mine.filter((m) => m.status === "closed_won").length;
+    const lists = nList || 0;
+    const coins = 10 + 10 * Math.min(lists, 3) + 5 * Math.min(accepted, 6) + 20 * Math.min(mutual, 5) + 50 * won;
+    const steps = [
+      { t: "Ponte la camiseta", d: "Tu perfil ya está creado", pts: 10, done: true },
+      { t: "Convoca", d: "Publica qué ofreces o qué necesitas", pts: 10, done: lists > 0, href: "#/publicar" },
+      { t: "Haz un pase", d: "Acepta una conexión que te interese", pts: 5, done: accepted > 0, href: "#/matches" },
+      { t: "Pase mutuo", d: "Que el otro lado también quiera conocerte", pts: 20, done: mutual > 0, href: "#/matches" },
+      { t: "¡Gol!", d: "Cierra un negocio", pts: 50, done: won > 0, href: "#/matches" },
+    ];
+    let li = 0; LEVELS.forEach(([, min], i) => { if (coins >= min) li = i; });
+    const next = LEVELS[li + 1];
+    state.progress = { coins, steps, level: LEVELS[li][0], next, pct: next ? Math.min(100, Math.round(((coins - LEVELS[li][1]) / (next[1] - LEVELS[li][1])) * 100)) : 100 };
+    return state.progress;
+  }
+  window.RC_APP = { confetti: (n, force) => confetti(n, force) };
+  async function refreshCoins() {
+    const p = await loadProgress();
+    const el = document.getElementById("coins-n");
+    if (el && p) el.textContent = p.coins;
+  }
+  function renderJugada(p) {
+    const firstPending = p.steps.findIndex((s) => !s.done);
+    return `<div class="jugada">
+      <div class="jugada-head">
+        <div><div class="eyebrow">Mi jugada</div><h3>Hola, ${esc((state.actor.display_name || state.actor.legal_name).split(" ")[0])}. Así va tu partido.</h3></div>
+        <div class="level"><img class="coin-sm" src="img/fm-coin.webp" alt="" width="46" height="46"><div><b>${p.coins}</b><span>${p.level}${p.next ? " · faltan " + (p.next[1] - p.coins) + " para " + p.next[0] : " · nivel máximo"}</span></div></div>
+      </div>
+      <div class="bar-xp" role="progressbar" aria-label="Avance al siguiente nivel" aria-valuenow="${p.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${p.pct}%"></i></div>
+      <ol class="track">${p.steps.map((s, i) => `<li class="${s.done ? "done" : i === firstPending ? "next" : ""}"><b>${s.href && !s.done ? `<a href="${s.href}">${s.t}</a>` : s.t}</b><span>${s.d}</span><span class="pts">+${s.pts} monedas</span></li>`).join("")}</ol>
+    </div>`;
+  }
+  function confetti(n = 150, force = false) {
+    if (!force && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cv = document.getElementById("confetti"); if (!cv) return;
+    const ctx = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
+    const cols = ["#f2c230", "#d4a437", "#e8722c", "#fafaf7", "#0b0f14"];
+    const ps = Array.from({ length: n }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 180, y: innerHeight * .62, vx: (Math.random() - .5) * 17, vy: -(7 + Math.random() * 12), g: .3 + Math.random() * .2, r: 3 + Math.random() * 5, c: cols[(Math.random() * cols.length) | 0], rot: Math.random() * 6, vr: (Math.random() - .5) * .4, coin: Math.random() < .2 }));
+    let f = 0;
+    (function tick() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (const p of ps) {
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= .992; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c;
+        if (p.coin) { ctx.beginPath(); ctx.arc(0, 0, p.r * 1.3, 0, 7); ctx.fill(); ctx.strokeStyle = "#8f6a12"; ctx.lineWidth = 2; ctx.stroke(); } else ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r);
+        ctx.restore();
+      }
+      if (++f < 160) requestAnimationFrame(tick); else ctx.clearRect(0, 0, cv.width, cv.height);
+    })();
+  }
+
   // ---------- vistas ----------
   async function viewHome() {
-    const [{ data: s }, { data: evs }] = await Promise.all([
+    const [{ data: s }, { data: evs }, prog] = await Promise.all([
       sb.rpc("rc_network_stats"),
       sb.from("rc_events").select("id,name,starts_at,ends_at,location,mode,status,rc_ecosystems(slug,name)")
         .in("status", ["open", "scheduled", "live"]).gte("ends_at", new Date().toISOString()).order("starts_at").limit(3),
+      loadProgress(),
     ]);
+    const st = s || {};
+    const start = state.user ? (state.actor ? "#/publicar" : "#/registro") : "#/entrar";
     const nextEvents = (evs || []).length ? `
-      <div class="section"><h2>Próximas ruedas de negocio</h2><p class="muted">Citas 1:1 entre compradores y proveedores, con agenda armada por afinidad.</p>
-      <div class="grid g3">${evs.map((e) => `<a class="card eco" href="#/rueda?id=${e.id}">
+      <div class="section"><h2>Próximas ruedas de negocio</h2><p class="muted">Compradores y proveedores se sientan cara a cara, en citas de 20 minutos con la agenda armada según quién encaja con quién.</p>
+      <div class="grid g3" style="margin-top:14px">${evs.map((e) => `<a class="card eco" href="#/rueda?id=${e.id}">
         <div class="art thumb">${RC_ART.photo(e.rc_ecosystems?.slug || "hero", "sm")}</div>
         <span class="pill ${(EV_STATUS[e.status] || [])[1] || ""}">${(EV_STATUS[e.status] || [e.status])[0]}</span>
         <h4 style="margin-top:8px">${esc(e.name)}</h4>
         <p>${esc(fmtDay(e.starts_at))} · ${fmtHour(e.starts_at)} · ${esc(e.location || e.mode)}</p></a>`).join("")}</div>
-      <p style="margin-top:10px"><a href="#/ruedas">Ver todas las ruedas →</a></p></div>` : "";
-    const st = s || {};
+      <p style="margin-top:12px"><a href="#/ruedas">Ver todas las ruedas →</a></p></div>` : "";
     const ecoCards = (st.ecosystems || []).map((e) => `
       <a class="card eco" href="#/explorar?eco=${e.slug}">
         <div class="art thumb">${RC_ART.photo(e.slug, "sm")}</div>
         <h4>${esc(e.name)}</h4>
         <p>${esc(ecoBySlug(e.slug)?.description || "")}</p>
-        <div class="meta"><span>${e.listings} publicaciones</span><span>${e.matches} matches</span></div>
+        <div class="meta"><span>${e.listings} en juego</span><span>${e.matches} conexiones</span></div>
       </a>`).join("");
     app.innerHTML = `
-      ${state.user && !state.actor ? '<div class="notice">Falta un paso: registra tu empresa o perfil para publicar y recibir matches. <a href="#/asistente">Hazlo conversando con el asistente</a> o <a href="#/registro">usa el formulario</a>.</div>' : ""}
-      <div class="hero split">
-        <div>
-          <div class="eyebrow">Fundación Managers × ICONEialabs</div>
-          <h1>Una sola puerta a muchos ecosistemas</h1>
-          <p class="lead">Publica lo que ofreces o lo que necesitas. La red te propone contrapartes con puntaje y explicación, y un gestor acompaña el cierre.</p>
-          <div class="cta">
-            <a class="btn primary" href="${state.user ? (state.actor ? "#/publicar" : "#/registro") : "#/entrar"}">Publicar una necesidad u oferta</a>
-            <a class="btn" href="#/explorar">Explorar la red</a>
+      ${state.user && !state.actor ? '<div class="notice">Falta un paso para entrar a la cancha: <a href="#/registro">cuéntanos quién eres</a> y publica lo que ofreces o lo que necesitas. <a href="#/asistente">¿Prefieres conversar? El asistente te ayuda.</a></div>' : ""}
+      <section class="band hero-band">
+        <div class="wrap hero-grid">
+          <div>
+            <div class="eyebrow">Fundación Managers · Ocio serio</div>
+            <h1>Cada negocio empieza con <em>un buen pase.</em></h1>
+            <p class="lead">Red Conecta presenta a quien ofrece con quien necesita. Personas y empresas reales que se encuentran, se conocen y hacen negocio, con un director técnico —un gestor de la Fundación— que las acompaña hasta el gol.</p>
+            <div class="cta">
+              <a class="btn primary" href="${start}">${state.actor ? "Convocar: publicar ahora" : "Quiero entrar a la cancha"}</a>
+              <a class="btn" href="#/explorar">Ver quién está jugando</a>
+            </div>
+          </div>
+          <div class="coin-stage" aria-hidden="true">
+            <img class="laurel" src="img/fm-laurel.webp" alt="" width="360" height="360">
+            <img class="coin" src="img/fm-coin.webp" alt="" width="250" height="254">
+            <span class="coin-tag">Moneda Managers</span>
           </div>
         </div>
-        <div class="art wide">${RC_ART.photo("hero")}</div>
+      </section>
+      <div class="grid g4 stats-strip">
+        <div class="kpi"><b>${st.actors ?? 0}</b><span>personas y empresas en la cancha</span></div>
+        <div class="kpi"><b>${st.listings ?? 0}</b><span>publicaciones en juego · ${st.offers ?? 0} ofrecen, ${st.demands ?? 0} buscan</span></div>
+        <div class="kpi"><b>${st.matches ?? 0}</b><span>conexiones propuestas</span></div>
+        <div class="kpi"><b>${st.closed_won ?? 0}</b><span>negocios cerrados en gol</span></div>
       </div>
-      <div class="grid g4">
-        <div class="kpi"><b>${st.actors ?? 0}</b><span>actores en la red</span></div>
-        <div class="kpi"><b>${st.demands ?? 0} / ${st.offers ?? 0}</b><span>demandas / ofertas activas</span></div>
-        <div class="kpi"><b>${st.matches ?? 0}</b><span>matches propuestos</span></div>
-        <div class="kpi"><b>${st.liquidity ?? 0} %</b><span>demandas con ≥ 3 matches fuertes</span></div>
+      ${prog ? `<div class="section" style="margin-top:28px">${renderJugada(prog)}</div>` : ""}
+      <div class="section"><h2>Cómo se juega</h2>
+        <div class="grid g3 steps" style="margin-top:14px">
+          <div class="card"><span class="stepn">1</span><h4>Convoca</h4><p>Cuéntanos con tus palabras qué ofreces o qué necesitas. Sin formularios eternos: con lo que sepas hoy alcanza.</p></div>
+          <div class="card"><span class="stepn">2</span><h4>Recibe el pase</h4><p>La red te presenta a quien encaja contigo, con un puntaje de 0 a 100 y una explicación clara de por qué vale la pena conocerse.</p></div>
+          <div class="card"><span class="stepn">3</span><h4>Metan el gol</h4><p>Si los dos aceptan, se comparte el contacto, se agenda la cita y un gestor de la Fundación los acompaña hasta cerrar el negocio.</p></div>
+        </div>
       </div>
-      <div class="section"><h2>Cómo funciona</h2>
-        <div class="grid g3 steps">
-          <div class="card"><span class="stepn">1</span><h4>Publicas</h4><p>Cuentas en tus palabras qué ofreces o qué necesitas y eliges el ecosistema. Tarda unos minutos.</p></div>
-          <div class="card"><span class="stepn">2</span><h4>La red te cruza</h4><p>El motor propone contrapartes con un puntaje de 0 a 100 y te explica por qué encajan.</p></div>
-          <div class="card"><span class="stepn">3</span><h4>Cierras con acompañamiento</h4><p>Si los dos aceptan, se revela el contacto, se agenda la cita y un gestor te acompaña hasta el negocio.</p></div>
+      <div class="section"><h2>Así se ve una conexión</h2>
+        <div class="story" style="margin-top:14px">
+          <div class="art"><img src="img/productoras.webp" alt="Dos operarias revisan un despacho en una bodega" loading="lazy" width="1280" height="720"></div>
+          <div class="txt">
+            <div class="eyebrow">Ejemplo con datos de demostración</div>
+            <blockquote>«Una tostadora de café en el Huila necesitaba empaques compostables. Una fábrica en Bogotá los hace. La red los presentó con una afinidad de más de 80 sobre 100.»</blockquote>
+            <p class="small muted">Cafés del Huila y Empaques Verdes son empresas de demostración. Las historias reales las escribimos juntos.</p>
+            <a href="#/explorar?eco=productoras">Ver esa cancha →</a>
+          </div>
         </div>
       </div>
       ${nextEvents}
-      <div class="section"><h2>Ecosistemas</h2><p class="muted">Elige uno para ver lo que hoy se ofrece y se busca.</p>
-      <div class="grid g3">${ecoCards}</div></div>`;
+      <div class="section"><h2>Elige tu cancha</h2><p class="muted">Ocho ecosistemas, una sola red. Entra a donde juegas hoy y mira lo que hay en juego.</p>
+      <div class="grid g3" style="margin-top:14px">${ecoCards}</div></div>
+      <section class="band close-band">
+        <div class="wrap">
+          <div><h2>La jugada empieza hoy.</h2><p>Ocio serio para que los líderes tomen mejores decisiones.</p></div>
+          <div class="cta" style="margin:0"><a class="btn primary" href="${start}">${state.actor ? "Publicar ahora" : "Entrar a la cancha"}</a><a class="btn" href="#/ruedas">Ver las ruedas</a></div>
+        </div>
+      </section>`;
   }
 
   async function viewExplore(params) {
@@ -149,7 +239,7 @@
       <p class="muted">${rows.length} publicaciones activas${cur ? " en " + esc(cur.name) : ""}.</p>
       <form class="toolbar" id="f">
         <div class="field"><label>Ecosistema</label><select name="eco"><option value="">Todos</option>${opts}</select></div>
-        <div class="field"><label>Lado</label><select name="side"><option value="">Ofertas y demandas</option><option value="demand" ${side === "demand" ? "selected" : ""}>Solo demandas (lo que buscan)</option><option value="offer" ${side === "offer" ? "selected" : ""}>Solo ofertas</option></select></div>
+        <div class="field"><label>Lado</label><select name="side"><option value="">Lo que se ofrece y lo que se busca</option><option value="demand" ${side === "demand" ? "selected" : ""}>Solo lo que se busca</option><option value="offer" ${side === "offer" ? "selected" : ""}>Solo lo que se ofrece</option></select></div>
         <div class="field" style="flex:2 1 220px"><label>Buscar</label><input name="q" value="${esc(q)}" placeholder="empaques, café, software…"></div>
         <button class="btn">Filtrar</button>
       </form>
@@ -168,7 +258,7 @@
     return `<div class="card">
       <div class="art thumb" title="${esc(l.ecosystem_name)}">${RC_ART.photo(l.ecosystem_slug, "sm")}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-        <span class="pill ${l.side}">${l.side === "offer" ? "Oferta" : "Demanda"}</span>
+        <span class="pill ${l.side}">${l.side === "offer" ? "Ofrece" : "Busca"}</span>
         <span class="pill">${esc(TYPES[l.type] || l.type)}</span>
         ${l.is_anchor ? `<span class="pill anchor">${l.side === "demand" ? "Demanda ancla" : "Oferta ancla"}</span>` : ""}
       </div>
@@ -189,8 +279,8 @@
     app.innerHTML = `
       <div class="login">
       <div class="auth">
-        <h2>Entrar a Red Conecta</h2>
-        <p class="muted">Con tu correo y una contraseña. Si es tu primera vez, crea la cuenta y luego registra tu empresa o perfil.</p>
+        <h2>Bienvenido a la cancha</h2>
+        <p class="muted">Entra con tu correo y una contraseña. Si es tu primera vez, crea tu cuenta y luego cuéntanos quién eres.</p>
         <form id="f">
           <div class="field"><label for="em">Correo</label><input id="em" name="email" type="email" required autocomplete="email"></div>
           <div class="field"><label for="pw">Contraseña</label><input id="pw" name="password" type="password" required minlength="6" autocomplete="current-password"></div>
@@ -203,11 +293,11 @@
         </form>
       </div>
       <aside class="login-side">
-        <div class="art wide">${RC_ART.photo("hero")}</div>
+        <div class="art wide"><img src="img/fm-estadio.webp" alt="Estadio durante el Torneo Managers" width="1800" height="1020"></div>
         <ul class="ticks">
-          <li>Un solo perfil para todos los ecosistemas</li>
-          <li>Matches con puntaje y explicación</li>
-          <li>El contacto se revela solo con interés mutuo</li>
+          <li>Un solo perfil para jugar en todas las canchas</li>
+          <li>Conexiones con puntaje y explicación en palabras claras</li>
+          <li>El contacto se comparte solo cuando los dos quieren conocerse</li>
         </ul>
       </aside>
       </div>`;
@@ -239,7 +329,7 @@
     const a = state.actor || {};
     const ecoChecks = state.ecosystems.map((e) => `<label class="check"><input type="checkbox" name="eco" value="${e.id}"> ${esc(e.name)}</label>`).join("");
     app.innerHTML = `
-      <h2>${state.actor ? "Tu perfil en la red" : "Registra tu empresa o perfil"}</h2>
+      <h2>${state.actor ? "Tu perfil en la red" : "Cuéntanos quién eres"}</h2>
       <p class="muted">Una sola identidad para todos los ecosistemas. Lo que marques aquí define dónde te propone la red.</p>
       ${state.actor ? "" : '<div class="notice">¿Prefieres conversar? <a href="#/asistente">El asistente arma tu perfil y tus primeras publicaciones</a> a partir de lo que le cuentes.</div>'}
       <form id="f">
@@ -279,7 +369,7 @@
         else { row.created_by = state.user.id; const { data, error } = await sb.from("rc_actors").insert(row).select().single(); if (error) throw error; actorId = data.id; }
         await sb.from("rc_actor_ecosystems").delete().eq("actor_id", actorId);
         if (ecos.length) { const { error } = await sb.from("rc_actor_ecosystems").insert(ecos.map((e) => ({ actor_id: actorId, ecosystem_id: e }))); if (error) throw error; }
-        await loadSession(); toast("Perfil guardado"); go("#/publicar");
+        await loadSession(); toast("¡Ya estás en la cancha! Ahora convoca: publica qué ofreces o qué necesitas."); confetti(); go("#/publicar");
       } catch (e) { fail(e); }
     };
   }
@@ -289,11 +379,11 @@
     const a = state.actor;
     const tagChips = state.tags.filter((t) => t.kind === "tag").map((t) => `<span class="chip" data-tag="${esc(t.code)}">${esc(t.label)}</span>`).join("");
     app.innerHTML = `
-      <h2>Publicar en la red</h2>
+      <h2>Convoca: ¿qué ofreces o qué necesitas?</h2>
       <p class="muted">Describe con tus palabras. El motor clasifica y en segundos te muestra con quién te cruza. ¿Prefieres conversar? <a href="#/asistente">Publica con el asistente</a>.</p>
       <form id="f">
         <div class="row">
-          <div class="field"><label>¿Qué publicas?</label><select name="side"><option value="demand">Una necesidad (demanda)</option><option value="offer">Una oferta</option></select></div>
+          <div class="field"><label>¿Qué quieres hacer?</label><select name="side"><option value="demand">Busco algo (una necesidad)</option><option value="offer">Ofrezco algo (una oferta)</option></select></div>
           <div class="field"><label>Ecosistema</label><select name="ecosystem_id" id="eco">${state.ecosystems.map((e) => `<option value="${e.id}">${esc(e.name)}</option>`).join("")}</select></div>
           <div class="field"><label>Tipo</label><select name="type" id="type"></select></div>
         </div>
@@ -334,7 +424,7 @@
       try {
         const { data, error } = await sb.from("rc_listings").insert(row).select().single(); if (error) throw error;
         await sb.from("rc_actor_ecosystems").upsert({ actor_id: a.id, ecosystem_id: row.ecosystem_id }, { onConflict: "actor_id,ecosystem_id", ignoreDuplicates: true });
-        toast("Publicado. Buscando contrapartes…"); go("#/matches?listing=" + data.id);
+        toast("¡Convocado! Mira quién encaja contigo…"); confetti(70); go("#/matches?listing=" + data.id);
       } catch (e) { fail(e); }
     };
   }
@@ -355,7 +445,7 @@
       ${rows.map((r) => `<tr>
         <td><a href="#/matches?listing=${r.id}"><b>${esc(r.title)}</b></a>${r.is_anonymous ? ' <span class="pill">anónima</span>' : ""}</td>
         <td>${esc(r.rc_ecosystems?.name)}</td>
-        <td><span class="pill ${r.side}">${r.side === "offer" ? "Oferta" : "Demanda"}</span></td>
+        <td><span class="pill ${r.side}">${r.side === "offer" ? "Ofrece" : "Busca"}</span></td>
         <td class="mono">${count(r.id)}</td>
         <td>${r.status === "active" ? '<span class="pill ok">activa</span>' : `<span class="pill">${esc(r.status)}</span>`}</td>
         <td class="small">${fmtDate(r.valid_until) || "—"}</td>
@@ -391,7 +481,7 @@
     const link = (t) => "#/matches?" + new URLSearchParams({ ...(listingId ? { listing: listingId } : {}), ...(t === "todos" ? {} : { tab: t }) }).toString();
     const tabs = `<div class="chips tabs">${Object.entries(TABS).map(([k, [label, fn]]) => `<a class="chip ${k === tab ? "on" : ""}" href="${link(k)}">${label} <b>${all.filter(fn).length}</b></a>`).join("")}</div>`;
     app.innerHTML = `
-      <h2>Tus matches</h2>
+      <h2>Tus conexiones</h2>
       <p class="muted">Cada contraparte viene con su explicación. Acepta las que te interesen: cuando el otro lado también acepte, verás el contacto.</p>
       ${listingId ? '<p><a href="#/matches">Ver todos mis matches</a></p>' : ""}
       ${tabs}
@@ -445,7 +535,8 @@
       try {
         if (act === "accept" || act === "dismiss") {
           const { data, error } = await sb.rpc("rc_respond_match", { p_match: id, p_accept: act === "accept" }); if (error) throw error;
-          toast(data?.status === "mutual" ? "¡Interés mutuo! Ya puedes ver el contacto y agendar." : act === "accept" ? "Listo. Avisamos al otro lado." : "Descartado.");
+          if (data?.status === "mutual") confetti();
+          toast(data?.status === "mutual" ? "¡Pase mutuo! Ya pueden conocerse: mira el contacto y agenda la cita." : act === "accept" ? "Listo. Avisamos al otro lado." : "Descartado.");
           refresh();
         } else if (act === "advance") {
           const { error } = await sb.rpc("rc_advance_match", { p_match: id, p_status: b.dataset.st }); if (error) throw error;
@@ -466,7 +557,7 @@
             ev.preventDefault(); const fd = new FormData(ev.target);
             const { error } = await sb.from("rc_deals").insert({ match_id: id, kind: fd.get("kind"), value_cop: fd.get("value_cop") ? Number(fd.get("value_cop")) : null, closed_at: fd.get("closed_at"), reported_by: state.user.id }); if (error) return fail(error);
             const { error: e2 } = await sb.rpc("rc_advance_match", { p_match: id, p_status: "closed_won" }); if (e2) return fail(e2);
-            toast("Negocio registrado. ¡Felicitaciones!"); refresh();
+            toast("¡GOOOL! Negocio registrado. Felicitaciones."); confetti(240); refresh();
           };
         } else if (act === "mgr") {
           const { error } = await sb.rpc("rc_manager_decide", { p_match: id, p_approve: b.dataset.ok === "1" }); if (error) throw error;
@@ -550,7 +641,7 @@
           <label class="prop-li">
             <input type="checkbox" data-li="${i}" checked>
             <div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"><span class="pill ${l.side}">${l.side === "offer" ? "Oferta" : "Demanda"}</span><span class="pill">${esc(eco(l.ecosystem_slug))}</span><span class="pill">${esc(TYPES[l.type] || l.type)}</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"><span class="pill ${l.side}">${l.side === "offer" ? "Ofrece" : "Busca"}</span><span class="pill">${esc(eco(l.ecosystem_slug))}</span><span class="pill">${esc(TYPES[l.type] || l.type)}</span></div>
               <b>${esc(l.title)}</b>
               <p class="small muted" style="margin:4px 0 0">${esc(l.description)}</p>
               <div class="meta" style="margin-top:4px">${l.quantity ? `<span>${l.quantity} ${esc(l.unit || "")}</span>` : ""}${l.price_min || l.price_max ? `<span>${fmtCop(l.price_min)}${l.price_max ? " – " + fmtCop(l.price_max) : ""}</span>` : ""}${(l.tags || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div>
@@ -784,7 +875,7 @@
     app.querySelectorAll("select[data-meeting]").forEach((sel) => sel.onchange = async () => {
       if (!sel.value) return;
       const { error } = await sb.rpc("rc_meeting_result", { p_meeting: sel.dataset.meeting, p_outcome: sel.value });
-      if (error) return fail(error); toast("Resultado guardado"); viewEvent(params);
+      if (error) return fail(error); toast("Resultado guardado"); if (sel.value === "negocio") confetti(240); viewEvent(params);
     });
     app.querySelectorAll("[data-ev]").forEach((b) => b.onclick = async () => {
       const act = b.dataset.ev;
@@ -816,6 +907,7 @@
     renderChrome();
     app.innerHTML = '<div class="skel" aria-busy="true" aria-label="Cargando"><div class="sk h"></div><div class="sk p"></div><div class="grid g3"><div class="sk c"></div><div class="sk c"></div><div class="sk c"></div></div></div>';
     try { await fn(new URLSearchParams(qs || "")); } catch (e) { fail(e); }
+    refreshCoins();
     window.scrollTo(0, 0);
   }
   window.addEventListener("hashchange", route);

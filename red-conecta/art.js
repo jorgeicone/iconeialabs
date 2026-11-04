@@ -1,12 +1,12 @@
 /* Red Conecta · ilustraciones vectoriales por ecosistema (paleta ICONEialabs).
    Idea común: lo que se ofrece (cian) y lo que se necesita (naranja) se encuentran en un punto (morado). */
 window.RC_ART = (() => {
-  const C = "#00d4ff", V = "#7b2fff", O = "#ff8c00", N3 = "#101f40", LN = "#1c2d55", FG = "#e6ecf7", BG = "#060f26";
-  const ACCENT = { hero: V, productoras: C, productividad: O, emprendimiento: V, talento: C, financiacion: O, conocimiento: V, turismo: C, rural: O, vacio: C };
+  const C = "#f2c230", V = "#f3efe2", O = "#e8722c", N3 = "#1b222c", LN = "#2c3440", FG = "#f3efe2", BG = "#0b0f14";
+  const ACCENT = { hero: C, productoras: C, productividad: O, emprendimiento: C, talento: C, financiacion: O, conocimiento: C, turismo: C, rural: O, vacio: C };
 
   const shell = (id, inner) => `<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 <defs>
-<linearGradient id="bg-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e1f46"/><stop offset="1" stop-color="${BG}"/></linearGradient>
+<linearGradient id="bg-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18202a"/><stop offset="1" stop-color="${BG}"/></linearGradient>
 <radialGradient id="gl-${id}" cx=".82" cy=".18" r=".75"><stop offset="0" stop-color="${ACCENT[id]}" stop-opacity=".30"/><stop offset="1" stop-color="${ACCENT[id]}" stop-opacity="0"/></radialGradient>
 <pattern id="dt-${id}" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="${LN}"/></pattern>
 <linearGradient id="mt-${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C}"/><stop offset="1" stop-color="${O}"/></linearGradient>
