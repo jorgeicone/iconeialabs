@@ -374,13 +374,25 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 #hud:hover{opacity:1}
 #hud button{background:none;border:1px solid #3a5280;color:#cfe0ff;border-radius:20px;padding:4px 12px;font:inherit;cursor:pointer}
 #tm.late{color:var(--rojo)}#tm.justo{color:var(--amar)}
-.ph{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;background-color:#04122a}
-.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,42,.97) 0%,rgba(4,18,42,.9) 45%,rgba(4,18,42,.62) 100%)}
-.ph.hero::after{background:linear-gradient(90deg,rgba(4,18,42,.95) 0%,rgba(4,18,42,.78) 50%,rgba(4,18,42,.25) 100%)}
-.slide>*:not(.ph){position:relative;z-index:1}
+.foto{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;background-color:#04122a}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,18,42,.97) 0%,rgba(4,18,42,.9) 45%,rgba(4,18,42,.62) 100%)}
+.foto.hero::after{background:linear-gradient(90deg,rgba(4,18,42,.95) 0%,rgba(4,18,42,.78) 50%,rgba(4,18,42,.25) 100%)}
+.slide>*:not(.foto){position:relative;z-index:1}
 .slide>.brand,.slide>.foot{position:absolute}
 .slide::after{z-index:1}
 .card{backdrop-filter:blur(6px);background:rgba(7,26,58,.55)}
+
+/* variables y estilos que la consola espera de la presentación */
+:root{--cyan:#00d4ff;--purple:#7b2fff;--card:rgba(7,26,58,.92);--card2:#0d2a5c;--dim:#8ea2c4;--green:#3fd08a;--mono:'IBM Plex Mono',ui-monospace,monospace;--muted:#c9d5ea;--orange:#ff9a3c;--red:#ff6b6b}
+.btn{background:transparent;border:1px solid rgba(0,212,255,.45);color:#e8f2ff;border-radius:10px;padding:8px 14px;font:600 13px Archivo,sans-serif;cursor:pointer}
+.btn.act,.btn:hover{background:#00d4ff;color:#071a3a}
+.live-mount{margin-top:28px;max-height:560px;overflow:auto}
+.vitc .a{font-size:30px!important;line-height:1.35}
+.vitc .who,.vitc .q{font-size:22px!important}
+.conteo b{font-size:120px}
+#hud{opacity:0!important}
+#hud:hover{opacity:1!important}
+.apretada h2{margin-bottom:20px}.apretada th,.apretada td{padding:11px 24px;font-size:26px}.apretada .note{margin-top:16px;font-size:24px}
 /* MANDOS-DISCRETOS: el chip de la consola no se lee desde la butaca */
 #vivochip{opacity:.35}
 #vivochip:hover{opacity:1}
@@ -391,36 +403,37 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 
 <!-- 1 PORTADA -->
 <section class="slide center" data-min="3" data-titulo="Portada" data-bloque="espera">
-  <div class="ph hero" style="background-image:url('https://t3.ftcdn.net/jpg/03/87/90/48/500_F_387904865_EkPJdpcv6J2TlZR0W3J9LyzdmP5mHHnL.jpg')"></div>
+  <div class="foto hero" style="background-image:url('https://t3.ftcdn.net/jpg/03/87/90/48/500_F_387904865_EkPJdpcv6J2TlZR0W3J9LyzdmP5mHHnL.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b><span>Educación Continua · Diplomado Élite en Ventas 2026</span></div>
   <div class="kick">Módulo 4 · Revenue Intelligence · Sesión 2 de 3</div>
   <h1>Del dato<br><em>al costeo</em></h1>
   <p class="lead" style="margin-top:40px">Cuánto le cuesta al cliente seguir igual, en pesos y con sus propias cifras.</p>
   <p class="note">Casalimpia · Miércoles 4 de noviembre de 2026 · Docente: Jorge Hugo Pérez Gaona</p>
   <p class="lead" style="margin-top:26px;font-size:32px">📱 <b style="color:var(--cian)">iconeialabs.com/casalimpia/vivo2</b> · código <b style="color:var(--amar);letter-spacing:3px">CLM4S2</b></p>
+  <p class="note" style="margin-top:10px">¿Ves esto en el celular? Gíralo en horizontal.</p>
   <div class="foot"><span>Uso licenciado · Titularidad de Jorge Hugo Pérez Gaona</span><span>ICONEialabs</span></div>
 </section>
 
 <!-- 2 RUTA -->
 <section class="slide" data-min="2" data-titulo="La ruta de hoy" data-bloque="espera">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/77/25/06/500_F_477250690_17tuLV56rHUX0xu9xeZCWSSonEV4loTc.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/77/25/06/500_F_477250690_17tuLV56rHUX0xu9xeZCWSSonEV4loTc.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">La ruta de hoy · 2 horas · manos en el computador</div>
   <h2>Del embudo a <em>la cifra del comité</em></h2>
   <div class="agenda">
-    <div class="ag"><span class="h">6:30</span><span>¿Qué ves en tu cuenta de Google?</span><span class="m">10 min</span></div>
-    <div class="ag"><span class="h">6:40</span><span>Mi embudo en 3 números · Gemini clasifica por qué perdemos</span><span class="m">20 min</span></div>
-    <div class="ag"><span class="h">7:00</span><span>El ANS que vende, en parejas</span><span class="m">15 min</span></div>
-    <div class="ag"><span class="h">7:15</span><span>El costeo completo en Sheets, con la nómina 2026</span><span class="m">45 min</span></div>
-    <div class="ag"><span class="h">8:00</span><span>Casalimpia vs. el barato vs. seguir igual</span><span class="m">15 min</span></div>
-    <div class="ag"><span class="h">8:15</span><span>Lo que cumplimos hoy · evaluación · tarea</span><span class="m">15 min</span></div>
+    <div class="ag"><span class="h">6:30</span><span>¿Qué ves en tu cuenta de Google?</span><span class="m">13 min</span></div>
+    <div class="ag"><span class="h">6:43</span><span>Mi embudo en 3 números · Gemini clasifica por qué perdemos</span><span class="m">18 min</span></div>
+    <div class="ag"><span class="h">7:01</span><span>El ANS que vende, en parejas</span><span class="m">14 min</span></div>
+    <div class="ag"><span class="h">7:15</span><span>El costeo completo en Sheets, con la nómina 2026</span><span class="m">43 min</span></div>
+    <div class="ag"><span class="h">7:58</span><span>Casalimpia vs. el barato vs. seguir igual</span><span class="m">16 min</span></div>
+    <div class="ag"><span class="h">8:14</span><span>Lo que empezamos hoy · evaluación · tarea</span><span class="m">13 min</span></div>
   </div>
-  <p class="note">Lo prometido el 28 de octubre que se cumple hoy: <b style="color:var(--amar)">seguimiento de cuentas</b> (lo pidieron 7 de ustedes) y <b style="color:var(--amar)">costeos y cotizaciones</b> (lo pidieron 3).</p>
+  <p class="note">De lo que pidieron el 28 de octubre, hoy <b style="color:var(--amar)">empieza el seguimiento de cuentas</b> (lo pidieron 7 de las 15 personas que hablaron) y se trabajan <b style="color:var(--amar)">los costeos</b> (3 de 15).</p>
 </section>
 
 <!-- 3 EDICION -->
 <section class="slide" data-min="6" data-titulo="¿Qué ves en tu cuenta?" data-bloque="edicion">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/06/22/03/82/500_F_622038208_bIp1wfiXNgIQCHvx8gLBErvluEvU8YaP.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/22/03/82/500_F_622038208_bIp1wfiXNgIQCHvx8gLBErvluEvU8YaP.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Minuto 0 · en tu computador · 2 minutos</div>
   <h2>¿Qué tiene <em>tu cuenta de Google</em>?</h2>
@@ -430,13 +443,13 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="card"><div class="n">03</div><h3>Workspace Studio</h3><p>Los 9 puntos arriba a la derecha: ¿aparece?</p></div>
     <div class="card"><div class="n">04</div><h3>Vids</h3><p>En el mismo selector de apps: ¿aparece?</p></div>
   </div>
-  <p class="note">Si algo no aparece, no es un error tuyo: depende de la edición que tiene Casalimpia. Con estas respuestas sabemos qué podemos hacer en vivo el viernes.</p>
+  <p class="note">Si algo no aparece, no es un error tuyo: depende de la edición que tiene Casalimpia. Con estas respuestas sabemos qué podemos hacer en vivo el viernes y en los módulos 5 y 8. ¿Solo tienes el celular? Marca «No sé».</p>
   <div class="live-mount" data-live="edicion" data-modo="conteo" data-conteo="cuentas revisadas"></div>
 </section>
 
 <!-- 4 RETORNO -->
 <section class="slide" data-min="2" data-titulo="Lo que traen" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/67/52/80/500_F_467528061_0BMhT1Bw2IJabQY4dBXPnekaqRFVCazI.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/67/52/80/500_F_467528061_0BMhT1Bw2IJabQY4dBXPnekaqRFVCazI.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">La tarea del 28 de octubre</div>
   <h2>Los datos de <em>una cuenta</em></h2>
@@ -446,12 +459,12 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="card"><div class="n">03</div><h3>Quejas</h3><p>Cuántas al mes.</p></div>
     <div class="card"><div class="n">04</div><h3>Tarifa</h3><p>La actual o la del competidor.</p></div>
   </div>
-  <p class="note">¿No la trajiste? Trabajas con el caso Centro Empresarial Andino: 42 operarios, 3 sedes, 6 % de ausentismo, 14 quejas al mes. Cifras inventadas.</p>
+  <p class="note">¿Sin datos de una cuenta a mano? Trabajas con el caso Centro Empresarial Andino: 42 operarios, 3 sedes, 6 % de ausentismo, 14 quejas al mes. Cifras inventadas.</p>
 </section>
 
 <!-- 5 EMBUDO -->
 <section class="slide" data-min="10" data-titulo="Mi embudo en 3 números" data-bloque="embudo">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/19/04/28/500_F_419042808_bzZZPxXuBtXgu1jFLt5X4CVR0lvg4WKW.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/19/04/28/500_F_419042808_bzZZPxXuBtXgu1jFLt5X4CVR0lvg4WKW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Ejercicio individual · en el celular · 10 min</div>
   <h2>Mi embudo en <em>3 números</em></h2>
@@ -460,26 +473,27 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div><small>TIEMPO DE CICLO</small>Días de la primera reunión a la firma</div>
     <div><small>MOTIVOS DE PÉRDIDA</small>Los 3 que más se repiten</div>
   </div>
-  <p class="ej">Y una más, porque la pidieron 7 de ustedes: <b>¿cuántas cuentas se te enfriaron por falta de seguimiento?</b> Nada de esto sale en pantalla.</p>
+  <p class="ej">Y una más, porque el seguimiento lo pidieron 7 de las 15 personas que hablaron el 28: <b>¿cuántas cuentas llevan más de 30 días sin contacto?</b> Cierra con tu indicador más débil. Nada de esto sale en pantalla.</p>
+  <p class="note">Revenue Intelligence es esto: decidir la venta con los números del propio embudo, no con la intuición.</p>
   <div class="live-mount" data-live="embudo" data-modo="progreso"></div>
 </section>
 
 <!-- 6 =AI() -->
 <section class="slide" data-min="8" data-titulo="Gemini clasifica los motivos" data-bloque="embudo">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/06/60/09/40/500_F_660094089_Tlq9KPf69w6OkaNVcyPg1t8gro3XpqAU.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/60/09/40/500_F_660094089_Tlq9KPf69w6OkaNVcyPg1t8gro3XpqAU.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">① Google · así se hace con IA</div>
   <h2 style="margin-bottom:26px">Que Gemini diga <em>por qué perdemos</em></h2>
   <p class="lead" style="font-size:30px;margin-bottom:20px">En Google Sheets: tus motivos en la columna A. En B2 escribe y arrastra hacia abajo:</p>
   <div class="prompt">=AI("Clasifica este motivo de pérdida en una sola palabra: precio, tiempo, confianza, competidor o necesidad"; A2)</div>
   <p class="note" style="margin-top:12px">Si tu Sheets está en inglés, cambia el punto y coma por una coma.</p>
-  <p class="lead" style="font-size:28px;margin-top:22px">Luego, en el panel de Gemini: <i>«¿Qué tipo de motivo se repite más y qué pregunta debí hacer en la reunión para evitarlo?»</i></p>
+  <p class="lead" style="font-size:28px;margin-top:22px">Luego, en el panel de Gemini: <i>«¿Qué tipo de motivo se repite más y qué pregunta conviene hacer en la próxima reunión para anticiparlo?»</i></p>
   <p class="note">¿No ves la chispa? Pega la lista en gemini.google.com con la misma pregunta. ② Claude y ③ ChatGPT hacen lo mismo con la lista pegada.</p>
 </section>
 
 <!-- 7 ANS -->
 <section class="slide" data-min="10" data-titulo="El ANS que vende" data-bloque="ans">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/04/37/78/63/500_F_437786317_bMpO6Xl5di4oAv7GbHQ0vK9PbBrCIORk.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/37/78/63/500_F_437786317_bMpO6Xl5di4oAv7GbHQ0vK9PbBrCIORk.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">En parejas · comercial + operaciones · 10 min</div>
   <h2>El ANS <em>que vende</em></h2>
@@ -490,7 +504,7 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 
 <!-- 8 PROMPT ANS -->
 <section class="slide" data-min="4" data-titulo="Gemini · una frase por silla" data-bloque="ans">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/66/66/38/500_F_466663878_gbV96JtJbQs9RFLkQU5Lxpc1eE7Ddw5Y.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/66/66/38/500_F_466663878_gbV96JtJbQs9RFLkQU5Lxpc1eE7Ddw5Y.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">① Google · app de Gemini</div>
   <h2 style="margin-bottom:26px">Una frase <em>por silla del comité</em></h2>
@@ -500,16 +514,16 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 
 <!-- 9 PUENTE -->
 <section class="slide center" data-min="3" data-titulo="Tarifa o costo total" data-bloque="mira">
-  <div class="ph hero" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
+  <div class="foto hero" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Brecha D6 del diagnóstico</div>
+  <div class="kick">Lo que marcaron en el diagnóstico</div>
   <p class="q">Frente al más barato, ¿comparamos <em style="font-style:normal;color:var(--amar)">tarifa</em> o <em style="font-style:normal;color:var(--cian)">costo total</em>?</p>
-  <p class="note">El cliente que tiene su propio personal no ve la mitad de lo que le cuesta. Hoy lo ponemos en una hoja.</p>
+  <p class="note">El ANS que escribieron hace 10 minutos tiene precio. El cliente con personal propio no ve 4 de cada 10 pesos de lo que le cuesta: hoy lo ponemos en una hoja.</p>
 </section>
 
 <!-- 10 OPERARIO -->
 <section class="slide" data-min="6" data-titulo="Lo que cuesta un operario en 2026" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/02/37/49/57/500_F_237495719_uNzpBPMnTktmidEXQgaeLZhpiD3l479p.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/02/37/49/57/500_F_237495719_uNzpBPMnTktmidEXQgaeLZhpiD3l479p.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Un operario con salario mínimo · 2026</div>
   <h2>$1.750.905 de salario, <em>$2.715.572 de costo</em></h2>
@@ -521,12 +535,12 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <tr><td>ARL clase I</td><td>$9.140</td><td>Vacaciones</td><td>$72.954</td></tr>
     <tr><td>Caja de compensación 4 %</td><td>$70.036</td><td><b>Total (155 % del salario)</b></td><td><b style="color:var(--amar)">$2.715.572</b></td></tr>
   </table>
-  <p class="note">Empresa exonerada de salud, SENA e ICBF. Sin exoneración: ≈ $2.951.944. Decretos 1469 y 1470 de 2025; el Consejo de Estado aún estudia la nulidad, pero el valor vigente es este.</p>
+  <p class="note">Incluye vacaciones porque el puesto de aseo se cubre mientras el titular descansa; sin ese rubro serían $2.642.618. Empresa exonerada de salud, SENA e ICBF. Sin exoneración: ≈ $2.951.944. Decretos 1469 y 1470 de 2025; el Consejo de Estado aún estudia la nulidad, pero el valor vigente es este.</p>
 </section>
 
 <!-- 11 RUBROS -->
 <section class="slide" data-min="4" data-titulo="Lo que el cliente no ve" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/04/18/88/21/500_F_418882114_d0lFe0uRQQkyvC8iqBKdz0LqwGHU8szb.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/18/88/21/500_F_418882114_d0lFe0uRQQkyvC8iqBKdz0LqwGHU8szb.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">El costo completo de tener personal propio</div>
   <h2>Ocho rubros, <em>el cliente ve dos</em></h2>
@@ -537,14 +551,14 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="card"><div class="n">NO VE</div><h3>Ausentismo</h3><p>Reemplazos con recargo, o puestos vacíos.</p></div>
     <div class="card"><div class="n">NO VE</div><h3>Dotación</h3><p>Tres entregas al año.</p></div>
     <div class="card"><div class="n">NO VE</div><h3>Supervisión</h3><p>Alguien que cuida, programa y responde.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Riesgo laboral</h3><p>ARL, accidentes, demandas, rotación.</p></div>
+    <div class="card"><div class="n">NO VE</div><h3>Riesgo laboral</h3><p>ARL y rotación. Accidentes y demandas: sin cifra en la hoja.</p></div>
     <div class="card"><div class="n">NO VE</div><h3>Quejas</h3><p>El tiempo de quien las atiende.</p></div>
   </div>
 </section>
 
 <!-- 12 PLANTILLA -->
 <section class="slide" data-min="20" data-titulo="Manos en la hoja" data-bloque="costeo">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/18/33/10/37/500_F_1833103791_TtwQ5dSb251XfkTMnRx4j0LpTVytof7I.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/18/33/10/37/500_F_1833103791_TtwQ5dSb251XfkTMnRx4j0LpTVytof7I.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Manos en la hoja · 20 min · lo pidieron 3 de ustedes</div>
   <h2>El costeo completo <em>en Google Sheets</em></h2>
@@ -554,13 +568,13 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="ag"><span class="h">3</span><span>Cambia solo las celdas amarillas: tu cuenta o el caso Andino</span><span class="m">15 min</span></div>
     <div class="ag"><span class="h">4</span><span>Anota en el kit el costo mensual que te dio</span><span class="m">2 min</span></div>
   </div>
-  <p class="note">Guárdala en una carpeta nueva de tu Drive: <b>«Diplomado · Mi cuenta»</b>. Ahí vamos a guardar todo lo que construyamos hasta diciembre.</p>
+  <p class="note">Guárdala en una carpeta nueva de tu Drive: <b>«Diplomado · Mi cuenta»</b>. Ahí vamos a guardar todo lo que construyamos hasta diciembre. ¿Solo celular? Trabaja con el caso Andino en pantalla y anota en el kit el total que da la hoja del docente.</p>
   <div class="live-mount" data-live="costeo" data-modo="progreso"></div>
 </section>
 
 <!-- 13 GEMINI REVISA -->
 <section class="slide" data-min="10" data-titulo="Gemini revisa la hoja" data-bloque="costeo">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/06/02/89/46/500_F_602894635_osZB3mjhBUpZ35VflmkaloMxdIzVXESb.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/02/89/46/500_F_602894635_osZB3mjhBUpZ35VflmkaloMxdIzVXESb.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">① Google · panel de Gemini en Sheets o gemini.google.com con @</div>
   <h2 style="margin-bottom:26px">Que Gemini <em>te revise</em></h2>
@@ -570,13 +584,13 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 </section>
 
 <!-- 14 ANDINO -->
-<section class="slide" data-min="6" data-titulo="El caso Andino resuelto" data-reveal="1" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/03/87/90/48/500_F_387904865_EkPJdpcv6J2TlZR0W3J9LyzdmP5mHHnL.jpg')"></div>
+<section class="slide apretada" data-min="6" data-titulo="El caso Andino resuelto" data-reveal="1" data-bloque="mira">
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/03/87/90/48/500_F_387904865_EkPJdpcv6J2TlZR0W3J9LyzdmP5mHHnL.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Caso Andino · cifras inventadas · costo total al mes</div>
   <h2>El barato <em>no era el barato</em></h2>
   <table>
-    <tr><th>Rubro</th><th class="r">Seguir igual</th><th>Competidor barato</th><th class="g">Casalimpia</th></tr>
+    <tr><th>Rubro</th><th class="r">Seguir igual</th><th>Competidor barato</th><th class="g">Casalimpia*</th></tr>
     <tr><td>Tarifa del proveedor</td><td>—</td><td>$116,0 M</td><td>$128,0 M</td></tr>
     <tr><td>Nómina, dotación, insumos y rotación propios</td><td>$121,4 M</td><td>—</td><td>—</td></tr>
     <tr><td>Supervisión que paga el cliente</td><td>$12,9 M</td><td>$4,3 M</td><td>—</td></tr>
@@ -584,12 +598,12 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <tr><td>Quejas</td><td>$1,7 M</td><td>$1,7 M</td><td>—</td></tr>
     <tr><td><b>Costo total</b></td><td><b class="rv" style="color:var(--rojo)">$144,6 M</b></td><td><b class="rv">$130,5 M</b></td><td><b class="rv" style="color:var(--verde)">$128,0 M</b></td></tr>
   </table>
-  <p class="note rv">Seguir igual le cuesta <b style="color:var(--amar)">$16,57 M al mes · $198,8 M al año</b>. El barato cobra $12 M menos de tarifa y sale $2,5 M más caro, sin contar el riesgo de solidaridad laboral si el contratista no paga (art. 34 CST). <span style="font-size:20px;color:var(--gris)">Totales calculados sin redondear.</span></p>
+  <p class="note rv">Seguir igual le cuesta <b style="color:var(--amar)">$16,57 M al mes · $198,8 M al año</b>. El barato cobra $12 M menos de tarifa y sale $2,5 M más caro, sin contar el riesgo de solidaridad laboral si el contratista no paga (art. 34 CST). <span style="font-size:20px;color:var(--gris)">*Tarifa supuesta del ejercicio. Supuestos: el barato no supervisa ni cubre ausencias en el día; la fila de reemplazos es el ANS que escribieron. Totales calculados sin redondear.</span></p>
 </section>
 
 <!-- 15 AHORRO -->
 <section class="slide" data-min="10" data-titulo="La cifra para el comité" data-bloque="ahorro">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/04/82/47/60/500_F_482476001_IiObhziz1NPy39JhnoLEqbMHFkkf4yP2.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/82/47/60/500_F_482476001_IiObhziz1NPy39JhnoLEqbMHFkkf4yP2.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Tu cuenta · 10 min</div>
   <h2>¿Cuánto pierde <em>cada mes que sigue igual</em>?</h2>
@@ -600,43 +614,30 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 
 <!-- 16 CUMPLIMOS -->
 <section class="slide" data-min="3" data-titulo="Lo que cumplimos hoy" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Lo prometido el 28 de octubre</div>
-  <h2>Lo que <em>cumplimos hoy</em></h2>
+  <h2>Lo que <em>empezamos hoy</em></h2>
   <div class="grid g3">
-    <div class="card"><div class="n">LO PIDIERON 7</div><h3>Seguimiento</h3><p>Contamos las cuentas que se enfrían. El tablero llega en el módulo 5 (12 nov); las alertas automáticas, en el módulo 8 (10 dic).</p></div>
-    <div class="card"><div class="n">LO PIDIERON 3</div><h3>Costeos</h3><p>La plantilla con la nómina 2026 y Gemini revisando las fórmulas.</p></div>
-    <div class="card"><div class="n">TEMARIO</div><h3>Costo de no contratar</h3><p>La cifra mensual, en pesos, para el comité.</p></div>
+    <div class="card"><div class="n">EMPIEZA HOY · 7 DE 15</div><h3>Seguimiento</h3><p>Contamos las cuentas que se enfrían. El tablero llega en el módulo 5 (12 nov); las alertas automáticas, en el módulo 8 (10 dic).</p></div>
+    <div class="card"><div class="n">3 DE 15 LO PIDIERON</div><h3>Costeos</h3><p>La plantilla con la nómina 2026 y el prompt para que Gemini revise las fórmulas.</p></div>
+    <div class="card"><div class="n">TEMARIO</div><h3>Embudo, ANS y costo de no contratar</h3><p>Tu indicador más débil, tu ANS con frase y la cifra mensual para el comité. La llamada ganadora va el viernes.</p></div>
   </div>
-  <p class="note">El viernes, con esta hoja, construimos en Gemini un asistente que arma el caso de ahorro solo.</p>
+  <p class="note">El viernes, con esta hoja, construimos en Gemini un asistente que arma el caso de ahorro, y tú lo revisas.</p>
 </section>
 
 <!-- 17 EXPECTATIVA -->
 <section class="slide center" data-min="2" data-titulo="¿Resolvió lo que esperabas?" data-bloque="expectativa">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/03/91/34/11/500_F_391341133_FZOqJ1EhhNWDOk0DMr0BNG6RmDcAtt8y.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/03/91/34/11/500_F_391341133_FZOqJ1EhhNWDOk0DMr0BNG6RmDcAtt8y.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Una pregunta · en el celular</div>
   <p class="q">¿Lo de hoy resolvió <em style="font-style:normal;color:var(--amar)">lo que esperabas</em>? De 1 a 10.</p>
   <div class="live-mount" data-live="expectativa" data-modo="conteo" data-conteo="respuestas"></div>
 </section>
 
-<!-- 18 TAREA -->
-<section class="slide" data-min="3" data-titulo="Para el viernes 6 de noviembre" data-bloque="mira">
-  <div class="ph" style="background-image:url('https://t3.ftcdn.net/jpg/02/56/36/93/500_F_256369362_LmC3TT7FGBcHtBKDfYBnFt4i3WTpkSMv.jpg')"></div>
-  <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Para el viernes 6 de noviembre · presencial, de 2 a 6 p. m.</div>
-  <h2>Traigan <em>el portátil</em> y esto en Drive</h2>
-  <div class="grid g3">
-    <div class="card"><div class="n">01</div><h3>Tu hoja de costeo</h3><p>En la carpeta «Diplomado · Mi cuenta».</p></div>
-    <div class="card"><div class="n">02</div><h3>Una propuesta ganada y una perdida</h3><p>Y un pliego, si tienes uno a mano.</p></div>
-    <div class="card"><div class="n">03</div><h3>Ruta Google</h3><p>Módulos 1 y 2: tu edición y Drive. Unos 75 minutos. <b style="color:var(--cian)">iconeialabs.com/entrenamiento-workspace</b></p></div>
-  </div>
-</section>
-
 <!-- 19 EVALUACION -->
 <section class="slide center" data-min="4" data-titulo="Evaluación de la sesión" data-bloque="evaluacion">
-  <div class="ph" style="background-image:url('https://t4.ftcdn.net/jpg/12/15/09/41/500_F_1215094102_osQTfFCWSi7hgmeBXtpEaE1GKPXXYXlE.jpg')"></div>
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/12/15/09/41/500_F_1215094102_osQTfFCWSi7hgmeBXtpEaE1GKPXXYXlE.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Dos minutos · en el celular</div>
   <p class="q">Evalúa la sesión de hoy</p>
@@ -644,14 +645,29 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
   <div class="live-mount" data-live="evaluacion" data-modo="conteo" data-conteo="evaluaciones enviadas"></div>
 </section>
 
+<!-- 18 TAREA -->
+<section class="slide" data-min="3" data-titulo="Para el viernes 6 de noviembre" data-bloque="mira">
+  <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/02/56/36/93/500_F_256369362_LmC3TT7FGBcHtBKDfYBnFt4i3WTpkSMv.jpg')"></div>
+  <div class="brand">Universidad <b>EAN</b></div>
+  <div class="kick">Viernes 6 de noviembre · 2:00–6:00 p. m. · presencial en la U. EAN · Sesión 3: Gemini como analista de datos de venta</div>
+  <h2>Traigan <em>el portátil</em> y esto en Drive</h2>
+  <p class="lead" style="font-size:30px;margin-bottom:24px">Y una pregunta para el camino: ¿cuál de tus clientes está pagando hoy, sin saberlo, el costo de seguir igual?</p>
+  <div class="grid g3">
+    <div class="card"><div class="n">01</div><h3>Tu hoja de costeo</h3><p>En la carpeta «Diplomado · Mi cuenta».</p></div>
+    <div class="card"><div class="n">02</div><h3>Una propuesta ganada y una perdida</h3><p>Y un pliego, si tienes uno a mano.</p></div>
+    <div class="card"><div class="n">03</div><h3>Ruta Google</h3><p>Módulos 1 y 2: tu edición y Drive. Unos 75 minutos. <b style="color:var(--cian)">iconeialabs.com/entrenamiento-workspace</b></p></div>
+  </div>
+</section>
+  
+
 <!-- 20 CIERRE -->
 <section class="slide center" data-min="1" data-titulo="Cierre" data-bloque="mira">
-  <div class="ph hero" style="background-image:url('https://t3.ftcdn.net/jpg/14/59/30/60/500_F_1459306050_s8vAfwwOVa7s7Ep2S3WUox3jiDqpsBKy.jpg')"></div>
+  <div class="foto hero" style="background-image:url('https://t3.ftcdn.net/jpg/14/59/30/60/500_F_1459306050_s8vAfwwOVa7s7Ep2S3WUox3jiDqpsBKy.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Módulo 4 · Sesión 2</div>
-  <h1>El viernes, <em>Gemini lo arma solo</em></h1>
+  <h1>El viernes, Gemini arma el caso; <em>tú lo firmas</em></h1>
   <p class="lead" style="margin-top:36px">Guarda tu PDF desde el kit: «Mis respuestas» → «Guardar PDF».</p>
-  <div class="foot"><span>© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados.</span><span>Uso licenciado a Universidad EAN para Casalimpia</span></div>
+  <div class="foot" style="flex-direction:column;gap:4px"><span>© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados. · Uso licenciado a Universidad EAN para Casalimpia</span><span>ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados · Ing. Jorge Hugo Pérez Gaona · www.iconeialabs.com</span></div>
 </section>
 
 
@@ -690,6 +706,7 @@ var slides,i,show;
   function prev(){window.show(i-1);}
   function fs(){try{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen();}catch(e){}}
   addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
     if(['ArrowRight','PageDown',' ','Enter'].indexOf(e.key)>=0){e.preventDefault();next();}
     else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>=0){e.preventDefault();prev();}
@@ -702,8 +719,7 @@ var slides,i,show;
   document.getElementById('bf').onclick=function(e){e.stopPropagation();fs();};
   document.getElementById('vp').addEventListener('click',function(e){(e.clientX>innerWidth*0.35)?next():prev();});
   var tx=null;
-  addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
-  addEventListener('touchend',function(e){if(tx===null)return;var d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50){d<0?next():prev();}tx=null;});
+  /* el deslizamiento lo pone la consola: dos manejadores avanzaban dos láminas */
   setInterval(function(){
     var s=Math.floor((Date.now()-t0)/1000),m=+slides[i].getAttribute('data-min')||0,el=document.getElementById('tm');
     el.textContent=Math.floor(s/60)+':'+('0'+s%60).slice(-2)+(m?' / '+m+' min':'');
@@ -790,7 +806,7 @@ const vsb = supabase.createClient(V_URL, V_KEY, {global:{headers:{'x-dispositivo
 let VCOD=null, VCLA=null, VSES=null, VDATA=null, VTIMER=null, VVISTOS=new Set();
 /* VORDEN · VCAMPOS · VTIT los genera inyectar.py a partir de bloques.js */
 const VORDEN=["edicion", "embudo", "ans", "costeo", "ahorro", "expectativa", "evaluacion"];
-const VCAMPOS={"edicion": [["docs", "Abre un Documento de Google nuevo: ¿ves el icono de Gemini (la chispa) arriba a la derecha?"], ["sheets", "En una Hoja de cálculo nueva: ¿ves el icono de Gemini?"], ["studio", "En el selector de apps (los 9 puntos): ¿aparece Workspace Studio?"], ["vids", "¿Aparece Vids en el selector de apps?"], ["probe", "Desde el 28 de octubre, ¿probaste Moge, Arena o Zapia? ¿Para qué?"]], "embudo": [["propuestas", "Propuestas enviadas"], ["ganadas", "Propuestas ganadas"], ["dias", "Días promedio de la primera reunión a la firma"], ["motivos", "Los 3 motivos por los que más perdiste"], ["enfriadas", "¿Cuántas cuentas se te enfriaron por falta de seguimiento?"], ["debil", "Entonces, mi indicador más débil es…"]], "ans": [["indicador", "El ANS"], ["dato", "El dato (o el espacio para el dato)"], ["frase", "La frase de venta"], ["quien", "¿A qué silla del comité se la dices?"]], "costeo": [["caso", "¿Con qué cuenta trabajas?"], ["operarios", "Operarios de aseo"], ["ausentismo", "Ausentismo (%)"], ["propio", "Costo mensual de tenerlo con personal propio ($)"], ["revision", "¿Qué te corrigió o te preguntó Gemini sobre la hoja?"]], "ahorro": [["perdida", "Pérdida mensual de seguir igual ($)"], ["barato", "Diferencia real frente al competidor barato ($ al mes)"], ["frase", "La frase para el comité, con la cifra"]], "expectativa": [["nota", "De 1 a 10"], ["falta", "¿Qué te faltó para que fuera un 10? (opcional)"]], "evaluacion": [["e1", "¿Qué tan clara estuvo la sesión?"], ["e2", "¿El ritmo fue el adecuado?"], ["e3", "¿Te sirvieron los ejercicios en el celular?"], ["e4", "¿Qué tanto puedes usar lo de hoy esta semana?"], ["e5", "Dominio del tema por parte del docente"], ["e6", "Claridad al explicar"], ["e7", "¿Se resolvieron tus dudas?"], ["e8", "¿Funcionaron la plataforma y el kit?"], ["e9", "¿Recomendarías esta sesión a un colega?"], ["e10", "Una cosa que mejorarías (opcional)"]]};
+const VCAMPOS={"edicion": [["docs", "Abre un Documento de Google nuevo: ¿ves el icono de Gemini (la chispa) arriba a la derecha?"], ["sheets", "En una Hoja de cálculo nueva: ¿ves el icono de Gemini?"], ["studio", "En el selector de apps (los 9 puntos): ¿aparece Workspace Studio?"], ["vids", "¿Aparece Vids en el selector de apps?"], ["probe", "Desde el 28 de octubre, ¿probaste Moge, Arena o Zapia? ¿Para qué?"]], "embudo": [["propuestas", "Propuestas enviadas"], ["ganadas", "Propuestas ganadas"], ["dias", "Días promedio de la primera reunión a la firma"], ["motivos", "Los 3 motivos por los que más perdiste"], ["enfriadas", "¿Cuántas cuentas llevan más de 30 días sin contacto?"], ["debil", "Entonces, mi indicador más débil es…"]], "ans": [["indicador", "El ANS"], ["dato", "El dato (o el espacio para el dato)"], ["frase", "La frase de venta"], ["quien", "¿A qué silla del comité se la dices?"]], "costeo": [["caso", "¿Con qué cuenta trabajas?"], ["operarios", "Operarios de aseo"], ["ausentismo", "Ausentismo (%)"], ["propio", "Costo mensual de tenerlo con personal propio ($)"], ["revision", "¿Qué te corrigió o te preguntó Gemini sobre la hoja?"]], "ahorro": [["perdida", "Pérdida mensual de seguir igual ($)"], ["barato", "Diferencia real frente al competidor barato ($ al mes)"], ["frase", "La frase para el comité, con la cifra"]], "expectativa": [["nota", "De 1 a 10"], ["falta", "¿Qué te faltó para que fuera un 10? (opcional)"]], "evaluacion": [["e1", "¿Qué tan clara estuvo la sesión?"], ["e2", "¿El ritmo fue el adecuado?"], ["e3", "¿Te sirvieron los ejercicios en el celular?"], ["e4", "¿Qué tanto puedes usar lo de hoy esta semana?"], ["e5", "Dominio del tema por parte del docente"], ["e6", "Claridad al explicar"], ["e7", "¿Se resolvieron tus dudas?"], ["e8", "¿Funcionaron la plataforma y el kit?"], ["e9", "¿Recomendarías esta sesión a un colega?"], ["e10", "Una cosa que mejorarías (opcional)"]]};
 const VTIT={"espera": "Ya estás dentro", "mira": "Mira la pantalla", "edicion": "¿Qué ves en tu cuenta de Google?", "embudo": "Mi embudo en 3 números", "ans": "El ANS que vende", "costeo": "El costeo completo", "ahorro": "Casalimpia vs. barato vs. seguir igual", "expectativa": "¿Lo de hoy resolvió lo que esperabas?", "evaluacion": "Evalúa la sesión"};
 const VSEM={};
 /* semáforo: VSEM[bloque] = [[letra, significado], …]  ·  significado puede ir vacío */
@@ -857,12 +873,16 @@ async function vivoEntrar(auto){
       'Ojo: esta consola está en la sesión '+cod+', no en '+V_COD_DECK; }
   document.body.classList.add('live');
   vivoEmpujar(); vivoPintar();
-  clearInterval(VTIMER); VTIMER=setInterval(vivoRefrescar,2500);
+  clearInterval(VTIMER); VTIMER=setInterval(vivoRefrescar,4000);
 }
 
+var VREFRESCANDO=false;
 async function vivoRefrescar(){
-  if(!VCOD) return;
-  const {data,error}=await vsb.rpc('aula_tablero',{p_codigo:VCOD,p_clave:VCLA});
+  if(!VCOD || VREFRESCANDO) return;   /* con la red lenta las consultas no se apilan */
+  VREFRESCANDO=true;
+  let data,error;
+  try{ ({data,error}=await vsb.rpc('aula_tablero',{p_codigo:VCOD,p_clave:VCLA})); }
+  finally{ VREFRESCANDO=false; }
   if(error){ vchip('err','sin conexión'); document.getElementById('vsync').textContent='reintentando…'; return; }
   VDATA=data; VSES=data.sesion; vivoBotonCerrar();
   vchip('on',(data.participantes.length||0)+' en vivo');
@@ -938,22 +958,19 @@ function lecturaBloque(bq,campo,vals,pers){
   const n=pers.length, llenos=vals.filter(v=>v).length, vac=n-llenos;
   const noSe=vals.filter(v=>RX_NOSE.test(v||'')).length;
   if(!n) return '';
-  if(vac+noSe===n) return '0 de '+n+' respuestas con dato por ahora: es el dato que hay que ir a conseguir.';
-  if(vac+noSe>=Math.ceil(n/2)) return (vac+noSe)+' de '+n+' siguen sin dato: es el punto a reforzar del bloque.';
-  if(vac+noSe>0) return (vac+noSe)+' de '+n+' siguen sin dato.';
+  if(vac+noSe>0) return (n-vac-noSe)+' de '+n+' con dato por ahora.';
   return 'Los '+n+' la respondieron. Compara: ¿están hablando del mismo tipo de dato?';
 }
 
 function pintarConsolidado(bq,campos,pers,idx){
-  if(esEval(bq)) return evalAgregada(bq,campos,pers,idx);
+  if(esAgregado(bq)) return evalAgregada(bq,campos,pers,idx);
   let out='<div class="cons">';
   campos.forEach(([k,l])=>{
     const vals=pers.map(pa=>(idx[pa.id+'|'+bq+'|'+k]||'').trim());
     const llenos=vals.filter(esReal).length;
     out+='<div class="cq"><div class="cqh"><b>'+vesc(l)+'</b>'+
-      '<i class="'+(llenos===pers.length?'':'mal')+'">'+llenos+' de '+pers.length+'</i></div><ul>'+
-      pers.map((pa,n)=>'<li'+(vals[n]?'':' class="vac"')+'><em>'+vesc(vitNombre(pa,bq,idx))+'</em>'+
-        (vals[n]?vesc(vals[n]):'— en blanco —')+'</li>').join('')+'</ul>'+
+      '<i>'+llenos+' de '+pers.length+'</i></div><ul>'+
+      pers.map((pa,n)=>vals[n]?'<li><em>'+vesc(vitNombre(pa,bq,idx))+'</em>'+vesc(vals[n])+'</li>':'').join('')+'</ul>'+
       '<div class="lectura">'+vesc(lecturaBloque(bq,k,vals,pers))+'</div></div>';
   });
   if(VSEM[bq]){
@@ -976,8 +993,8 @@ function pintarProy(){
   document.getElementById('btncons').classList.toggle('act',PVISTA==='consolidado');
   if(!campos){ body.innerHTML='<div id="proyvacio">Este bloque no tiene respuestas de los participantes.<br>Cambia a una lámina de ejercicio y vuelve a proyectar.</div>'; return; }
   const idx={}; res.forEach(r=>{ idx[r.participante_id+'|'+r.bloque+'|'+r.campo]=r.valor; });
-  if(!pers.length){ body.innerHTML='<div id="proyvacio">Nadie ha entrado todavía.</div>'; return; }
-  if(PVISTA==='consolidado' || esEval(bq)){ body.innerHTML=pintarConsolidado(bq,campos,pers,idx); return; }
+  if(!pers.length){ body.innerHTML='<div id="proyvacio">Esperando las primeras respuestas.</div>'; return; }
+  if(PVISTA==='consolidado' || esAgregado(bq)){ body.innerHTML=pintarConsolidado(bq,campos,pers,idx); return; }
   const _m=slides[i].querySelector('.live-mount'), _md=_m?(_m.dataset.modo||''):'';
   const _vit=!!(_m&&VVIT[bq]);
   let _cam=campos, _per=pers;
@@ -986,7 +1003,7 @@ function pintarProy(){
     _cam=vitCampos(_m,bq);
     _per=pers.filter(pa => (est&&est.size) ? est.has(pa.id)
       : _cam.some(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim())));
-    if(!_per.length){ body.innerHTML='<div id="proyvacio">Todavía no ha escrito nadie.</div>'; return; }
+    if(!_per.length){ body.innerHTML='<div id="proyvacio">Esperando las primeras respuestas.</div>'; return; }
   } else if(_md==='progreso'||_md==='vitrina'||_md==='conteo'){
     body.innerHTML='<div id="proyvacio">Nada de este bloque está a la vista.<br>Usa <b>Mostrar en la lámina</b> para poner lo que escribieron.</div>'; return;
   }
@@ -999,7 +1016,7 @@ function pintarProy(){
     if(VSEM[bq]) cuerpo+=vsemHTML(bq, L=>idx[pa.id+'|'+bq+'|sem_'+L], 'margin-top:12px');
     out+='<div class="pcard"><div class="who">'+vesc(vitNombre(pa,bq,idx))+'</div>'+cuerpo+'</div>';
   });
-  body.innerHTML = out || '<div id="proyvacio">Nadie ha entrado todavía.</div>';
+  body.innerHTML = out || '<div id="proyvacio">Esperando las primeras respuestas.</div>';
 }
 async function vivoCerrarSesion(){
   if(!VCOD) return;
@@ -1124,11 +1141,11 @@ function ciePintar(){
     '<div class="kpic"><b>'+bloques.length+' de '+VORDEN.filter(b=>VCAMPOS[b]).length+'</b><span>ejercicios con respuesta</span></div></div>';
 
   if(!bloques.length){
-    body.innerHTML=out+'<div id="cievacio">Todavía no ha escrito nadie. Esta pantalla se llena sola.</div>';
+    body.innerHTML=out+'<div id="cievacio">Esperando las primeras respuestas. Esta pantalla se llena sola.</div>';
     return;
   }
   out+='<div class="cons">'+bloques.map(bq=>{
-    const q=cieEscribieron(bq,pers,idx).length, sens=cieSensible(bq);
+    const q=cieEscribieron(bq,pers,idx).length, sens=cieSensible(bq)||esAgregado(bq);
     const pal=sens? [] : ciePalabras(bq,pers,idx,6);
     return '<div class="cq"><div class="cqh"><b>'+vesc(VTIT[bq]||bq)+'</b>'+
       '<i class="'+(q?'':'mal')+'">'+q+' de '+pers.length+'</i></div>'+
@@ -1146,7 +1163,7 @@ function vivoTexto(){
   const idx={}; res.forEach(r=>{ idx[r.participante_id+'|'+r.bloque+'|'+r.campo]=r.valor; });
   let t=((VSES&&VSES.titulo)||'Sesión')+' — '+VCOD+'\n\n';
   VORDEN.forEach(bq=>{
-    const campos=VCAMPOS[bq]; if(!campos || esEval(bq)) return;
+    const campos=VCAMPOS[bq]; if(!campos || esAgregado(bq)) return;
     let bloque='';
     pers.forEach(pa=>{
       let cuerpo='', tiene=false;
@@ -1181,7 +1198,11 @@ function vitNombre(pa,bq,idx){
 }
 /* PRIVACIDAD v1 · La evaluación nunca sale por persona: solo promedio con su n,
    en pantalla, en el cierre, en el informe y en lo que se copia. */
-function esEval(bq){ return /^eval/i.test(String(bq||'')); }
+function esEval(bq){ return /^(eval|expectativa)/i.test(String(bq||'')); }
+/* PRIVACIDAD v2 · Un bloque en modo progreso promete «nada de esto sale en pantalla»:
+   se muestra solo en agregado, igual que la evaluación, y la tecla M no lo abre. */
+function modoDe(bq){ const m=document.querySelector('.live-mount[data-live="'+bq+'"]'); return m?(m.dataset.modo||''):''; }
+function esAgregado(bq){ return esEval(bq) || modoDe(bq)==='progreso'; }
 function evalAgregada(bq,campos,pers,idx){
   let out='<div class="cons">';
   campos.forEach(([k,l])=>{
@@ -1193,7 +1214,8 @@ function evalAgregada(bq,campos,pers,idx){
     else dato=vals.length+' de '+pers.length+' escribieron un comentario';
     out+='<div class="cq"><div class="cqh"><b>'+vesc(l)+'</b><i>'+dato+'</i></div></div>';
   });
-  return out+'<div class="lectura">La evaluación se muestra solo en agregado. Los comentarios se leen después de la sesión, sin nombres.</div></div>';
+  return out+'<div class="lectura">'+(esEval(bq)?'La evaluación se muestra solo en agregado. Los comentarios se leen después de la sesión, sin nombres.'
+    :'Este ejercicio es privado: aquí solo va el agregado del grupo, sin nombres.')+'</div></div>';
 }
 function vitEstrella(bq,id){
   if(!VEST[bq]) VEST[bq]=new Set();
@@ -1202,7 +1224,7 @@ function vitEstrella(bq,id){
 }
 function vitToggle(){
   const m=slides[i].querySelector('.live-mount'); if(!m) return;
-  const bq=m.dataset.live; if(!VCAMPOS[bq] || esEval(bq)) return;
+  const bq=m.dataset.live; if(!VCAMPOS[bq] || esAgregado(bq)) return;
   VVIT[bq]=!VVIT[bq]; vivoPintar();
 }
 function vitNota(modo,bq){
@@ -1235,9 +1257,13 @@ function pintarLamina(){
   slides[i].classList.toggle('sinvivo', !_rev && (_md==='progreso'||_md==='vitrina'));
   if(_rev){
     const campos2=vitCampos(m,bq), est=VEST[bq];
-    const gente=pers.filter(pa => (est&&est.size) ? est.has(pa.id)
-      : campos2.some(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim())));
-    if(!gente.length){ m.innerHTML='<div class="vitcerrada">Todavía no ha escrito nadie</div>'; return; }
+    /* Sin ★ la vitrina no proyecta textos: un muro de 14 tarjetas no cabe ni se lee. */
+    if(!(est&&est.size)){
+      const listos=pers.filter(pa=>campos2.every(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length;
+      m.innerHTML='<div class="conteo"><b style="color:#ffc845;-webkit-text-fill-color:#ffc845">'+listos+' <small>de '+pers.length+'</small></b><span>listas para la puesta en común</span></div>'; return;
+    }
+    const gente=pers.filter(pa => est.has(pa.id));
+    if(!gente.length){ m.innerHTML='<div class="vitcerrada">Esperando las primeras respuestas</div>'; return; }
     m.innerHTML='<div class="vit">'+gente.map(pa=>{
       let cuerpo='';
       campos2.forEach(([k,l])=>{ const v=(idx[pa.id+'|'+bq+'|'+k]||'').trim(); if(!v) return;
@@ -1246,7 +1272,12 @@ function pintarLamina(){
     }).join('')+'</div>';
     return;
   }
-  if(_md==='progreso'||_md==='vitrina'){ m.innerHTML=''; return; }
+  if(_md==='progreso'){
+    /* Lámina viva sin exponer a nadie: solo cuántos terminaron. */
+    const listos=pers.filter(pa=>campos.every(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length;
+    m.innerHTML='<div class="conteo"><b style="color:#ffc845;-webkit-text-fill-color:#ffc845">'+listos+' <small>de '+pers.length+'</small></b><span>terminaron</span></div>'; return;
+  }
+  if(_md==='vitrina'){ m.innerHTML=''; return; }
   if(m.dataset.modo==='conteo'){
     const campos2=vitCampos(m,bq);
     const n=pers.filter(pa=>campos2.some(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length;
@@ -1347,7 +1378,9 @@ function vivoPintar(){
 
 /* atajo de teclado V + enganche al cambio de lámina */
 addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey) return;   /* Ctrl+C copiaba y abría el Cierre ante la sala */
   const typing=/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if(typing&&e.key==='Enter'&&/^(vcod|vcla)$/.test(document.activeElement.id)){ document.activeElement.blur(); vivoEntrar(); return; }
   if(!typing&&(e.key==='v'||e.key==='V')) vivoToggle();
   if(!typing&&(e.key==='p'||e.key==='P')&&VCOD) vivoProy();
   if(!typing&&(e.key==='m'||e.key==='M')&&VCOD) vitToggle();

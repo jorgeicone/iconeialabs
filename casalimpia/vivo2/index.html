@@ -209,6 +209,7 @@ textarea::placeholder,input.txt::placeholder{color:#43567a}
     <input class="txt" id="gnom" placeholder="Nombre y apellido" autocomplete="name"></div>
   <button class="btn" id="gbtn">Entrar</button>
   <div class="err" id="gerr"></div>
+  <p style="margin-top:28px;font-size:.72rem;color:var(--dim);line-height:1.4">© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados.</p>
 </div>
 
 <!-- APP -->
@@ -217,7 +218,7 @@ textarea::placeholder,input.txt::placeholder{color:#43567a}
 <div id="foot" class="hide">
   <span><b id="fnom">—</b></span>
   <span id="fses"></span>
-  <span id="fcopy">© 2026 ICONEialabs</span>
+  <span id="fcopy">© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs</span>
   <button id="grupo">El grupo</button>
   <button id="mine">Mis respuestas</button>
   <button id="pdf">Guardar PDF</button>
@@ -227,11 +228,11 @@ textarea::placeholder,input.txt::placeholder{color:#43567a}
 <script>/* ===== CASALIMPIA · MÓDULO 4 · SESIÓN 2 · Del dato al costeo · CLM4S2 · (c) 2026 Jorge Hugo Pérez Gaona · ICONEialabs ===== */
 const BLOQUES = {
   espera: { t:'Ya estás dentro', kick:'En espera',
-    intro:'Regístrate con tu nombre y apellido. Al final te llevas en PDF todo lo que escribas hoy. Esta ventana se mueve sola.', campos:[] },
+    intro:'Ya estás registrado. Al final te llevas en PDF todo lo que escribas hoy. Esta ventana se mueve sola.', campos:[] },
   mira: { t:'Mira la pantalla', kick:'Bloque de explicación',
     intro:'Este tramo no tiene nada que llenar. Deja la ventana abierta: el siguiente ejercicio aparece solo.', campos:[] },
   edicion: { t:'¿Qué ves en tu cuenta de Google?', kick:'Minuto 0 · 2 minutos', modo:'conteo', conteo:'cuentas revisadas',
-    intro:'Abre tu correo corporativo de Google en el computador. Marca lo que ves hoy, sin pedirle nada a nadie. Si no sabes, marca «No sé»: también es un dato.',
+    intro:'Abre tu correo corporativo de Google en el computador (¿solo celular? marca «No sé»). Marca lo que ves hoy, sin pedirle nada a nadie. Si no sabes, marca «No sé»: también es un dato.',
     campos:[
       {k:'docs', l:'Abre un Documento de Google nuevo: ¿ves el icono de Gemini (la chispa) arriba a la derecha?', op:['Sí','No','No sé']},
       {k:'sheets', l:'En una Hoja de cálculo nueva: ¿ves el icono de Gemini?', op:['Sí','No','No sé']},
@@ -239,23 +240,27 @@ const BLOQUES = {
       {k:'vids', l:'¿Aparece Vids en el selector de apps?', op:['Sí','No','No sé']},
       {k:'probe', l:'Desde el 28 de octubre, ¿probaste Moge, Arena o Zapia? ¿Para qué?', ph:'Ej.: Zapia para recordatorios; Arena para comparar respuestas', rows:2}] },
   embudo: { t:'Mi embudo en 3 números', kick:'Ejercicio individual · 10 min', modo:'progreso',
-    intro:'Con tus datos de los últimos 6 meses. Si no los tienes exactos, pon tu mejor estimado y márcalo con «aprox.». Nada de esto sale en pantalla. Para clasificar tus motivos en Google Sheets: =AI("Clasifica este motivo de pérdida en una sola palabra: precio, tiempo, confianza, competidor o necesidad"; A2) (si tu Sheets está en inglés, usa coma en vez de punto y coma)',
+    intro:'Con tus datos de los últimos 6 meses. Si no los tienes exactos, pon tu mejor estimado y márcalo con «aprox.». Nada de esto sale en pantalla.',
+    prompts:[['Fórmula para Google Sheets (si tu hoja usa coma como separador, cambia el punto y coma)','=AI("Clasifica este motivo de pérdida en una sola palabra: precio, tiempo, confianza, competidor o necesidad"; A2)']],
     campos:[
       {k:'propuestas', l:'Propuestas enviadas', ph:'Ej.: 12', rows:1},
       {k:'ganadas', l:'Propuestas ganadas', ph:'Ej.: 3', rows:1},
       {k:'dias', l:'Días promedio de la primera reunión a la firma', ph:'Ej.: 90 aprox.', rows:1},
       {k:'motivos', l:'Los 3 motivos por los que más perdiste', ph:'Ej.: precio; el cliente no decidió; se quedó con el actual', rows:2},
-      {k:'enfriadas', l:'¿Cuántas cuentas se te enfriaron por falta de seguimiento?', ph:'Ej.: 4', rows:1},
+      {k:'enfriadas', l:'¿Cuántas cuentas llevan más de 30 días sin contacto?', ph:'Ej.: 4', rows:1},
       {k:'debil', l:'Entonces, mi indicador más débil es…', ph:'Tasa de cierre, tiempo de ciclo o motivo de pérdida', rows:1}] },
   ans: { t:'El ANS que vende', kick:'En parejas · comercial + operaciones · 10 min', modo:'vitrina', proyecta:['frase','quien'],
-    intro:'Tomen un ANS que Casalimpia sí mide. Si no conocen la cifra, escriban «[dato de Casalimpia]»: no la inventen. Prompt para la app de Gemini: «Actúa como asesor comercial de facility management en Colombia. Este es un indicador de servicio de Casalimpia: [pega tu ANS y su dato]. Escribe una frase de venta para cada silla del comité de compras: gerencia administrativa, compras, SST y dirección financiera. Máximo 25 palabras cada una, con lo que esa persona gana o arriesga. Si falta una cifra, deja [corchetes]; no la inventes.»',
+    intro:'Tu frase puede salir en pantalla; si la quieres sin tu nombre, marca la casilla de abajo. Tomen un ANS que Casalimpia sí mide. Si no conocen la cifra, escriban «[dato de Casalimpia]»: no la inventen.',
+    prompts:[['Prompt para la app de Gemini','Actúa como asesor comercial de facility management en Colombia. Este es un indicador de servicio de Casalimpia: [pega tu ANS y su dato]. Escribe una frase de venta para cada silla del comité de compras: gerencia administrativa, compras, SST y dirección financiera. Máximo 25 palabras cada una, con lo que esa persona gana o arriesga. Si falta una cifra, deja [corchetes]; no la inventes.']],
     campos:[
       {k:'indicador', l:'El ANS', ph:'Ej.: tiempo de reemplazo por ausentismo', rows:1},
       {k:'dato', l:'El dato (o el espacio para el dato)', ph:'Ej.: reemplazo en menos de [X] horas', rows:1},
       {k:'frase', l:'La frase de venta', ph:'Ej.: «Si una persona falta, usted no lo nota: la reemplazamos antes de [X] horas»', rows:3},
       {k:'quien', l:'¿A qué silla del comité se la dices?', op:['Administrativa','Compras','SST','Financiera'], libre:true}] },
-  costeo: { t:'El costeo completo', kick:'Manos en la hoja · 30 min', modo:'progreso',
-    intro:'Abre la plantilla (enlace en pantalla), haz una copia en tu Drive y llénala con el caso Andino o con una cuenta tuya. Aquí anotas solo los resultados. Plantilla: iconeialabs.com/casalimpia/plantilla-costeo.xlsx. Prompt para Gemini: «Revisa esta hoja de costeo de aseo. 1) Verifica que cada fórmula del costo del operario coincida con las cargas laborales de Colombia en 2026. 2) Dime qué rubro falta o está subestimado para esta operación. 3) Arma 3 escenarios de ausentismo (4 %, 6 % y 9 %) con el costo total de cada uno. No inventes cifras: si falta una, pregúntamela.»',
+  costeo: { t:'El costeo completo', kick:'Manos en la hoja · 20 min + 10 con Gemini', modo:'progreso',
+    intro:'Abre la plantilla (enlace en pantalla), haz una copia en tu Drive y llénala con el caso Andino o con una cuenta tuya. Aquí anotas solo los resultados; nada sale en pantalla. ¿Solo celular? Usa el caso Andino y anota el total que muestra el docente.',
+    enlaces:[['https://iconeialabs.com/casalimpia/plantilla-costeo.xlsx','Descargar la plantilla de costeo']],
+    prompts:[['Prompt para que Gemini revise tu hoja','Revisa esta hoja de costeo de aseo. 1) Verifica que cada fórmula del costo del operario coincida con las cargas laborales de Colombia en 2026. 2) Dime qué rubro falta o está subestimado para esta operación. 3) Arma 3 escenarios de ausentismo (4 %, 6 % y 9 %) con el costo total de cada uno. No inventes cifras: si falta una, pregúntamela.']],
     campos:[
       {k:'caso', l:'¿Con qué cuenta trabajas?', op:['Caso Andino','Una cuenta mía'], libre:true},
       {k:'operarios', l:'Operarios de aseo', ph:'Ej.: 42', rows:1},
@@ -263,7 +268,8 @@ const BLOQUES = {
       {k:'propio', l:'Costo mensual de tenerlo con personal propio ($)', ph:'Lo que te dio la hoja', rows:1},
       {k:'revision', l:'¿Qué te corrigió o te preguntó Gemini sobre la hoja?', ph:'Ej.: me faltaba la dotación', rows:2}] },
   ahorro: { t:'Casalimpia vs. barato vs. seguir igual', kick:'La cifra para el comité · 10 min', modo:'vitrina', proyecta:['frase'],
-    intro:'Con tu hoja: ¿cuánto pierde el cliente cada mes que sigue igual? Las cifras del caso Andino son inventadas para practicar. Prompt: «Con esta hoja, escribe una frase para cada silla del comité de compras (administrativa, compras, SST y financiera) que muestre cuánto pierde el cliente cada mes que sigue igual. Máximo 30 palabras, con la cifra en pesos. Marca como supuesto toda cifra que no venga de la hoja.»',
+    intro:'Tu frase puede salir en pantalla; si la quieres sin tu nombre, marca la casilla de abajo. No escribas el nombre del cliente. Con tu hoja: ¿cuánto pierde el cliente cada mes que sigue igual? Las cifras del caso Andino son inventadas para practicar.',
+    prompts:[['Prompt para la frase del comité','Con esta hoja, escribe una frase para cada silla del comité de compras (administrativa, compras, SST y financiera) que muestre cuánto pierde el cliente cada mes que sigue igual. Máximo 30 palabras, con la cifra en pesos. Marca como supuesto toda cifra que no venga de la hoja.']],
     campos:[
       {k:'perdida', l:'Pérdida mensual de seguir igual ($)', ph:'Costo propio − costo con Casalimpia', rows:1},
       {k:'barato', l:'Diferencia real frente al competidor barato ($ al mes)', ph:'Incluye reemplazos, supervisión y quejas', rows:1},
@@ -290,11 +296,16 @@ const BLOQUES = {
 const SLIDE_BLOQUE = {
   1:'espera', 2:'espera', 3:'edicion', 4:'mira', 5:'embudo', 6:'embudo', 7:'ans', 8:'ans',
   9:'mira', 10:'mira', 11:'mira', 12:'costeo', 13:'costeo', 14:'mira', 15:'ahorro',
-  16:'mira', 17:'expectativa', 18:'mira', 19:'evaluacion', 20:'mira'
+  16:'mira', 17:'expectativa', 18:'evaluacion', 19:'mira', 20:'mira'
 };
 </script>
 <script>
 /* ================= CONFIG ================= */
+const PIE_COPIA='<div class="pie-copia">ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados<br>'+
+  'Ing. Jorge Hugo Pérez Gaona · www.iconeialabs.com<br>'+
+  '© 2026 Ing. Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados.</div>';
+(function(){ const l=document.getElementById('logo');
+  if(l && !/data:/.test(getComputedStyle(l).backgroundImage)) l.style.display='none'; })();
 const SB_URL='https://nvgkhdrrxqdgxktfkioa.supabase.co', SB_KEY='sb_publishable_d1RrtE7S-9a8e8mGKRRjxQ_4HU_nkDl';
 
 /* identidad de dispositivo — la RLS exige que coincida con la cabecera */
@@ -312,8 +323,19 @@ const $=s=>document.querySelector(s);
 let SES=null, PAR=null, BLOQUE=null, VALS={}, canal=null, viendoMias=false;
 let viendoGrupo=false, GRUPO=null;
 
+document.addEventListener('click',async e=>{
+  const bt=e.target.closest('[data-copiar]'); if(!bt) return;
+  try{ await navigator.clipboard.writeText(bt.getAttribute('data-copiar')); bt.textContent='Copiado ✓'; }
+  catch(_){ const r=document.createRange(); r.selectNodeContents(bt.previousElementSibling);
+    const s=getSelection(); s.removeAllRanges(); s.addRange(r); bt.textContent='Seleccionado: mantén pulsado y copia'; }
+  setTimeout(()=>bt.textContent='Copiar',2500);
+});
 /* ================= ENTRADA ================= */
 const qs=new URLSearchParams(location.search);
+/* El código guardado solo sirve si es el de este kit: quien usó el kit de la sesión
+   anterior en el mismo navegador entraba solo a la sesión vieja. */
+if(!qs.get('s') && (localStorage.getItem('aula_cod')||'').toUpperCase()!=='CLM4S2'.toUpperCase()){
+  try{ localStorage.removeItem('aula_cod'); }catch(e){} }
 $('#gcod').value=(qs.get('s')||localStorage.getItem('aula_cod')||'CLM4S2').toUpperCase();
 $('#gnom').value=localStorage.getItem('aula_nom')||'';
 $('#gcod').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase());
@@ -474,8 +496,7 @@ function pintarGrupo(app){
        '<p class="intro">Escrito por tus compañeros, sin nombres.</p>';
     tx.forEach(t=>{ h+='<div class="card gcita"><p style="margin:0">'+esc(t)+'</p></div>'; });
   }
-  h+='<div class="pie-copia">ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados<br>'+
-     '© '+new Date().getFullYear()+' ICONEialabs. Todos los derechos reservados.</div>';
+  h+=PIE_COPIA;
   app.innerHTML=h;
 }
 
@@ -495,6 +516,10 @@ function pintar(){
     return;
   }
   let h='<div class="kick">'+esc(b.kick)+'</div><h1>'+esc(b.t)+'</h1><p class="intro">'+esc(b.intro)+'</p>';
+  /* enlaces tocables y prompts con botón Copiar: en el celular nadie selecciona 75 palabras a mano */
+  (b.enlaces||[]).forEach(([u,t])=>{ h+='<p class="intro"><a href="'+esc(u)+'" target="_blank" rel="noopener" style="color:var(--cyan);font-weight:700">'+esc(t||u)+'</a></p>'; });
+  (b.prompts||[]).forEach(([t,p])=>{ h+='<div class="card prm"><div class="qq">'+esc(t)+'</div><p style="white-space:pre-wrap">'+esc(p)+
+    '</p><button class="btn" style="width:auto;margin-top:10px;padding:10px 18px" data-copiar="'+esc(p)+'">Copiar</button></div>'; });
   b.campos.forEach(c=>{
     if(c.op){ h+=opHTML(id,c); return; }
     if(c.tipo==='diez'){ h+=diezHTML(id,c); return; }
@@ -608,7 +633,9 @@ function semPares(b){ return (b.semaforo||[]).map(x=>Array.isArray(x)?x:[x,'']);
 
 function pintarMias(app){
   const hoy=new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
-  let h='<div class="solo-print"><div class="n">'+esc((PAR&&PAR.nombre)||'')+'</div>'+
+  const marca=(document.querySelector('#bar .wordmark')||{}).textContent||'';
+  let h='<div class="solo-print">'+(marca?'<div class="m" style="font-weight:700;color:#000;margin:0 0 6px">'+esc(marca)+'</div>':'')+
+        '<div class="n">'+esc((PAR&&PAR.nombre)||'')+'</div>'+
         '<div class="m">'+esc((SES&&SES.titulo)||'')+' · '+hoy+'</div></div>'+
         '<div class="kick">Tu cuaderno</div><h1>Lo que has escrito hoy</h1>'+
         '<p class="intro">Todo queda guardado con tu nombre. Vuelve a esta dirección cuando quieras y lo encuentras. Con <b>Guardar PDF</b> te lo llevas al celular.</p>';
@@ -628,8 +655,7 @@ function pintarMias(app){
     }
   });
   if(!algo) h+='<div class="card"><p class="intro" style="margin:0">Todavía no has escrito nada. Vuelve cuando llenes el primer bloque.</p></div>';
-  h+='<div class="pie-copia">ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados<br>'+
-     '© '+new Date().getFullYear()+' ICONEialabs. Todos los derechos reservados.</div>';
+  h+=PIE_COPIA;
   app.innerHTML=h;
 }
 
