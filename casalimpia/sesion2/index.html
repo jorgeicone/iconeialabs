@@ -343,12 +343,7 @@ h1{font-size:92px;line-height:1.02;font-weight:800;letter-spacing:-1.5px}
 h2{font-size:68px;line-height:1.08;font-weight:800;letter-spacing:-1px;margin-bottom:40px}
 h2 em,h1 em{font-style:normal;color:var(--amar)}
 p.lead{font-size:36px;line-height:1.4;color:#d6e0f2;max-width:1500px}
-.grid{display:grid;gap:30px}
 .g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
-.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:34px 36px}
-.card h3{font-size:34px;font-weight:700;margin-bottom:14px;color:var(--blanco)}
-.card p{font-size:27px;line-height:1.4;color:#c9d5ea}
-.card .n{font-size:22px;font-weight:800;color:var(--cian);letter-spacing:2px;margin-bottom:10px}
 .center{justify-content:center}
 .q{font-size:76px;font-weight:800;line-height:1.15;max-width:1600px}
 .note{font-size:26px;color:var(--gris);margin-top:34px}
@@ -359,17 +354,10 @@ th.g{color:var(--verde)}th.r{color:var(--rojo)}
 .agenda{display:flex;flex-direction:column;gap:14px}
 .ag{display:grid;grid-template-columns:220px 1fr 140px;align-items:center;font-size:31px;padding:16px 28px;border-radius:16px;background:rgba(255,255,255,.05)}
 .ag .h{font-weight:800;color:var(--cian)}.ag .m{text-align:right;color:var(--gris);font-size:24px}
-.formula{display:flex;gap:18px;align-items:stretch;margin:10px 0 36px}
-.formula div{flex:1;background:rgba(46,196,230,.1);border:2px solid rgba(46,196,230,.4);border-radius:20px;padding:26px;font-size:28px;font-weight:700;line-height:1.3}
-.formula div small{display:block;font-size:20px;color:var(--cian);letter-spacing:2px;margin-bottom:8px}
-.ej{font-size:28px;line-height:1.5;color:#d6e0f2;border-left:6px solid var(--amar);padding:8px 0 8px 30px}
 .reveal .rv{opacity:1}
 .rv{opacity:0;transition:opacity .4s}
-.sent{font-size:52px;font-weight:700;line-height:1.6}
-.sent u{text-decoration:none;display:inline-block;min-width:330px;border-bottom:4px dashed var(--amar);color:var(--amar)}
 ol.ev{columns:2;column-gap:70px;font-size:27px;line-height:1.35;padding-left:40px;color:#d6e0f2}
 ol.ev li{margin-bottom:16px;break-inside:avoid}
-.prompt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:27px;line-height:1.5;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:36px 40px;color:#e8f2ff}
 #hud{white-space:nowrap;position:fixed;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;font:600 13px Archivo,sans-serif;color:#8ea2c4;background:rgba(2,10,24,.75);padding:6px 12px;border-radius:30px;opacity:.25;transition:opacity .3s;z-index:9;user-select:none}
 #hud:hover{opacity:1}
 #hud button{background:none;border:1px solid #3a5280;color:#cfe0ff;border-radius:20px;padding:4px 12px;font:inherit;cursor:pointer}
@@ -380,16 +368,11 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 .slide>*:not(.foto){position:relative;z-index:1}
 .slide>.brand,.slide>.foot{position:absolute}
 .slide::after{z-index:1}
-.card{backdrop-filter:blur(6px);background:rgba(7,26,58,.55)}
 
 /* variables y estilos que la consola espera de la presentación */
 :root{--cyan:#00d4ff;--purple:#7b2fff;--card:rgba(7,26,58,.92);--card2:#0d2a5c;--dim:#8ea2c4;--green:#3fd08a;--mono:'IBM Plex Mono',ui-monospace,monospace;--muted:#c9d5ea;--orange:#ff9a3c;--red:#ff6b6b}
-.btn{background:transparent;border:1px solid rgba(0,212,255,.45);color:#e8f2ff;border-radius:10px;padding:8px 14px;font:600 13px Archivo,sans-serif;cursor:pointer}
-.btn.act,.btn:hover{background:#00d4ff;color:#071a3a}
 .live-mount{margin-top:28px;max-height:560px;overflow:auto}
-.vitc .a{font-size:30px!important;line-height:1.35}
 .vitc .who,.vitc .q{font-size:22px!important}
-.conteo b{font-size:120px}
 #hud{opacity:0!important}
 #hud:hover{opacity:1!important}
 .apretada h2{margin-bottom:20px}.apretada th,.apretada td{padding:11px 24px;font-size:26px}.apretada .note{margin-top:16px;font-size:24px}
@@ -418,32 +401,19 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="1" data-titulo="La ruta de hoy" data-bloque="espera">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/77/25/06/500_F_477250690_17tuLV56rHUX0xu9xeZCWSSonEV4loTc.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">La ruta de hoy · 2 horas · manos en el computador</div>
-  <h2>Del embudo a <em>la cifra del comité</em></h2>
-  <div class="agenda">
-    <div class="ag"><span class="h">6:30</span><span>¿Qué ves en tu cuenta de Google?</span><span class="m">7 min</span></div>
-    <div class="ag"><span class="h">6:37</span><span>Mi embudo en 3 números · Gemini clasifica por qué perdemos</span><span class="m">19 min</span></div>
-    <div class="ag"><span class="h">6:56</span><span>El ANS que vende, en parejas</span><span class="m">14 min</span></div>
-    <div class="ag"><span class="h">7:10</span><span>El costeo completo en Sheets, con la nómina 2026</span><span class="m">37 min</span></div>
-    <div class="ag"><span class="h">7:47</span><span>Casalimpia vs. el barato vs. seguir igual</span><span class="m">13 min</span></div>
-    <div class="ag"><span class="h">8:00</span><span>Lo que empezamos hoy · evaluación · tarea</span><span class="m">10 min</span></div>
-  </div>
-  <p class="note">De lo que pidieron el 28 de octubre, hoy <b style="color:var(--amar)">empieza el seguimiento de cuentas</b> (lo pidieron 7 de las 15 personas que hablaron) y se trabajan <b style="color:var(--amar)">los costeos</b> (3 de 15).</p>
+  <div class="kick">La ruta de hoy · 2 horas</div>
+  <h2>Hoy hacemos <em>4 cosas</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Revisamos qué tiene tu cuenta de Google</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Miramos tu embudo y tu ANS</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Calculamos cuánto le cuesta al cliente tener personal propio</span><span class="m"></span></div><div class="ag"><span class="h">4</span><span>Sacamos la cifra para el comité</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 3 EDICION -->
 <section class="slide" data-min="4" data-titulo="¿Qué ves en tu cuenta?" data-bloque="edicion">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/22/03/82/500_F_622038208_bIp1wfiXNgIQCHvx8gLBErvluEvU8YaP.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Minuto 0 · en tu computador · 2 minutos</div>
+  <div class="kick">Paso 1 · 4 minutos</div>
   <h2>¿Qué tiene <em>tu cuenta de Google</em>?</h2>
-  <div class="grid g4">
-    <div class="card"><div class="n">01</div><h3>Docs</h3><p>Documento nuevo: ¿ves la chispa de Gemini arriba a la derecha?</p></div>
-    <div class="card"><div class="n">02</div><h3>Sheets</h3><p>Hoja nueva: ¿ves la chispa de Gemini?</p></div>
-    <div class="card"><div class="n">03</div><h3>Workspace Studio</h3><p>Los 9 puntos arriba a la derecha: ¿aparece?</p></div>
-    <div class="card"><div class="n">04</div><h3>Vids</h3><p>En el mismo selector de apps: ¿aparece?</p></div>
-  </div>
-  <p class="note">Si algo no aparece, no es un error tuyo: depende de la edición que tiene Casalimpia. Con estas respuestas sabemos qué podemos hacer en vivo el viernes y en los módulos 5 y 8. ¿Solo tienes el celular? Marca «No sé».</p>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Abre un Documento y una Hoja de Google: ¿ves la chispa de Gemini?</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Mira los 9 puntos arriba a la derecha: ¿ves Studio y Vids?</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Marca en el kit lo que ves. Si no sabes, marca «No sé»</span><span class="m"></span></div></div>
   <div class="live-mount" data-live="edicion" data-modo="conteo" data-conteo="cuentas revisadas"></div>
 </section>
 
@@ -453,52 +423,37 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Lo que necesitamos para hoy</div>
   <h2>Los datos de <em>una cuenta</em></h2>
-  <div class="grid g4">
-    <div class="card"><div class="n">01</div><h3>Operarios</h3><p>Cuántas personas de aseo tiene hoy.</p></div>
-    <div class="card"><div class="n">02</div><h3>Ausentismo</h3><p>En % o en días al mes.</p></div>
-    <div class="card"><div class="n">03</div><h3>Quejas</h3><p>Cuántas al mes.</p></div>
-    <div class="card"><div class="n">04</div><h3>Tarifa</h3><p>La actual o la del competidor.</p></div>
-  </div>
-  <p class="note">¿Sin datos de una cuenta a mano? Trabajas con el caso Centro Empresarial Andino: 42 operarios, 3 sedes, 6 % de ausentismo, 14 quejas al mes. Cifras inventadas.</p>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Cuántos operarios de aseo tiene</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Ausentismo y quejas al mes</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>La tarifa que paga hoy</span><span class="m"></span></div></div>
+  <p class="note">¿Sin datos a mano? Usa el caso Andino: 42 operarios, 6 % de ausentismo, 14 quejas al mes. Cifras inventadas.</p>
 </section>
 
 <!-- 5 EMBUDO -->
 <section class="slide" data-min="10" data-titulo="Mi embudo en 3 números" data-bloque="embudo">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/19/04/28/500_F_419042808_bzZZPxXuBtXgu1jFLt5X4CVR0lvg4WKW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Ejercicio individual · en el celular · 10 min</div>
-  <h2>Mi embudo en <em>3 números</em></h2>
-  <div class="formula">
-    <div><small>TASA DE CIERRE</small>Ganadas ÷ propuestas</div>
-    <div><small>TIEMPO DE CICLO</small>Días de la primera reunión a la firma</div>
-    <div><small>MOTIVOS DE PÉRDIDA</small>Los 3 que más se repiten</div>
-  </div>
-  <p class="ej">Y una más, porque el seguimiento lo pidieron 7 de las 15 personas que hablaron el 28: <b>¿cuántas cuentas llevan más de 30 días sin contacto?</b> Cierra con tu indicador más débil. Nada de esto sale en pantalla.</p>
-  <p class="note">Revenue Intelligence es esto: decidir la venta con los números del propio embudo, no con la intuición.</p>
-  <div class="live-mount" data-live="embudo" data-modo="progreso"></div>
+  <div class="kick">Paso 2 · en el kit · 10 minutos</div>
+  <h2>Tu embudo en <em>3 números</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>¿Cuántas propuestas enviaste y cuántas ganaste?</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>¿Cuántos días tarda en cerrarse una venta?</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>¿Por qué perdiste las otras?</span><span class="m"></span></div></div>
+  <p class="note">Nada de esto sale en pantalla.</p><div class="live-mount" data-live="embudo" data-modo="progreso"></div>
 </section>
 
 <!-- 6 =AI() -->
 <section class="slide" data-min="8" data-titulo="Gemini clasifica los motivos" data-bloque="embudo">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/60/09/40/500_F_660094089_Tlq9KPf69w6OkaNVcyPg1t8gro3XpqAU.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">① Google · así se hace con IA</div>
-  <h2 style="margin-bottom:26px">Que Gemini diga <em>por qué perdemos</em></h2>
-  <p class="lead" style="font-size:30px;margin-bottom:20px">En Google Sheets: tus motivos en la columna A. En B2 escribe y arrastra hacia abajo:</p>
-  <div class="prompt">=AI("Clasifica este motivo de pérdida en una sola palabra: precio, tiempo, confianza, competidor o necesidad"; A2)</div>
-  <p class="note" style="margin-top:12px">Si tu Sheets está en inglés, cambia el punto y coma por una coma.</p>
-  <p class="lead" style="font-size:28px;margin-top:22px">Luego, en el panel de Gemini: <i>«¿Qué tipo de motivo se repite más y qué pregunta conviene hacer en la próxima reunión para anticiparlo?»</i></p>
-  <p class="note">¿No ves la chispa? Pega la lista en gemini.google.com con la misma pregunta. ② Claude y ③ ChatGPT hacen lo mismo con la lista pegada.</p>
+  <div class="kick">Así se hace con Gemini</div>
+  <h2>Que Gemini diga <em>por qué perdemos</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Pega tus motivos de pérdida en una Hoja de Google, columna A</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Copia la fórmula del kit en la columna B</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Pregúntale a Gemini: «¿qué motivo se repite más?»</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 7 ANS -->
 <section class="slide" data-min="10" data-titulo="El ANS que vende" data-bloque="ans">
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/37/78/63/500_F_437786317_bMpO6Xl5di4oAv7GbHQ0vK9PbBrCIORk.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">En parejas · comercial + operaciones · 10 min</div>
+  <div class="kick">Paso 3 · en parejas · 10 minutos</div>
   <h2>El ANS <em>que vende</em></h2>
-  <div class="sent">Si <u>[el ANS]</u> se cumple, usted <u>[lo que gana]</u>. Si no, le cuesta <u>[cifra]</u>.</div>
-  <p class="note">Si no conoces la cifra de Casalimpia, escribe «[dato de Casalimpia]». No la inventes.</p>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Elige un indicador de servicio de Casalimpia</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Escribe en una frase lo que gana el cliente con él</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Di a quién del comité se la dirías</span><span class="m"></span></div></div>
   <div class="live-mount" data-live="ans" data-modo="vitrina" data-proyecta="frase,quien"></div>
 </section>
 
@@ -506,10 +461,10 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="4" data-titulo="Gemini · una frase por silla" data-bloque="ans">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/66/66/38/500_F_466663878_gbV96JtJbQs9RFLkQU5Lxpc1eE7Ddw5Y.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">① Google · app de Gemini</div>
-  <h2 style="margin-bottom:26px">Una frase <em>por silla del comité</em></h2>
-  <div class="prompt">Actúa como asesor comercial de facility management en Colombia. Este es un indicador de servicio de Casalimpia: [pega tu ANS y su dato]. Escribe una frase de venta para cada silla del comité de compras: gerencia administrativa, compras, SST y dirección financiera. Máximo 25 palabras cada una, con lo que esa persona gana o arriesga. Si falta una cifra, deja [corchetes]; no la inventes.</div>
-  <p class="note">El prompt está en tu kit para copiarlo. ② Claude · ③ ChatGPT: el mismo texto funciona igual.</p>
+  <div class="kick">Así se hace con Gemini</div>
+  <h2>Una frase <em>por cada persona del comité</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Copia el prompt del kit</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Pégalo en gemini.google.com con tu indicador</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Quédate con la frase que más te sirva</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 9 PUENTE -->
@@ -517,8 +472,8 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
   <div class="foto hero" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Lo que marcaron en el diagnóstico</div>
-  <p class="q">Frente al más barato, ¿comparamos <em style="font-style:normal;color:var(--amar)">tarifa</em> o <em style="font-style:normal;color:var(--cian)">costo total</em>?</p>
-  <p class="note">El ANS que escribieron hace 10 minutos tiene precio. El cliente con personal propio no ve 4 de cada 10 pesos de lo que le cuesta: hoy lo ponemos en una hoja.</p>
+  <p class="q">¿Comparamos <em>tarifa</em> o <em>costo total</em>?</p>
+  <p class="note">El cliente con personal propio no ve 4 de cada 10 pesos de lo que le cuesta.</p>
 </section>
 
 <!-- 10 OPERARIO -->
@@ -526,49 +481,28 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/02/37/49/57/500_F_237495719_uNzpBPMnTktmidEXQgaeLZhpiD3l479p.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
   <div class="kick">Un operario con salario mínimo · 2026</div>
-  <h2>$1.750.905 de salario, <em>$2.715.572 de costo</em></h2>
-  <table>
-    <tr><th>Rubro</th><th>Mensual</th><th>Rubro</th><th>Mensual</th></tr>
-    <tr><td>Salario mínimo</td><td>$1.750.905</td><td>Cesantías</td><td>$166.667</td></tr>
-    <tr><td>Auxilio de transporte</td><td>$249.095</td><td>Intereses a las cesantías</td><td>$20.000</td></tr>
-    <tr><td>Pensión 12 %</td><td>$210.109</td><td>Prima</td><td>$166.667</td></tr>
-    <tr><td>ARL clase I</td><td>$9.140</td><td>Vacaciones</td><td>$72.954</td></tr>
-    <tr><td>Caja de compensación 4 %</td><td>$70.036</td><td><b>Total (155 % del salario)</b></td><td><b style="color:var(--amar)">$2.715.572</b></td></tr>
-  </table>
-  <p class="note">Incluye vacaciones porque el puesto de aseo se cubre mientras el titular descansa; sin ese rubro serían $2.642.618. Empresa exonerada de salud, SENA e ICBF. Sin exoneración: ≈ $2.951.944. Decretos 1469 y 1470 de 2025; el Consejo de Estado aún estudia la nulidad, pero el valor vigente es este.</p>
+  <h2>Cuesta <em>$2.715.572</em> al mes</h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Salario $1.750.905 + auxilio $249.095</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Más aportes, prestaciones y vacaciones</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Total: 155 % del salario</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 11 RUBROS -->
 <section class="slide" data-min="2" data-titulo="Lo que el cliente no ve" data-bloque="mira">
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/18/88/21/500_F_418882114_d0lFe0uRQQkyvC8iqBKdz0LqwGHU8szb.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">El costo completo de tener personal propio</div>
-  <h2>Ocho rubros, <em>el cliente ve dos</em></h2>
-  <div class="grid g4">
-    <div class="card" style="border-color:var(--amar)"><div class="n">VE</div><h3>Nómina</h3><p>Salario y auxilio.</p></div>
-    <div class="card" style="border-color:var(--amar)"><div class="n">VE</div><h3>Insumos</h3><p>Lo que compra cada mes.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Prestaciones</h3><p>Cesantías, prima, vacaciones, aportes.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Ausentismo</h3><p>Reemplazos con recargo, o puestos vacíos.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Dotación</h3><p>Tres entregas al año.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Supervisión</h3><p>Alguien que cuida, programa y responde.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Riesgo laboral</h3><p>ARL y rotación. Accidentes y demandas: sin cifra en la hoja.</p></div>
-    <div class="card"><div class="n">NO VE</div><h3>Quejas</h3><p>El tiempo de quien las atiende.</p></div>
-  </div>
+  <div class="kick">Lo que el cliente no ve</div>
+  <h2>El cliente ve la nómina. <em>No ve el resto</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Prestaciones y dotación</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Reemplazos cuando alguien falta</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Supervisión, quejas y riesgo laboral</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 12 PLANTILLA -->
 <section class="slide" data-min="20" data-titulo="Manos en la hoja" data-bloque="costeo">
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/18/33/10/37/500_F_1833103791_TtwQ5dSb251XfkTMnRx4j0LpTVytof7I.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Manos en la hoja · 20 min · lo pidieron 3 de ustedes</div>
-  <h2>El costeo completo <em>en Google Sheets</em></h2>
-  <div class="agenda">
-    <div class="ag"><span class="h">1</span><span>Descarga la plantilla: <b style="color:var(--cian)">iconeialabs.com/casalimpia/plantilla-costeo.xlsx</b></span><span class="m">1 min</span></div>
-    <div class="ag"><span class="h">2</span><span>Súbela a tu Drive y ábrela con Google Sheets</span><span class="m">2 min</span></div>
-    <div class="ag"><span class="h">3</span><span>Cambia solo las celdas amarillas: tu cuenta o el caso Andino</span><span class="m">15 min</span></div>
-    <div class="ag"><span class="h">4</span><span>Anota en el kit el costo mensual que te dio</span><span class="m">2 min</span></div>
-  </div>
-  <p class="note">Guárdala en una carpeta nueva de tu Drive: <b>«Diplomado · Mi cuenta»</b>. Ahí vamos a guardar todo lo que construyamos hasta diciembre. ¿Solo celular? Trabaja con el caso Andino en pantalla y anota en el kit el total que da la hoja del docente.</p>
+  <div class="kick">Paso 4 · 20 minutos · lo pidieron 3 de las 15 personas</div>
+  <h2>El costeo <em>en Google Sheets</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Descarga la plantilla desde el kit</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Súbela a tu Drive y ábrela con Google Sheets</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Cambia solo las celdas amarillas y anota el total en el kit</span><span class="m"></span></div></div>
   <div class="live-mount" data-live="costeo" data-modo="progreso"></div>
 </section>
 
@@ -576,10 +510,9 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="10" data-titulo="Gemini revisa la hoja" data-bloque="costeo">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/06/02/89/46/500_F_602894635_osZB3mjhBUpZ35VflmkaloMxdIzVXESb.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">① Google · panel de Gemini en Sheets o gemini.google.com con @</div>
-  <h2 style="margin-bottom:26px">Que Gemini <em>te revise</em></h2>
-  <div class="prompt">Revisa esta hoja de costeo de aseo. 1) Verifica que cada fórmula del costo del operario coincida con las cargas laborales de Colombia en 2026. 2) Dime qué rubro falta o está subestimado para esta operación. 3) Arma 3 escenarios de ausentismo (4 %, 6 % y 9 %) con el costo total de cada uno. No inventes cifras: si falta una, pregúntamela.</div>
-  <p class="ej" style="margin-top:28px">Regla: <b>la IA calcula, tú contrastas.</b> Suma el total con una calculadora. Si no coincide, manda la hoja.</p>
+  <div class="kick">Así se hace con Gemini · 10 minutos</div>
+  <h2>Que Gemini <em>revise tu hoja</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Abre el panel de Gemini en tu Hoja (o gemini.google.com)</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Copia el prompt del kit</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Compara su respuesta con tu calculadora</span><span class="m"></span></div></div>
   <div class="live-mount" data-live="costeo" data-modo="progreso"></div>
 </section>
 
@@ -605,10 +538,9 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="10" data-titulo="La cifra para el comité" data-bloque="ahorro">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/04/82/47/60/500_F_482476001_IiObhziz1NPy39JhnoLEqbMHFkkf4yP2.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Tu cuenta · 10 min</div>
+  <div class="kick">Paso 5 · 10 minutos</div>
   <h2>¿Cuánto pierde <em>cada mes que sigue igual</em>?</h2>
-  <div class="sent">«Cada mes que siguen igual dejan de ahorrar <u>$[cifra]</u>. En un año son <u>$[cifra × 12]</u>.»</div>
-  <p class="note">Para la frase del comité, pídele a Gemini: «con esta hoja, una frase por silla del comité que muestre la pérdida mensual en pesos». Está en tu kit.</p>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Resta: costo propio − costo con Casalimpia</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Multiplícalo por 12</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Escribe la frase para el comité en el kit</span><span class="m"></span></div></div>
   <div class="live-mount" data-live="ahorro" data-modo="vitrina" data-proyecta="frase"></div>
 </section>
 
@@ -616,14 +548,10 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="1" data-titulo="Lo que cumplimos hoy" data-bloque="mira">
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/03/13/82/65/500_F_313826598_Lm9m1KS50HTso29iDxqBOvjWpWRtLkJW.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Lo prometido el 28 de octubre</div>
-  <h2>Lo que <em>empezamos hoy</em></h2>
-  <div class="grid g3">
-    <div class="card"><div class="n">EMPIEZA HOY · 7 DE 15</div><h3>Seguimiento</h3><p>Contamos las cuentas que se enfrían. El tablero llega en el módulo 5 (12 nov); las alertas automáticas, en el módulo 8 (10 dic).</p></div>
-    <div class="card"><div class="n">3 DE 15 LO PIDIERON</div><h3>Costeos</h3><p>La plantilla con la nómina 2026 y el prompt para que Gemini revise las fórmulas.</p></div>
-    <div class="card"><div class="n">TEMARIO</div><h3>Embudo, ANS y costo de no contratar</h3><p>Tu indicador más débil, tu ANS con frase y la cifra mensual para el comité. La llamada ganadora va el viernes.</p></div>
-  </div>
-  <p class="note">El viernes, con esta hoja, construimos en Gemini un asistente que arma el caso de ahorro, y tú lo revisas.</p>
+  <div class="kick">Lo que empezamos hoy</div>
+  <h2>Hoy te llevas <em>3 cosas</em></h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Tu embudo y tu indicador más débil</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Tu frase de ANS</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Tu hoja de costeo con la cifra para el comité</span><span class="m"></span></div></div>
+  
 </section>
 
 <!-- 17 EXPECTATIVA -->
@@ -649,14 +577,10 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 <section class="slide" data-min="2" data-titulo="Para el viernes 6 de noviembre" data-bloque="mira">
   <div class="foto" style="background-image:url('https://t3.ftcdn.net/jpg/02/56/36/93/500_F_256369362_LmC3TT7FGBcHtBKDfYBnFt4i3WTpkSMv.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Viernes 6 de noviembre · 2:00–6:00 p. m. · presencial en la U. EAN · Sesión 3: Gemini como analista de datos de venta</div>
-  <h2>Traigan <em>el portátil</em> y esto en Drive</h2>
-  <p class="lead" style="font-size:30px;margin-bottom:24px">Y una pregunta para el camino: ¿cuál de tus clientes está pagando hoy, sin saberlo, el costo de seguir igual?</p>
-  <div class="grid g3">
-    <div class="card"><div class="n">01</div><h3>Tu hoja de costeo</h3><p>En la carpeta «Diplomado · Mi cuenta».</p></div>
-    <div class="card"><div class="n">02</div><h3>Una propuesta ganada y una perdida</h3><p>Y un pliego, si tienes uno a mano.</p></div>
-    <div class="card"><div class="n">03</div><h3>Ruta Google</h3><p>Módulos 1 y 2: tu edición y Drive. Unos 75 minutos. <b style="color:var(--cian)">iconeialabs.com/entrenamiento-workspace</b></p></div>
-  </div>
+  <div class="kick">Viernes 6 de noviembre · 2:00–6:00 p. m. · presencial en la U. EAN</div>
+  <h2>Para el viernes</h2>
+  <div class="agenda"><div class="ag"><span class="h">1</span><span>Trae el portátil</span><span class="m"></span></div><div class="ag"><span class="h">2</span><span>Guarda en Drive tu hoja y una propuesta ganada y otra perdida</span><span class="m"></span></div><div class="ag"><span class="h">3</span><span>Haz los módulos 1 y 2 de la Ruta Google: iconeialabs.com/entrenamiento-workspace</span><span class="m"></span></div></div>
+  
 </section>
   
 
