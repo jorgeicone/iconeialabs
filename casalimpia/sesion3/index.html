@@ -316,6 +316,7 @@ body.live .slide.sinvivo .manual{display:block}
 #vinfbar button:hover{background:#fff;color:#0b1b2e}
 #vinf.on ~ #vinfbar{display:flex}
 @media print{
+  html,body{height:auto!important;overflow:visible!important}
   body>*{display:none!important}
   #vinf{display:block!important;position:static;overflow:visible}
   #vinfbar{display:none!important}
@@ -448,7 +449,7 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <tr><td>Seguimiento, recordatorios y alertas</td><td>7 de 15</td><td>Tu Gem D · Seguimiento de cuentas · reto del agente de los lunes</td></tr>
     <tr><td>Prospección por sector</td><td>3 de 15</td><td>Tu Gem F · Prospección por sector</td></tr>
   </table>
-  <p class="note">Y el miércoles pidieron trabajar un mismo caso: hoy es Andino, con los mismos datos para todos.</p>
+  <p class="note">Hoy todos trabajamos el mismo caso: Andino, con los mismos datos para todos.</p>
 </section>
 
 <!-- 5 DEL GEM AL SKILL -->
@@ -743,6 +744,7 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="ag"><span class="h">3</span><span>Elige un sector y trae 3 clientes de ese sector</span><span class="m"></span></div>
   </div>
   <p class="note">La pregunta que abre el módulo 5: ¿cómo hacer que esos clientes lleguen solos, sin que tengas que buscarlos uno por uno?</p>
+  <div class="live-mount" data-live="puente" data-modo="conteo" data-conteo="ya eligieron sector"></div>
 </section>
 
 <!-- 26 EVALUACION -->
@@ -905,6 +907,7 @@ const V_COD_DECK='CLM4S3';
 const vsb = supabase.createClient(V_URL, V_KEY, {global:{headers:{'x-dispositivo':'consola-facilitador'}}});
 let VCOD=null, VCLA=null, VSES=null, VDATA=null, VTIMER=null, VVISTOS=new Set();
 /* VORDEN · VCAMPOS · VTIT los genera inyectar.py a partir de bloques.js */
+const VOPC={"arranque|portatil": 1, "arranque|skills": 1, "arranque|hoja": 1, "superprompt|util": 1, "ahorro|cuadra": 1, "miskill|cual": 1, "miskill|prueba": 1, "agente|estado": 1, "plantilla|hecha": 1, "plantilla|grafico": 1, "expectativa|nota": 1, "evaluacion|e1": 1, "evaluacion|e2": 1, "evaluacion|e3": 1, "evaluacion|e4": 1, "evaluacion|e5": 1, "evaluacion|e6": 1, "evaluacion|e7": 1, "evaluacion|e8": 1, "evaluacion|e9": 1, "evaluacion|e10": 1};
 const VORDEN=["arranque", "superprompt", "ahorro", "miskill", "agente", "plantilla", "expectativa", "evaluacion", "puente"];
 const VCAMPOS={"arranque": [["portatil", "¿Con qué trabajas hoy?"], ["skills", "En gemini.google.com, menú de la izquierda: ¿qué ves?"], ["hoja", "¿Cómo quedó tu hoja de costeo del miércoles?"]], "superprompt": [["tarea", "¿Qué le pediste?"], ["preguntas", "¿Cuántas preguntas te hizo antes de darte el prompt?"], ["util", "¿Cómo te fue con el prompt que te dio?"]], "ahorro": [["propio", "Costo total con personal propio ($ al mes)"], ["barato", "Costo total con el competidor barato ($ al mes)"], ["perdida", "¿Cuánto pierde Andino cada mes que sigue igual?"], ["frase", "La frase que te dio para la dirección financiera"], ["cuadra", "¿Cuadra con la hoja?"]], "miskill": [["cual", "¿Cuál elegiste?"], ["nombre", "Nombre de tu Gem"], ["para", "¿Para qué la vas a usar cada semana?"], ["prueba", "¿Cómo le fue en la prueba?"], ["horas", "¿Cuánto tiempo te ahorra a la semana? (aprox.)"]], "agente": [["estado", "¿Cómo quedó tu agente?"], ["hace", "¿Qué hace, en una línea?"], ["ajuste", "¿Qué tuviste que corregir de lo que armó Gemini?"]], "plantilla": [["hecha", "¿Qué plantillas dejaste listas?"], ["grafico", "¿El gráfico quedó vinculado a tu hoja?"], ["uso", "¿Con qué cliente la vas a usar primero? (sin nombre, solo el tipo)"]], "puente": [["sector", "¿Qué sector elegiste?"]], "expectativa": [["nota", "De 1 a 10"], ["falta", "¿Qué te faltó para que fuera un 10? (opcional)"]], "evaluacion": [["e1", "¿Qué tan clara estuvo la sesión?"], ["e2", "¿El ritmo fue el adecuado?"], ["e3", "¿Te sirvieron los ejercicios en el celular?"], ["e4", "¿Qué tanto puedes usar lo de hoy esta semana?"], ["e5", "Dominio del tema por parte del docente"], ["e6", "Claridad al explicar"], ["e7", "¿Se resolvieron tus dudas?"], ["e8", "¿Funcionaron la plataforma y el kit?"], ["e9", "¿Recomendarías esta sesión a un colega?"], ["e10", "Una cosa que mejorarías (opcional)"]]};
 const VTIT={"espera": "Ya estás dentro", "mira": "Mira la pantalla", "arranque": "¿Con qué llegas hoy?", "superprompt": "Gem 1 · Creador de Super Prompt", "ahorro": "Gem 2 · Caso de ahorro Casalimpia", "miskill": "Tu Gem", "agente": "Tu primer agente en Workspace Studio", "plantilla": "Plantillas que no se rehacen", "puente": "Para el miércoles 11 de noviembre", "expectativa": "¿El módulo 4 resolvió lo que esperabas?", "evaluacion": "Evalúa la sesión"};
@@ -1080,7 +1083,7 @@ function pintarConsolidado(bq,campos,pers,idx){
     const llenos=vals.filter(esReal).length;
     out+='<div class="cq"><div class="cqh"><b>'+vesc(l)+'</b>'+
       '<i>'+llenos+' de '+pers.length+'</i></div><ul>'+
-      (function(){const r=vals.filter(esReal);const c={};r.forEach(v=>{c[v]=(c[v]||0)+1;});const ks=Object.keys(c);if(ks.length<=6&&ks.every(v=>v.length<=45))return ks.map(v=>'<li>'+vesc(v)+' · <b>'+c[v]+' de '+pers.length+'</b></li>').join('');return '<li>'+r.length+' de '+pers.length+' escribieron · los textos quedan en el panel del docente</li>';})()+'</ul>'+
+      (function(){const r=vals.filter(esReal);const c={};r.forEach(v=>{c[v]=(c[v]||0)+1;});const ks=Object.keys(c);if(VOPC[bq+'|'+k]&&ks.length<=8)return ks.map(v=>'<li>'+vesc(v)+' · <b>'+c[v]+' de '+pers.length+'</b></li>').join('');return '<li>'+r.length+' de '+pers.length+' escribieron · los textos quedan en el panel del docente</li>';})()+'</ul>'+
       '<div class="lectura">'+vesc(lecturaBloque(bq,k,vals,pers))+'</div></div>';
   });
   if(VSEM[bq]){
@@ -1463,7 +1466,7 @@ function vivoPintar(){
   }
   const idx={}; res.forEach(r=>{ idx[r.participante_id+'|'+r.bloque+'|'+r.campo]=r; });
   body.innerHTML = pers.map(pa=>{
-    let h='<div class="vp" data-p="'+pa.id+'"><div class="who">'+vesc(pa.nombre)+'</div>';
+    let h='<div class="vp" data-p="'+pa.id+'"><div class="who">Persona '+(pers.indexOf(pa)+1)+'</div>';
     let algo=false;
     campos.forEach(([k,l])=>{
       const r=idx[pa.id+'|'+bq+'|'+k]; const v=(r&&r.valor||'').trim();
@@ -1595,7 +1598,7 @@ function vivoInforme(){
     campos.forEach(([k,l])=>{
       const vals=pers.map(pa=>(idx[pa.id+'|'+bq+'|'+k]||'').trim()).filter(esReal);
       cuerpo+='<div class="pregunta">'+vesc(l)+' <span class="vacio">· '+vals.length+' de '+pers.length+' con dato</span></div>'+
-        (function(){const c={};vals.forEach(v=>{c[v]=(c[v]||0)+1;});const ks=Object.keys(c);return (ks.length<=6&&ks.every(v=>v.length<=45))?ks.map(v=>'<div class="resp">'+vesc(v)+' · '+c[v]+' de '+pers.length+'</div>').join(''):'<div class="resp">Textos libres: los sintetiza el docente.</div>';})();
+        (function(){const c={};vals.forEach(v=>{c[v]=(c[v]||0)+1;});const ks=Object.keys(c);return (VOPC[bq+'|'+k]&&ks.length<=8)?ks.map(v=>'<div class="resp">'+vesc(v)+' · '+c[v]+' de '+pers.length+'</div>').join(''):'<div class="resp">Textos libres: los sintetiza el docente.</div>';})();
     });
     /* semáforos, si el bloque los tiene */
     const letras=VSEM[bq]||[];
