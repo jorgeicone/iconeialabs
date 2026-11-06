@@ -381,6 +381,7 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
 #vivochip:hover{opacity:1}
 </style>
 <style>/* EXPERIENCIA v1 */.foto::after{background:linear-gradient(90deg,rgba(4,18,42,.97) 0%,rgba(4,18,42,.93) 45%,rgba(4,18,42,.86) 100%)!important}.foto.hero::after{background:linear-gradient(90deg,rgba(4,18,42,.96) 0%,rgba(4,18,42,.9) 50%,rgba(4,18,42,.72) 100%)!important}.slide .vitc .a{font-size:28px!important}.slide .vitc .who,.slide .vitc .q{font-size:24px!important}.slide .lvacio{font-size:28px!important}.slide .conteo span{font-size:32px!important}.foot{font-size:20px!important;color:#9fb0cc!important}@media (hover:hover) and (pointer:fine){#vnav{display:none!important}}</style>
+<style>/* EXPERIENCIA v2 */body:not(.vivo-on) #hud:has(#vivochip.err){display:flex!important;opacity:1!important}#vivochip.err{opacity:1!important;font-size:15px!important}body:not(.vivo-on) #hud{display:none!important}.slide .vitc .a{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.foot{font-size:24px!important}.brand span{font-size:22px!important}</style>
 </head>
 <body>
 <div id="vp"><div id="stage">
@@ -727,19 +728,10 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
   <div class="kick">Una pregunta · en el celular</div>
   <p class="q">¿El módulo 4 resolvió <em style="font-style:normal;color:var(--amar)">lo que esperabas</em>? De 1 a 10.</p>
   <div class="live-mount" data-live="expectativa" data-modo="conteo" data-conteo="respuestas"></div>
+  <div style="position:absolute;right:5%;bottom:8%;display:flex;align-items:center;gap:18px;z-index:3"><span style="font-size:28px;color:#fff;text-align:right">📱 iconeialabs.com/casalimpia/vivo3<br>código <b style="color:var(--amar);letter-spacing:3px">CLM4S3</b></span><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNzAiIGhlaWdodD0iMzcwIiBjbGFzcz0ic2Vnbm8iPjxnIHRyYW5zZm9ybT0ic2NhbGUoMTApIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMCAwaDM3djM3aC0zN3oiLz48cGF0aCBjbGFzcz0icXJsaW5lIiBzdHJva2U9IiMwNDEyMWYiIGQ9Ik0yIDIuNWg3bTMgMGgxbTEgMGgxbTMgMGgxbTEgMGg0bTEgMGgxbTIgMGg3bS0zMyAxaDFtNSAwaDFtNSAwaDFtMiAwaDFtMiAwaDFtMSAwaDFtNSAwaDFtNSAwaDFtLTMzIDFoMW0xIDBoM20xIDBoMW0xIDBoM20xIDBoMW0xIDBoM20yIDBoMW0xIDBoMm0zIDBoMW0xIDBoM20xIDBoMW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGg0bTYgMGgxbTIgMGgybTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgxbS0zMyAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtNCAwaDVtMiAwaDFtNSAwaDFtMSAwaDNtMSAwaDFtLTMzIDFoMW01IDBoMW0xIDBoMW0yIDBoMW01IDBoMW0xIDBoMW0xIDBoMW00IDBoMW01IDBoMW0tMzMgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yNSAxaDJtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDRtLTIzIDFoMW0xIDBoNW0yIDBoMW0zIDBoMm0yIDBoMW0xIDBoMW0yIDBoM20xIDBoNW0tMjcgMWgxbTIgMGgybTMgMGgybTIgMGg1bTIgMGgxbTIgMGgybTEgMGgybTEgMGgxbS0zMCAxaDFtMiAwaDFtNSAwaDZtMyAwaDJtMSAwaDNtMSAwaDFtMSAwaDJtLTMyIDFoMW0yIDBoM20xIDBoN20xIDBoMW0xIDBoNW0xIDBoMW0xIDBoMm0xIDBoNG0tMzIgMWgzbTEgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbTIgMGgzbTIgMGgxbTEgMGgzbTMgMGgzbTIgMGgxbS0zMyAxaDFtMSAwaDRtMSAwaDJtMSAwaDFtNCAwaDFtMSAwaDJtMiAwaDFtMSAwaDRtMyAwaDNtLTMyIDFoMm0zIDBoM20xIDBoMm0xIDBoMW0xIDBoMm00IDBoMW0zIDBoN20tMzIgMWgxbTEgMGg0bTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTUgMGg2bTMgMGgxbS0zMCAxaDJtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtMSAwaDJtMyAwaDFtMSAwaDJtMSAwaDJtMyAwaDFtLTMyIDFoMm0yIDBoMW0yIDBoMW0yIDBoMW00IDBoMW0xIDBoMm0zIDBoMW0yIDBoMm0xIDBoMm0xIDBoMW0tMzMgMWgxbTQgMGg1bTMgMGgxbTEgMGgybTEgMGgxbTEgMGgzbTQgMGgybTEgMGgybS0zMCAxaDFtMSAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDJtNCAwaDFtMSAwaDNtMSAwaDZtLTMxIDFoMm0yIDBoMW0xIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW00IDBoMW00IDBoMm0tMzAgMWgybTEgMGgzbTEgMGgxbTEgMGgxbTEgMGg3bTQgMGgybTIgMGgxbTIgMGgxbTIgMGgxbS0zMyAxaDFtMyAwaDRtMSAwaDFtMiAwaDNtMiAwaDFtMiAwaDNtMyAwaDFtMiAwaDFtMSAwaDFtLTMyIDFoMW0xIDBoM20yIDBoMm0yIDBoMW0yIDBoMW0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoNG0xIDBoMW0tMzMgMWgxbTEgMGgxbTMgMGgybTEgMGgxbTEgMGgxbTIgMGgxbTEgMGgybTIgMGgxbTEgMGg4bS0yMiAxaDJtMyAwaDFtMiAwaDZtMiAwaDFtMyAwaDFtMSAwaDNtLTMzIDFoN20yIDBoMW00IDBoNG0zIDBoNG0xIDBoMW0xIDBoMW0xIDBoMm0tMzIgMWgxbTUgMGgxbTEgMGg2bTEgMGgxbTEgMGgzbTEgMGgxbTEgMGgybTMgMGg0bS0zMiAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDdtMyAwaDNtMSAwaDZtMSAwaDJtLTMzIDFoMW0xIDBoM20xIDBoMW0xIDBoM20xIDBoMW0xIDBoMm0yIDBoMm0xIDBoM20xIDBoMW0yIDBoNW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGgzbTQgMGg0bTEgMGgybTIgMGgxbTEgMGgybS0yOCAxaDFtNSAwaDFtMyAwaDJtMiAwaDJtMyAwaDFtMSAwaDNtMSAwaDJtMSAwaDNtLTMxIDFoN20xIDBoMW0xIDBoMW0xIDBoNG0xIDBoMW00IDBoMW0xIDBoNG0zIDBoMSIvPjwvZz48L3N2Zz4K" alt="QR del kit" style="width:150px;height:150px;border-radius:10px"></div>
 </section>
 
-<!-- 25 EVALUACION -->
-<section class="slide center" data-min="5" data-titulo="Evaluación de la sesión" data-bloque="evaluacion">
-  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/86/25/49/500_F_486254902_eX4RKKfHruSt9OR90PekIoFqnFPoNYeL.jpg')"></div>
-  <div class="brand">Universidad <b>EAN</b></div>
-  <div class="kick">Cinco minutos · en el celular</div>
-  <p class="q">Evalúa la sesión de hoy</p>
-  <p class="note">Diez preguntas, las mismas de todas las sesiones. Es anónima en el informe.</p>
-  <div class="live-mount" data-live="evaluacion" data-modo="conteo" data-conteo="evaluaciones enviadas"></div>
-</section>
-
-<!-- 26 PUENTE M5 -->
+<!-- 25 PUENTE M5 -->
 <section class="slide" data-min="2" data-titulo="Para el miércoles 11 de noviembre" data-bloque="puente">
   <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/16/21/79/500_F_416217970_64Dt4faXTxwkdnZt73HOU5oeeSclqMvn.jpg')"></div>
   <div class="brand">Universidad <b>EAN</b></div>
@@ -751,6 +743,17 @@ ol.ev li{margin-bottom:16px;break-inside:avoid}
     <div class="ag"><span class="h">3</span><span>Elige un sector y trae 3 clientes de ese sector</span><span class="m"></span></div>
   </div>
   <p class="note">La pregunta que abre el módulo 5: ¿cómo hacer que esos clientes lleguen solos, sin que tengas que buscarlos uno por uno?</p>
+</section>
+
+<!-- 26 EVALUACION -->
+<section class="slide center" data-min="5" data-titulo="Evaluación de la sesión" data-bloque="evaluacion">
+  <div class="foto" style="background-image:url('https://t4.ftcdn.net/jpg/04/86/25/49/500_F_486254902_eX4RKKfHruSt9OR90PekIoFqnFPoNYeL.jpg')"></div>
+  <div class="brand">Universidad <b>EAN</b></div>
+  <div class="kick">Cinco minutos · en el celular</div>
+  <p class="q">Evalúa la sesión de hoy</p>
+  <p class="note">Diez preguntas, las mismas de todas las sesiones. Es anónima en el informe.</p>
+  <div class="live-mount" data-live="evaluacion" data-modo="conteo" data-conteo="evaluaciones enviadas"></div>
+  <div style="position:absolute;right:5%;bottom:8%;display:flex;align-items:center;gap:18px;z-index:3"><span style="font-size:28px;color:#fff;text-align:right">📱 iconeialabs.com/casalimpia/vivo3<br>código <b style="color:var(--amar);letter-spacing:3px">CLM4S3</b></span><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNzAiIGhlaWdodD0iMzcwIiBjbGFzcz0ic2Vnbm8iPjxnIHRyYW5zZm9ybT0ic2NhbGUoMTApIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMCAwaDM3djM3aC0zN3oiLz48cGF0aCBjbGFzcz0icXJsaW5lIiBzdHJva2U9IiMwNDEyMWYiIGQ9Ik0yIDIuNWg3bTMgMGgxbTEgMGgxbTMgMGgxbTEgMGg0bTEgMGgxbTIgMGg3bS0zMyAxaDFtNSAwaDFtNSAwaDFtMiAwaDFtMiAwaDFtMSAwaDFtNSAwaDFtNSAwaDFtLTMzIDFoMW0xIDBoM20xIDBoMW0xIDBoM20xIDBoMW0xIDBoM20yIDBoMW0xIDBoMm0zIDBoMW0xIDBoM20xIDBoMW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGg0bTYgMGgxbTIgMGgybTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgxbS0zMyAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtNCAwaDVtMiAwaDFtNSAwaDFtMSAwaDNtMSAwaDFtLTMzIDFoMW01IDBoMW0xIDBoMW0yIDBoMW01IDBoMW0xIDBoMW0xIDBoMW00IDBoMW01IDBoMW0tMzMgMWg3bTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTEgMGg3bS0yNSAxaDJtMSAwaDFtMiAwaDFtMSAwaDFtMiAwaDRtLTIzIDFoMW0xIDBoNW0yIDBoMW0zIDBoMm0yIDBoMW0xIDBoMW0yIDBoM20xIDBoNW0tMjcgMWgxbTIgMGgybTMgMGgybTIgMGg1bTIgMGgxbTIgMGgybTEgMGgybTEgMGgxbS0zMCAxaDFtMiAwaDFtNSAwaDZtMyAwaDJtMSAwaDNtMSAwaDFtMSAwaDJtLTMyIDFoMW0yIDBoM20xIDBoN20xIDBoMW0xIDBoNW0xIDBoMW0xIDBoMm0xIDBoNG0tMzIgMWgzbTEgMGgxbTEgMGgxbTEgMGgxbTIgMGgxbTIgMGgzbTIgMGgxbTEgMGgzbTMgMGgzbTIgMGgxbS0zMyAxaDFtMSAwaDRtMSAwaDJtMSAwaDFtNCAwaDFtMSAwaDJtMiAwaDFtMSAwaDRtMyAwaDNtLTMyIDFoMm0zIDBoM20xIDBoMm0xIDBoMW0xIDBoMm00IDBoMW0zIDBoN20tMzIgMWgxbTEgMGg0bTMgMGgxbTEgMGgxbTEgMGgxbTEgMGgxbTUgMGg2bTMgMGgxbS0zMCAxaDJtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDJtMiAwaDFtMSAwaDJtMyAwaDFtMSAwaDJtMSAwaDJtMyAwaDFtLTMyIDFoMm0yIDBoMW0yIDBoMW0yIDBoMW00IDBoMW0xIDBoMm0zIDBoMW0yIDBoMm0xIDBoMm0xIDBoMW0tMzMgMWgxbTQgMGg1bTMgMGgxbTEgMGgybTEgMGgxbTEgMGgzbTQgMGgybTEgMGgybS0zMCAxaDFtMSAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDJtNCAwaDFtMSAwaDNtMSAwaDZtLTMxIDFoMm0yIDBoMW0xIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW00IDBoMW00IDBoMm0tMzAgMWgybTEgMGgzbTEgMGgxbTEgMGgxbTEgMGg3bTQgMGgybTIgMGgxbTIgMGgxbTIgMGgxbS0zMyAxaDFtMyAwaDRtMSAwaDFtMiAwaDNtMiAwaDFtMiAwaDNtMyAwaDFtMiAwaDFtMSAwaDFtLTMyIDFoMW0xIDBoM20yIDBoMm0yIDBoMW0yIDBoMW0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoNG0xIDBoMW0tMzMgMWgxbTEgMGgxbTMgMGgybTEgMGgxbTEgMGgxbTIgMGgxbTEgMGgybTIgMGgxbTEgMGg4bS0yMiAxaDJtMyAwaDFtMiAwaDZtMiAwaDFtMyAwaDFtMSAwaDNtLTMzIDFoN20yIDBoMW00IDBoNG0zIDBoNG0xIDBoMW0xIDBoMW0xIDBoMm0tMzIgMWgxbTUgMGgxbTEgMGg2bTEgMGgxbTEgMGgzbTEgMGgxbTEgMGgybTMgMGg0bS0zMiAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDdtMyAwaDNtMSAwaDZtMSAwaDJtLTMzIDFoMW0xIDBoM20xIDBoMW0xIDBoM20xIDBoMW0xIDBoMm0yIDBoMm0xIDBoM20xIDBoMW0yIDBoNW0tMzMgMWgxbTEgMGgzbTEgMGgxbTEgMGgzbTQgMGg0bTEgMGgybTIgMGgxbTEgMGgybS0yOCAxaDFtNSAwaDFtMyAwaDJtMiAwaDJtMyAwaDFtMSAwaDNtMSAwaDJtMSAwaDNtLTMxIDFoN20xIDBoMW0xIDBoMW0xIDBoNG0xIDBoMW00IDBoMW0xIDBoNG0zIDBoMSIvPjwvZz48L3N2Zz4K" alt="QR del kit" style="width:150px;height:150px;border-radius:10px"></div>
 </section>
 
 <!-- 27 CIERRE -->
@@ -802,6 +805,8 @@ var slides,i,show;
   addEventListener('keydown',function(e){
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    /* TECLADO v2: con Puesta en común, Cierre o Informe a la vista no se avanza por debajo */
+    var _vi=document.getElementById('vinf'); if((typeof VPROY!=='undefined'&&VPROY)||(typeof VCIE!=='undefined'&&VCIE)||(_vi&&_vi.classList.contains('on'))){ if(e.key==='Escape'&&_vi&&_vi.classList.contains('on')){_vi.classList.remove('on');} return; }
     if(['ArrowRight','PageDown',' ','Enter'].indexOf(e.key)>=0){e.preventDefault();next();}
     else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>=0){e.preventDefault();prev();}
     else if(e.key==='f'||e.key==='F')fs();
@@ -832,7 +837,7 @@ var slides,i,show;
       <button class="btn" id="btnpers" onclick="proyVista('personas')">Por persona</button>
       <button class="btn" id="btncons" onclick="proyVista('consolidado')">Consolidado</button>
       <button class="btn" onclick="proyCopiarIA(event)">Copiar para IA</button>
-      <button class="btn volver" onclick="vivoProy()">← Volver a la lámina<kbd>Esc</kbd></button>
+      <button class="btn volver" onclick="vivoProy()">← Volver a la lámina<kbd>P</kbd></button>
     </div>
   </div>
   <div id="proybody"></div>
@@ -842,7 +847,7 @@ var slides,i,show;
     <div class="pctl">
       <button class="btn" onclick="cieCopiar(event)">Copiar todo</button>
       <button class="btn" onclick="vivoInforme()">Informe imprimible</button>
-      <button class="btn volver" onclick="cieToggle()">← Volver a la lámina<kbd>Esc</kbd></button>
+      <button class="btn volver" onclick="cieToggle()">← Volver a la lámina<kbd>C</kbd></button>
     </div>
   </div>
   <div id="cietabs"></div>
@@ -957,7 +962,7 @@ async function vivoEntrar(auto){
   if(error){ err.textContent = /clave/.test(error.message)?'Clave incorrecta.':
     (/sesion/.test(error.message)?'No existe ese código.':'No pudimos conectar: '+error.message); return; }
   VCOD=cod; VCLA=cla; VDATA=data; VSES=data.sesion; vivoBotonCerrar();
-  try{ localStorage.setItem('aula_consola',JSON.stringify({c:cod,k:cla})); }catch(_){}
+  try{ sessionStorage.setItem('aula_consola',JSON.stringify({c:cod,k:cla})); }catch(_){}
   document.getElementById('vivogate').style.display='none';
   document.getElementById('vivobody').style.display='block';
   document.getElementById('vivofoot').style.display='flex';
@@ -976,7 +981,7 @@ async function vivoRefrescar(){
   if(!VCOD || VREFRESCANDO) return;   /* con la red lenta las consultas no se apilan */
   VREFRESCANDO=true;
   let data,error;
-  try{ ({data,error}=await vsb.rpc('aula_tablero',{p_codigo:VCOD,p_clave:VCLA})); }
+  try{ ({data,error}=await vsb.rpc('aula_tablero',{p_codigo:VCOD,p_clave:VCLA}).abortSignal(AbortSignal.timeout(8000))); }
   finally{ VREFRESCANDO=false; }
   if(error){ vchip('err','sin conexión'); document.getElementById('vsync').textContent='reintentando…'; return; }
   VDATA=data; VSES=data.sesion; vivoBotonCerrar();
@@ -989,7 +994,7 @@ async function vivoRefrescar(){
 /* empuja el bloque de la lámina actual al celular de los participantes */
 /* EMPUJE-SEGURO v1 · el último empuje gana, el error se ve y el refresco corrige el desfase */
 let VPUSHN=0;
-function vivoCambiar(){ try{ localStorage.removeItem("aula_consola"); }catch(_){} location.reload(); }
+function vivoCambiar(){ try{ sessionStorage.removeItem("aula_consola"); }catch(_){} location.reload(); }
 async function vivoEmpujar(){
   if(!VCOD) return;
   const bq=slides[i].dataset.bloque||'mira';
@@ -1025,7 +1030,7 @@ function vivoProy(){
   document.getElementById('proy').classList.toggle('on',VPROY);
   document.getElementById('vproy').classList.toggle('act',VPROY);
   document.getElementById('vproy').innerHTML =
-    (VPROY?'Cerrar pantalla completa':'Pantalla completa')+'<kbd>P</kbd>';
+    (VPROY?'Cerrar puesta en común':'Puesta en común · sin nombres')+'<kbd>P</kbd>';
   /* al proyectar, el panel se aparta para dejar la pantalla completa */
   const abierto=document.getElementById('vivo').classList.contains('on');
   if(VPROY && abierto){ window._panelvuelve=true; vivoToggle(); }
@@ -1382,7 +1387,7 @@ function pintarLamina(){
     const listos=pers.filter(pa=>campos.every(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length;
     m.innerHTML='<div class="conteo"><b style="color:#ffc845;-webkit-text-fill-color:#ffc845">'+listos+' <small>de '+pers.length+'</small></b><span>terminaron</span></div>'; return;
   }
-  if(_md==='vitrina'){ m.innerHTML=''; return; }
+  if(_md==='vitrina'){ const lv=pers.filter(pa=>vitCampos(m,bq).every(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length; m.innerHTML='<div class="conteo"><b style="color:#ffc845;-webkit-text-fill-color:#ffc845">'+lv+' <small>de '+pers.length+'</small></b><span>listos</span></div>'; return; }
   if(m.dataset.modo==='conteo'){
     const campos2=vitCampos(m,bq);
     const n=pers.filter(pa=>campos2.some(([k])=>((idx[pa.id+'|'+bq+'|'+k]||'').trim()))).length;
@@ -1544,7 +1549,7 @@ function vivoNavPintar(){
 /* si ya se abrió antes en este navegador, reconecta sola */
 (function(){
   let g=null;
-  try{ g=JSON.parse(localStorage.getItem('aula_consola')||'null'); }catch(_){}
+  try{ g=JSON.parse(sessionStorage.getItem('aula_consola')||'null'); }catch(_){}
   if(g&&g.c&&g.k){
     const propia = !V_COD_DECK || g.c.toUpperCase()===V_COD_DECK.toUpperCase();
     document.getElementById('vcod').value = propia ? g.c : V_COD_DECK;
