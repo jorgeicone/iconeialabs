@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Pendientes EAN · ICONEialabs</title>
-<!-- vx:pendientes-ean-20261122 -->
+<!-- vx:pendientes-ean-20261122-img -->
 <style>
 :root{--navy:#050d1f;--navy2:#0b1733;--navy3:#12224a;--cyan:#00d4ff;--mor:#7b2fff;--txt:#e8eefc;--mut:#8fa0c4;--ok:#22c58b;--warn:#ffb020;--bad:#ff4d6d;--line:rgba(255,255,255,.09)}
 *{box-sizing:border-box}
@@ -59,6 +59,24 @@ input.fe{background:var(--navy);border:1px solid var(--line);border-radius:8px;p
 .spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--cyan);border-radius:50%;animation:s 1s linear infinite;margin:0 auto 10px}@keyframes s{to{transform:rotate(360deg)}}
 footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
 .hide{display:none!important}
+/* imágenes de referencia */
+.hero{position:relative;display:grid;grid-template-columns:1.2fr 1fr;gap:10px;align-items:center;background:linear-gradient(120deg,rgba(123,47,255,.22),rgba(0,212,255,.10));border:1px solid var(--line);border-radius:20px;padding:22px 26px;margin-bottom:16px;overflow:hidden}
+.hero h2{margin:0 0 6px;font-size:24px}.hero p{margin:0;color:var(--mut);max-width:520px}
+.hero .art svg{width:100%;max-height:190px}
+.hero .ring{display:flex;align-items:center;gap:14px;margin-top:14px}
+.hero .ring b{font-size:13px;color:var(--mut);font-weight:500}
+@media(max-width:820px){.hero{grid-template-columns:1fr}.hero .art{display:none}}
+.cat{display:flex;gap:10px;align-items:flex-start}
+.tile{flex:0 0 52px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tile svg{width:34px;height:34px}
+.ctag{font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:2px}
+.who{display:flex;gap:8px;align-items:flex-start}
+.av{flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;color:#04101f}
+.loginart svg{width:150px;height:110px;margin:-4px auto 6px;display:block}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:-4px 0 14px;font-size:12px;color:var(--mut)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:22px;height:22px;border-radius:7px;display:grid;place-items:center}
+.legend i svg{width:15px;height:15px}
 </style>
 </head>
 <body>
@@ -73,6 +91,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
   </header>
 
   <div id="login">
+    <div class="loginart"><svg viewBox="0 0 150 110" fill="none"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b2fff"/><stop offset="1" stop-color="#00d4ff"/></linearGradient></defs><rect x="22" y="30" width="106" height="68" rx="10" fill="#12224a" stroke="url(#lg1)" stroke-width="2"/><path d="M22 38l53 34 53-34" stroke="url(#lg1)" stroke-width="2.5" fill="none"/><circle cx="112" cy="30" r="17" fill="#050d1f" stroke="#00d4ff" stroke-width="2"/><rect x="104" y="28" width="16" height="12" rx="3" fill="#00d4ff"/><path d="M107 28v-4a5 5 0 0110 0v4" stroke="#00d4ff" stroke-width="2.4" fill="none"/><circle cx="34" cy="16" r="3" fill="#7b2fff"/><circle cx="140" cy="70" r="2.5" fill="#00d4ff"/><circle cx="10" cy="80" r="2" fill="#00d4ff"/></svg></div>
     <div style="font-size:18px;font-weight:700">Acceso al panel</div>
     <div class="sub" style="margin-top:6px">Escribe la clave del panel</div>
     <input class="in" id="clave" type="password" placeholder="Clave" autocomplete="current-password">
@@ -81,6 +100,26 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
   </div>
 
   <div id="app" class="hide">
+    <div class="hero">
+      <div>
+        <h2>Tu semana en la EAN, en un solo lugar</h2>
+        <p>Cada tema viene de un correo: quién lo pide, qué hay que entregar y para cuándo. Edita cualquier celda, escribe observaciones y cambia el estado; todo se guarda solo.</p>
+        <div class="ring"><svg width="74" height="74" viewBox="0 0 74 74"><circle cx="37" cy="37" r="30" stroke="rgba(255,255,255,.1)" stroke-width="8" fill="none"/><circle id="ringv" cx="37" cy="37" r="30" stroke="url(#rg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 37 37)" style="transition:stroke-dashoffset .6s"/><defs><linearGradient id="rg"><stop offset="0" stop-color="#7b2fff"/><stop offset="1" stop-color="#00d4ff"/></linearGradient></defs><text id="ringt" x="37" y="42" text-anchor="middle" fill="#e8eefc" font-size="16" font-weight="800">0%</text></svg><div><div style="font-weight:700" id="ringl">0 de 0 resueltos</div><b>ejecutados + cumplidos</b></div></div>
+      </div>
+      <div class="art"><svg viewBox="0 0 420 200" fill="none">
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b2fff"/><stop offset="1" stop-color="#00d4ff"/></linearGradient></defs>
+        <rect x="40" y="150" width="340" height="8" rx="4" fill="#12224a"/>
+        <rect x="70" y="40" width="150" height="110" rx="12" fill="#0b1733" stroke="url(#hg)" stroke-width="2"/>
+        <rect x="84" y="56" width="70" height="8" rx="4" fill="#00d4ff"/><rect x="84" y="72" width="120" height="6" rx="3" fill="#2a3c6b"/><rect x="84" y="84" width="104" height="6" rx="3" fill="#2a3c6b"/>
+        <rect x="84" y="102" width="12" height="12" rx="3" fill="#22c58b"/><path d="M87 108l2.5 2.5 4-5" stroke="#04101f" stroke-width="2" fill="none"/><rect x="102" y="105" width="80" height="6" rx="3" fill="#2a3c6b"/>
+        <rect x="84" y="122" width="12" height="12" rx="3" stroke="#ffb020" stroke-width="2"/><rect x="102" y="125" width="64" height="6" rx="3" fill="#2a3c6b"/>
+        <g transform="translate(240 64)"><rect width="110" height="76" rx="10" fill="#12224a" stroke="#7b2fff" stroke-width="2"/><path d="M0 8l55 36 55-36" stroke="#7b2fff" stroke-width="2"/><circle cx="104" cy="4" r="13" fill="#ff4d6d"/><text x="104" y="9" text-anchor="middle" fill="#fff" font-size="13" font-weight="800" id="artn">0</text></g>
+        <g transform="translate(300 18)"><rect width="74" height="40" rx="8" fill="#0b1733" stroke="#00d4ff" stroke-width="1.5"/><rect x="8" y="8" width="58" height="6" rx="3" fill="#00d4ff"/><text x="37" y="32" text-anchor="middle" fill="#e8eefc" font-size="12" font-weight="700">23 NOV</text></g>
+        <path d="M222 96c10 0 10-16 18-16" stroke="#2a3c6b" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="52" cy="60" r="4" fill="#7b2fff"/><circle cx="388" cy="120" r="3" fill="#00d4ff"/><circle cx="230" cy="30" r="2.5" fill="#00d4ff"/>
+      </svg></div>
+    </div>
+    <div class="legend" id="legend"></div>
     <div class="kpis">
       <div class="kpi" data-f="todos"><div class="n" id="k-t">0</div><div class="l">Total</div></div>
       <div class="kpi" data-f="Pendiente"><div class="n" id="k-p" style="color:var(--warn)">0</div><div class="l">Pendientes</div></div>
@@ -126,6 +165,30 @@ async function rpc(fn,body){
   if(!r.ok){const m=(d&&d.message)||"error";throw new Error(m)}
   return d;
 }
+const I={
+ pago:'<svg viewBox="0 0 34 34" fill="none"><rect x="6" y="4" width="20" height="26" rx="3" fill="#0b1733" stroke="currentColor" stroke-width="2"/><path d="M11 11h10M11 16h10M11 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="25" cy="25" r="6" fill="currentColor"/><path d="M25 22v6M23.3 23.5c0-1 3.4-1 3.4 0s-3.4 1-3.4 2 3.4 1 3.4 0" stroke="#04101f" stroke-width="1.3"/></svg>',
+ contrato:'<svg viewBox="0 0 34 34" fill="none"><path d="M8 4h13l6 6v20H8z" fill="#0b1733" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M21 4v6h6" stroke="currentColor" stroke-width="2"/><path d="M12 15h10M12 19h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 26c2-3 3 1 5-1s2-2 3 0 3 1 5-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+ caso:'<svg viewBox="0 0 34 34" fill="none"><path d="M17 4l12 5v8c0 7-5 11-12 13C10 28 5 24 5 17V9z" fill="#0b1733" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 11v7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="17" cy="22.5" r="1.7" fill="currentColor"/></svg>',
+ calificar:'<svg viewBox="0 0 34 34" fill="none"><path d="M4 12l13-6 13 6-13 6z" fill="#0b1733" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 15v6c0 2 4 4 8 4s8-2 8-4v-6" stroke="currentColor" stroke-width="2"/><path d="M30 12v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="22" r="2" fill="currentColor"/></svg>',
+ puntos:'<svg viewBox="0 0 34 34" fill="none"><path d="M17 4l3.8 7.8 8.5 1.2-6.2 6 1.5 8.5L17 23.5 9.4 27.5l1.5-8.5-6.2-6 8.5-1.2z" fill="#0b1733" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 17h6M17 14v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+ virtual:'<svg viewBox="0 0 34 34" fill="none"><rect x="4" y="6" width="26" height="17" rx="3" fill="#0b1733" stroke="currentColor" stroke-width="2"/><path d="M12 29h10M17 23v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 11l6 3.5-6 3.5z" fill="currentColor"/></svg>',
+ otro:'<svg viewBox="0 0 34 34" fill="none"><rect x="5" y="8" width="24" height="18" rx="3" fill="#0b1733" stroke="currentColor" stroke-width="2"/><path d="M5 10l12 8 12-8" stroke="currentColor" stroke-width="2"/></svg>'
+};
+const CATS=[
+ {k:"pago",n:"Pago / soportes",c:"#ff4d6d",re:/bit[aá]cora|pago|founders/i},
+ {k:"contrato",n:"Contratación",c:"#ffb020",re:/contrat|\bops\b|disponibilidad|\bfirma/i},
+ {k:"caso",n:"Caso estudiante",c:"#ff7a45",re:/extempor|supletori|decano|sustentaci/i},
+ {k:"puntos",n:"Puntos extra",c:"#f5d90a",re:/puntos/i},
+ {k:"calificar",n:"Calificación",c:"#00d4ff",re:/calific|trabajo|proyecto|plan 360/i},
+ {k:"virtual",n:"EAN Virtual",c:"#7b2fff",re:/\bave\b|virtual|curso|encuesta/i}
+];
+function cat(i){const t=(i.tema||"")+" "+(i.detalle||"");return CATS.find(c=>c.re.test(i.tema||""))||CATS.find(c=>c.re.test(t))||{k:"otro",n:"General",c:"#8fa0c4"}}
+function tile(c){return `<div class="tile" style="background:${c.c}22;color:${c.c}">${I[c.k]}</div>`}
+function ini(s){const w=(s||"?").split(/[,(]/)[0].trim().split(/\s+/).filter(x=>/^[A-ZÁÉÍÓÚÑ]/.test(x));return ((w[0]||"?")[0]+((w[1]||"")[0]||"")).toUpperCase()}
+const PAL=["#00d4ff","#b18cff","#22c58b","#ffb020","#ff7a9c","#5ee7df","#f5d90a","#7aa2ff"];function avc(s){let h=7;for(const ch of s||"")h=(h*131+ch.charCodeAt(0))>>>0;return PAL[h%PAL.length]}
+function leyenda(){$("#legend").innerHTML=CATS.map(c=>`<span><i style="background:${c.c}22;color:${c.c}">${I[c.k]}</i>${c.n}</span>`).join("")}
+function anillo(){const t=items.length,r=items.filter(i=>i.estado!=="Pendiente").length,p=t?Math.round(r*100/t):0;
+ $("#ringv").setAttribute("stroke-dashoffset",188.5*(1-p/100));$("#ringt").textContent=p+"%";$("#ringl").textContent=`${r} de ${t} resueltos`;$("#artn").textContent=t-r}
 function hoyISO(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
 function fmt(d){if(!d)return"";const [y,m,dd]=d.split("-");const ms=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return `${+dd} ${ms[m-1]} ${y}`}
 
@@ -154,6 +217,7 @@ function pintar(){
   $("#k-c").textContent=items.filter(i=>i.estado==="Cumplido").length;
   $("#k-a").textContent=abiertos.filter(i=>i.prioridad==="alta").length;
   document.querySelectorAll(".kpi").forEach(k=>k.classList.toggle("on",k.dataset.f===filtro));
+  leyenda();anillo();
   const q=$("#q").value.toLowerCase().trim(),o=$("#orden").value,hoy=hoyISO(),pv={alta:0,media:1,baja:2};
   let L=items.filter(i=>{
     if(filtro==="alta"){if(!(i.prioridad==="alta"&&i.estado==="Pendiente"))return false}
@@ -174,11 +238,11 @@ function pintar(){
     else if(i.estado==="Pendiente"&&i.fecha===hoy)fz='<div class="fz hoy">Vence hoy</div>';
     else if(i.estado==="Pendiente"){const n=Math.round((new Date(i.fecha)-new Date(hoy))/864e5);if(n<=3)fz=`<div class="fz hoy">Faltan ${n} día${n>1?"s":""}</div>`}
     return `<tr data-id="${i.id}" class="${i.estado!=="Pendiente"?"done":""}">
-      <td class="tema"><div class="ed" contenteditable data-k="tema" data-ph="Tema">${esc(i.tema)}</div>
+      <td class="tema"><div class="cat">${tile(cat(i))}<div><div class="ctag" style="color:${cat(i).c}">${cat(i).n}</div><div class="ed" contenteditable data-k="tema" data-ph="Tema">${esc(i.tema)}</div>
         <span class="pri ${i.prioridad}" data-pri title="Clic para cambiar prioridad">● ${i.prioridad}</span>
-        ${i.recibido?`<div class="rec">Recibido ${fmt(i.recibido)}</div>`:""}</td>
+        ${i.recibido?`<div class="rec">Recibido ${fmt(i.recibido)}</div>`:""}</div></div></td>
       <td class="det"><div class="ed" contenteditable data-k="detalle" data-ph="Detalle">${esc(i.detalle)}</div></td>
-      <td class="sol"><div class="ed" contenteditable data-k="solicita" data-ph="Quién lo pide">${esc(i.solicita)}</div></td>
+      <td class="sol"><div class="who"><div class="av" style="background:${avc(i.solicita)}">${esc(ini(i.solicita))}</div><div class="ed" contenteditable data-k="solicita" data-ph="Quién lo pide">${esc(i.solicita)}</div></div></td>
       <td class="forma"><div class="ed" contenteditable data-k="forma_cumplir" data-ph="Forma de cumplir / formato de salida">${esc(i.forma_cumplir)}</div></td>
       <td><input type="date" class="fe" data-k="fecha" value="${i.fecha||""}">${fz}</td>
       <td><textarea class="obs" data-k="observaciones" placeholder="Escribe tus observaciones…">${esc(i.observaciones)}</textarea></td>
