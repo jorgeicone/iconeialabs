@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Pendientes EAN · ICONEialabs</title>
-<!-- vx:pendientes-ean-20261122-img -->
+<!-- vx:pendientes-ean-20261122-cuentas -->
 <style>
 :root{--navy:#050d1f;--navy2:#0b1733;--navy3:#12224a;--cyan:#00d4ff;--mor:#7b2fff;--txt:#e8eefc;--mut:#8fa0c4;--ok:#22c58b;--warn:#ffb020;--bad:#ff4d6d;--line:rgba(255,255,255,.09)}
 *{box-sizing:border-box}
@@ -27,7 +27,10 @@ h1{font-size:22px;margin:0;font-weight:700}
 .btn{background:linear-gradient(90deg,var(--mor),var(--cyan));border:0;border-radius:10px;padding:9px 16px;font-weight:700;color:#04101f;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt);font-weight:500}
 .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:rgba(11,23,51,.75)}
-table{width:100%;border-collapse:collapse;min-width:1250px}
+table{width:100%;border-collapse:collapse;min-width:1380px}
+.cta{display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px}
+.cta select{border-radius:8px;padding:5px 6px;border:1px solid var(--line);background:var(--navy);font-size:12px;font-weight:700;max-width:132px}
+.cta .dot{font-size:10px;color:var(--mut);word-break:break-all;max-width:132px}
 th{position:sticky;top:0;background:var(--navy3);text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);padding:10px;z-index:1}
 td{border-top:1px solid var(--line);padding:10px;vertical-align:top;font-size:14px}
 tr.done td{opacity:.62}
@@ -85,7 +88,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
     <div class="logo"><b>ICONE</b><span>ialabs</span></div>
     <div class="grow">
       <h1>Panel de pendientes · Correo Universidad EAN</h1>
-      <div class="sub">jhperez@universidadean.edu.co · lo que hay que resolver, quién lo pide y cómo se cumple</div>
+      <div class="sub">Cuentas jhperez@ y jperezg14153@universidadean.edu.co · lo que hay que resolver, quién lo pide y cómo se cumple</div>
     </div>
     <button class="btn ghost hide" id="salir">Cerrar sesión</button>
   </header>
@@ -102,7 +105,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
   <div id="app" class="hide">
     <div class="hero">
       <div>
-        <h2>Tu semana en la EAN, en un solo lugar</h2>
+        <h2>Tus dos correos de la EAN, en un solo lugar</h2>
         <p>Cada tema viene de un correo: quién lo pide, qué hay que entregar y para cuándo. Edita cualquier celda, escribe observaciones y cambia el estado; todo se guarda solo.</p>
         <div class="ring"><svg width="74" height="74" viewBox="0 0 74 74"><circle cx="37" cy="37" r="30" stroke="rgba(255,255,255,.1)" stroke-width="8" fill="none"/><circle id="ringv" cx="37" cy="37" r="30" stroke="url(#rg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 37 37)" style="transition:stroke-dashoffset .6s"/><defs><linearGradient id="rg"><stop offset="0" stop-color="#7b2fff"/><stop offset="1" stop-color="#00d4ff"/></linearGradient></defs><text id="ringt" x="37" y="42" text-anchor="middle" fill="#e8eefc" font-size="16" font-weight="800">0%</text></svg><div><div style="font-weight:700" id="ringl">0 de 0 resueltos</div><b>ejecutados + cumplidos</b></div></div>
       </div>
@@ -129,6 +132,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
     </div>
     <div class="bar">
       <input class="in" id="q" placeholder="Buscar tema, persona, detalle…" style="flex:1;min-width:220px">
+      <select class="in" id="fCta"><option value="todas">Todas las cuentas</option><option value="jhperez@universidadean.edu.co">jhperez@</option><option value="jperezg14153@universidadean.edu.co">jperezg14153@</option></select>
       <select class="in" id="fEst"><option value="todos">Todos los estados</option><option>Pendiente</option><option>Ejecutado</option><option>Cumplido</option></select>
       <select class="in" id="orden"><option value="fecha">Ordenar: fecha límite</option><option value="pri">Ordenar: prioridad</option><option value="rec">Ordenar: recibido (reciente)</option></select>
       <button class="btn" id="nuevo">+ Nuevo tema</button>
@@ -137,7 +141,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
     <div class="tablewrap">
       <table>
         <thead><tr>
-          <th>Tema a resolver</th><th>Detalle</th><th>Quién lo solicita</th><th>Cómo cumplir · formato de salida</th><th>Fecha límite</th><th>Observaciones</th><th>Estado</th><th></th>
+          <th>Cuenta</th><th>Tema a resolver</th><th>Detalle</th><th>Quién lo solicita</th><th>Cómo cumplir · formato de salida</th><th>Fecha límite</th><th>Observaciones</th><th>Estado</th><th></th>
         </tr></thead>
         <tbody id="tb"></tbody>
       </table>
@@ -153,7 +157,8 @@ footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
 const URL_SB="https://nvgkhdrrxqdgxktfkioa.supabase.co/rest/v1/rpc/";
 const KEY="sb_publishable_d1RrtE7S-9a8e8mGKRRjxQ_4HU_nkDl";
 const LS="ean_pend_clave";
-let clave="",items=[],filtro="todos";
+let clave="",items=[],filtro="todos",fcta="todas";
+const CTAS={"jhperez@universidadean.edu.co":{n:"jhperez@",c:"#00d4ff"},"jperezg14153@universidadean.edu.co":{n:"jperezg14153@",c:"#b18cff"}};
 const $=s=>document.querySelector(s);
 const esc=s=>(s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function lsGet(){try{return localStorage.getItem(LS)||""}catch(e){return ""}}
@@ -222,8 +227,9 @@ function pintar(){
   let L=items.filter(i=>{
     if(filtro==="alta"){if(!(i.prioridad==="alta"&&i.estado==="Pendiente"))return false}
     else if(filtro!=="todos"&&i.estado!==filtro)return false;
+    if(fcta!=="todas"&&i.cuenta!==fcta)return false;
     if(!q)return true;
-    return [i.tema,i.detalle,i.solicita,i.forma_cumplir,i.observaciones].join(" ").toLowerCase().includes(q);
+    return [i.cuenta,i.tema,i.detalle,i.solicita,i.forma_cumplir,i.observaciones].join(" ").toLowerCase().includes(q);
   });
   L.sort((a,b)=>{
     const da=a.estado==="Pendiente"?0:1,db=b.estado==="Pendiente"?0:1;if(da!==db)return da-db;
@@ -238,6 +244,7 @@ function pintar(){
     else if(i.estado==="Pendiente"&&i.fecha===hoy)fz='<div class="fz hoy">Vence hoy</div>';
     else if(i.estado==="Pendiente"){const n=Math.round((new Date(i.fecha)-new Date(hoy))/864e5);if(n<=3)fz=`<div class="fz hoy">Faltan ${n} día${n>1?"s":""}</div>`}
     return `<tr data-id="${i.id}" class="${i.estado!=="Pendiente"?"done":""}">
+      <td><div class="cta"><select data-k="cuenta" style="color:${(CTAS[i.cuenta]||{c:"#8fa0c4"}).c};border-color:${(CTAS[i.cuenta]||{c:"#8fa0c4"}).c}66">${Object.keys(CTAS).map(c=>`<option value="${c}" ${c===i.cuenta?"selected":""}>${CTAS[c].n}</option>`).join("")}</select><span class="dot">@universidadean.edu.co</span></div></td>
       <td class="tema"><div class="cat">${tile(cat(i))}<div><div class="ctag" style="color:${cat(i).c}">${cat(i).n}</div><div class="ed" contenteditable data-k="tema" data-ph="Tema">${esc(i.tema)}</div>
         <span class="pri ${i.prioridad}" data-pri title="Clic para cambiar prioridad">● ${i.prioridad}</span>
         ${i.recibido?`<div class="rec">Recibido ${fmt(i.recibido)}</div>`:""}</div></div></td>
@@ -265,11 +272,11 @@ function prog(id,k,v){clearTimeout(timers[id+k]);timers[id+k]=setTimeout(()=>gua
 $("#tb").addEventListener("input",e=>{
   const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr||!k)return;
   const v=e.target.isContentEditable?e.target.innerText.trim():e.target.value;
-  if(k==="estado"||k==="fecha")return;prog(tr.dataset.id,k,v);
+  if(k==="estado"||k==="fecha"||k==="cuenta")return;prog(tr.dataset.id,k,v);
 });
 $("#tb").addEventListener("change",e=>{
   const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr)return;
-  if(k==="estado"||k==="fecha")guardar(tr.dataset.id,{[k]:e.target.value},true);
+  if(k==="estado"||k==="fecha"||k==="cuenta")guardar(tr.dataset.id,{[k]:e.target.value},true);
 });
 $("#tb").addEventListener("click",async e=>{
   const tr=e.target.closest("tr");if(!tr)return;const id=tr.dataset.id;
@@ -282,13 +289,14 @@ $("#tb").addEventListener("click",async e=>{
   }
 });
 $("#nuevo").onclick=async()=>{
-  try{const r=await rpc("ean_pend_guardar",{p_clave:clave,p_item:{tema:"Nuevo tema",estado:"Pendiente",prioridad:"media",recibido:hoyISO()}});
-    items.unshift(r);filtro="todos";$("#q").value="";pintar();
+  try{const r=await rpc("ean_pend_guardar",{p_clave:clave,p_item:{tema:"Nuevo tema",estado:"Pendiente",prioridad:"media",recibido:hoyISO(),cuenta:fcta!=="todas"?fcta:"jhperez@universidadean.edu.co"}});
+    items.unshift(r);filtro="todos";$("#fEst").value="todos";$("#q").value="";pintar();
     const el=document.querySelector(`tr[data-id="${r.id}"] [data-k="tema"]`);if(el){el.focus();document.execCommand("selectAll",false,null)}}
   catch(e){marcar("No se pudo crear el tema.")}
 };
 document.querySelectorAll(".kpi").forEach(k=>k.onclick=()=>{filtro=k.dataset.f;$("#fEst").value=["Pendiente","Ejecutado","Cumplido"].includes(filtro)?filtro:"todos";pintar()});
 $("#fEst").onchange=e=>{filtro=e.target.value;pintar()};
+$("#fCta").onchange=e=>{fcta=e.target.value;pintar()};
 $("#q").oninput=pintar;$("#orden").onchange=pintar;$("#recargar").onclick=recargar;
 $("#entrar").onclick=()=>entrar($("#clave").value.trim());
 $("#clave").onkeydown=e=>{if(e.key==="Enter")entrar($("#clave").value.trim())};
