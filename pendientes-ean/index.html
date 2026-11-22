@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pendientes EAN · ICONEialabs</title>
+<!-- vx:pendientes-ean-20261122 -->
+<style>
+:root{--navy:#050d1f;--navy2:#0b1733;--navy3:#12224a;--cyan:#00d4ff;--mor:#7b2fff;--txt:#e8eefc;--mut:#8fa0c4;--ok:#22c58b;--warn:#ffb020;--bad:#ff4d6d;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,rgba(123,47,255,.18),transparent 60%),radial-gradient(900px 500px at 100% 0,rgba(0,212,255,.12),transparent 60%),var(--navy);color:var(--txt);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1500px;margin:0 auto;padding:22px 20px 60px}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.logo{font-weight:800;font-size:20px;letter-spacing:.5px}.logo b{color:var(--cyan)}.logo span{color:var(--mor);font-weight:600}
+h1{font-size:22px;margin:0;font-weight:700}
+.sub{color:var(--mut);font-size:13px}
+.grow{flex:1}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0 18px}
+.kpi{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:12px 16px;cursor:pointer;transition:.15s}
+.kpi:hover,.kpi.on{border-color:var(--cyan)}
+.kpi .n{font-size:28px;font-weight:800}.kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.in{background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;outline:none}
+.in:focus{border-color:var(--cyan)}
+.btn{background:linear-gradient(90deg,var(--mor),var(--cyan));border:0;border-radius:10px;padding:9px 16px;font-weight:700;color:#04101f;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt);font-weight:500}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:rgba(11,23,51,.75)}
+table{width:100%;border-collapse:collapse;min-width:1250px}
+th{position:sticky;top:0;background:var(--navy3);text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);padding:10px;z-index:1}
+td{border-top:1px solid var(--line);padding:10px;vertical-align:top;font-size:14px}
+tr.done td{opacity:.62}
+td.tema{font-weight:700;min-width:200px}
+td.det{min-width:260px;color:#cfd9f2}
+td.sol{min-width:170px;color:#cfd9f2}
+td.forma{min-width:250px;color:#cfd9f2}
+.ed{border-radius:6px;padding:2px 4px;margin:-2px -4px;outline:none;white-space:pre-wrap}
+.ed:hover{background:rgba(255,255,255,.04)}.ed:focus{background:rgba(0,212,255,.08);box-shadow:0 0 0 1px var(--cyan)}
+.ed:empty:before{content:attr(data-ph);color:var(--mut)}
+textarea.obs{width:100%;min-width:220px;min-height:74px;background:var(--navy);border:1px solid var(--line);border-radius:8px;padding:8px;resize:vertical;outline:none}
+textarea.obs:focus{border-color:var(--cyan)}
+select.est{border-radius:999px;padding:6px 10px;border:1px solid var(--line);background:var(--navy);font-weight:700;cursor:pointer}
+select.est.Pendiente{color:var(--warn);border-color:rgba(255,176,32,.5)}
+select.est.Ejecutado{color:var(--cyan);border-color:rgba(0,212,255,.5)}
+select.est.Cumplido{color:var(--ok);border-color:rgba(34,197,139,.5)}
+input.fe{background:var(--navy);border:1px solid var(--line);border-radius:8px;padding:5px 6px;color-scheme:dark}
+.fz{font-size:12px;margin-top:4px}
+.venc{color:var(--bad);font-weight:700}.hoy{color:var(--warn);font-weight:700}.sinf{color:var(--mut)}
+.pri{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;margin-top:6px;cursor:pointer;user-select:none}
+.pri.alta{background:rgba(255,77,109,.15);color:var(--bad)}.pri.media{background:rgba(255,176,32,.12);color:var(--warn)}.pri.baja{background:rgba(143,160,196,.15);color:var(--mut)}
+.rec{font-size:11px;color:var(--mut)}
+.x{background:none;border:0;color:var(--mut);cursor:pointer;font-size:16px}.x:hover{color:var(--bad)}
+.saving{font-size:11px;color:var(--cyan);height:14px}
+#login{max-width:400px;margin:12vh auto;background:var(--navy2);border:1px solid var(--line);border-radius:18px;padding:28px;text-align:center}
+#login .in{width:100%;margin:16px 0 10px;text-align:center;letter-spacing:1px}
+.err{color:var(--bad);font-size:13px;min-height:18px}
+.state{padding:40px;text-align:center;color:var(--mut)}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--cyan);border-radius:50%;animation:s 1s linear infinite;margin:0 auto 10px}@keyframes s{to{transform:rotate(360deg)}}
+footer{margin-top:28px;color:var(--mut);font-size:12px;text-align:center}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><b>ICONE</b><span>ialabs</span></div>
+    <div class="grow">
+      <h1>Panel de pendientes · Correo Universidad EAN</h1>
+      <div class="sub">jhperez@universidadean.edu.co · lo que hay que resolver, quién lo pide y cómo se cumple</div>
+    </div>
+    <button class="btn ghost hide" id="salir">Cerrar sesión</button>
+  </header>
+
+  <div id="login">
+    <div style="font-size:18px;font-weight:700">Acceso al panel</div>
+    <div class="sub" style="margin-top:6px">Escribe la clave del panel</div>
+    <input class="in" id="clave" type="password" placeholder="Clave" autocomplete="current-password">
+    <button class="btn" id="entrar" style="width:100%">Entrar</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="kpis">
+      <div class="kpi" data-f="todos"><div class="n" id="k-t">0</div><div class="l">Total</div></div>
+      <div class="kpi" data-f="Pendiente"><div class="n" id="k-p" style="color:var(--warn)">0</div><div class="l">Pendientes</div></div>
+      <div class="kpi" data-f="Ejecutado"><div class="n" id="k-e" style="color:var(--cyan)">0</div><div class="l">Ejecutados</div></div>
+      <div class="kpi" data-f="Cumplido"><div class="n" id="k-c" style="color:var(--ok)">0</div><div class="l">Cumplidos</div></div>
+      <div class="kpi" data-f="alta"><div class="n" id="k-a" style="color:var(--bad)">0</div><div class="l">Prioridad alta abiertos</div></div>
+    </div>
+    <div class="bar">
+      <input class="in" id="q" placeholder="Buscar tema, persona, detalle…" style="flex:1;min-width:220px">
+      <select class="in" id="fEst"><option value="todos">Todos los estados</option><option>Pendiente</option><option>Ejecutado</option><option>Cumplido</option></select>
+      <select class="in" id="orden"><option value="fecha">Ordenar: fecha límite</option><option value="pri">Ordenar: prioridad</option><option value="rec">Ordenar: recibido (reciente)</option></select>
+      <button class="btn" id="nuevo">+ Nuevo tema</button>
+      <button class="btn ghost" id="recargar">↻</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Tema a resolver</th><th>Detalle</th><th>Quién lo solicita</th><th>Cómo cumplir · formato de salida</th><th>Fecha límite</th><th>Observaciones</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div class="state" id="estado"><div class="spin"></div>Cargando temas…</div>
+    </div>
+    <div class="saving" id="sv"></div>
+  </div>
+
+  <footer>ICONEialabs · Método ICONE — Estrategia · Sistemas · Resultados<br>© 2026 Jorge Hugo Pérez Gaona · ICONEialabs. Todos los derechos reservados.</footer>
+</div>
+
+<script>
+const URL_SB="https://nvgkhdrrxqdgxktfkioa.supabase.co/rest/v1/rpc/";
+const KEY="sb_publishable_d1RrtE7S-9a8e8mGKRRjxQ_4HU_nkDl";
+const LS="ean_pend_clave";
+let clave="",items=[],filtro="todos";
+const $=s=>document.querySelector(s);
+const esc=s=>(s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function lsGet(){try{return localStorage.getItem(LS)||""}catch(e){return ""}}
+function lsSet(v){try{v?localStorage.setItem(LS,v):localStorage.removeItem(LS)}catch(e){}}
+
+async function rpc(fn,body){
+  const r=await fetch(URL_SB+fn,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const t=await r.text(); let d; try{d=t?JSON.parse(t):null}catch(e){d=t}
+  if(!r.ok){const m=(d&&d.message)||"error";throw new Error(m)}
+  return d;
+}
+function hoyISO(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+function fmt(d){if(!d)return"";const [y,m,dd]=d.split("-");const ms=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return `${+dd} ${ms[m-1]} ${y}`}
+
+async function entrar(c){
+  $("#err").textContent="";
+  try{
+    items=await rpc("ean_pend_leer",{p_clave:c});
+    clave=c;lsSet(c);
+    $("#login").classList.add("hide");$("#app").classList.remove("hide");$("#salir").classList.remove("hide");
+    pintar();
+  }catch(e){
+    lsSet("");
+    $("#err").textContent=/clave/.test(e.message)?"Clave incorrecta.":"No se pudo conectar con la base. Revisa tu conexión e inténtalo de nuevo.";
+  }
+}
+async function recargar(){
+  $("#estado").innerHTML='<div class="spin"></div>Cargando temas…';$("#estado").classList.remove("hide");
+  try{items=await rpc("ean_pend_leer",{p_clave:clave});pintar()}
+  catch(e){$("#estado").textContent="No se pudieron cargar los temas. Pulsa ↻ para reintentar."}
+}
+
+function pintar(){
+  const abiertos=items.filter(i=>i.estado==="Pendiente");
+  $("#k-t").textContent=items.length;$("#k-p").textContent=abiertos.length;
+  $("#k-e").textContent=items.filter(i=>i.estado==="Ejecutado").length;
+  $("#k-c").textContent=items.filter(i=>i.estado==="Cumplido").length;
+  $("#k-a").textContent=abiertos.filter(i=>i.prioridad==="alta").length;
+  document.querySelectorAll(".kpi").forEach(k=>k.classList.toggle("on",k.dataset.f===filtro));
+  const q=$("#q").value.toLowerCase().trim(),o=$("#orden").value,hoy=hoyISO(),pv={alta:0,media:1,baja:2};
+  let L=items.filter(i=>{
+    if(filtro==="alta"){if(!(i.prioridad==="alta"&&i.estado==="Pendiente"))return false}
+    else if(filtro!=="todos"&&i.estado!==filtro)return false;
+    if(!q)return true;
+    return [i.tema,i.detalle,i.solicita,i.forma_cumplir,i.observaciones].join(" ").toLowerCase().includes(q);
+  });
+  L.sort((a,b)=>{
+    const da=a.estado==="Pendiente"?0:1,db=b.estado==="Pendiente"?0:1;if(da!==db)return da-db;
+    if(o==="pri")return (pv[a.prioridad]-pv[b.prioridad])||((a.fecha||"9")>(b.fecha||"9")?1:-1);
+    if(o==="rec")return (b.recibido||"")>(a.recibido||"")?1:-1;
+    return ((a.fecha||"9999")>(b.fecha||"9999")?1:(a.fecha||"9999")<(b.fecha||"9999")?-1:pv[a.prioridad]-pv[b.prioridad]);
+  });
+  $("#tb").innerHTML=L.map(i=>{
+    let fz="";
+    if(!i.fecha)fz='<div class="fz sinf">Sin fecha en el correo</div>';
+    else if(i.estado==="Pendiente"&&i.fecha<hoy)fz='<div class="fz venc">Vencido</div>';
+    else if(i.estado==="Pendiente"&&i.fecha===hoy)fz='<div class="fz hoy">Vence hoy</div>';
+    else if(i.estado==="Pendiente"){const n=Math.round((new Date(i.fecha)-new Date(hoy))/864e5);if(n<=3)fz=`<div class="fz hoy">Faltan ${n} día${n>1?"s":""}</div>`}
+    return `<tr data-id="${i.id}" class="${i.estado!=="Pendiente"?"done":""}">
+      <td class="tema"><div class="ed" contenteditable data-k="tema" data-ph="Tema">${esc(i.tema)}</div>
+        <span class="pri ${i.prioridad}" data-pri title="Clic para cambiar prioridad">● ${i.prioridad}</span>
+        ${i.recibido?`<div class="rec">Recibido ${fmt(i.recibido)}</div>`:""}</td>
+      <td class="det"><div class="ed" contenteditable data-k="detalle" data-ph="Detalle">${esc(i.detalle)}</div></td>
+      <td class="sol"><div class="ed" contenteditable data-k="solicita" data-ph="Quién lo pide">${esc(i.solicita)}</div></td>
+      <td class="forma"><div class="ed" contenteditable data-k="forma_cumplir" data-ph="Forma de cumplir / formato de salida">${esc(i.forma_cumplir)}</div></td>
+      <td><input type="date" class="fe" data-k="fecha" value="${i.fecha||""}">${fz}</td>
+      <td><textarea class="obs" data-k="observaciones" placeholder="Escribe tus observaciones…">${esc(i.observaciones)}</textarea></td>
+      <td><select class="est ${i.estado}" data-k="estado">${["Pendiente","Ejecutado","Cumplido"].map(e=>`<option ${e===i.estado?"selected":""}>${e}</option>`).join("")}</select></td>
+      <td><button class="x" data-del title="Eliminar">✕</button></td></tr>`}).join("");
+  $("#estado").classList.toggle("hide",L.length>0);
+  if(!L.length)$("#estado").textContent=items.length?"Ningún tema coincide con el filtro.":"No hay temas todavía. Crea uno con «+ Nuevo tema».";
+}
+
+const timers={};
+function marcar(t){$("#sv").textContent=t}
+async function guardar(id,cambios,repintar){
+  const it=items.find(x=>x.id==id);if(!it)return;
+  Object.assign(it,cambios);marcar("Guardando…");
+  try{const r=await rpc("ean_pend_guardar",{p_clave:clave,p_item:it});Object.assign(it,r);marcar("Guardado ✓ "+new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}));if(repintar)pintar()}
+  catch(e){marcar("No se pudo guardar. Revisa tu conexión: el cambio sigue en pantalla.")}
+}
+function prog(id,k,v){clearTimeout(timers[id+k]);timers[id+k]=setTimeout(()=>guardar(id,{[k]:v}),700)}
+
+$("#tb").addEventListener("input",e=>{
+  const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr||!k)return;
+  const v=e.target.isContentEditable?e.target.innerText.trim():e.target.value;
+  if(k==="estado"||k==="fecha")return;prog(tr.dataset.id,k,v);
+});
+$("#tb").addEventListener("change",e=>{
+  const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr)return;
+  if(k==="estado"||k==="fecha")guardar(tr.dataset.id,{[k]:e.target.value},true);
+});
+$("#tb").addEventListener("click",async e=>{
+  const tr=e.target.closest("tr");if(!tr)return;const id=tr.dataset.id;
+  if(e.target.hasAttribute("data-pri")){const it=items.find(x=>x.id==id);const n={alta:"media",media:"baja",baja:"alta"}[it.prioridad];guardar(id,{prioridad:n},true)}
+  if(e.target.hasAttribute("data-del")){
+    const it=items.find(x=>x.id==id);
+    if(!confirm("¿Eliminar «"+it.tema+"»? No se puede deshacer."))return;
+    try{await rpc("ean_pend_borrar",{p_clave:clave,p_id:+id});items=items.filter(x=>x.id!=id);pintar();marcar("Eliminado")}
+    catch(e){marcar("No se pudo eliminar.")}
+  }
+});
+$("#nuevo").onclick=async()=>{
+  try{const r=await rpc("ean_pend_guardar",{p_clave:clave,p_item:{tema:"Nuevo tema",estado:"Pendiente",prioridad:"media",recibido:hoyISO()}});
+    items.unshift(r);filtro="todos";$("#q").value="";pintar();
+    const el=document.querySelector(`tr[data-id="${r.id}"] [data-k="tema"]`);if(el){el.focus();document.execCommand("selectAll",false,null)}}
+  catch(e){marcar("No se pudo crear el tema.")}
+};
+document.querySelectorAll(".kpi").forEach(k=>k.onclick=()=>{filtro=k.dataset.f;$("#fEst").value=["Pendiente","Ejecutado","Cumplido"].includes(filtro)?filtro:"todos";pintar()});
+$("#fEst").onchange=e=>{filtro=e.target.value;pintar()};
+$("#q").oninput=pintar;$("#orden").onchange=pintar;$("#recargar").onclick=recargar;
+$("#entrar").onclick=()=>entrar($("#clave").value.trim());
+$("#clave").onkeydown=e=>{if(e.key==="Enter")entrar($("#clave").value.trim())};
+$("#salir").onclick=()=>{lsSet("");location.reload()};
+const g=lsGet();if(g)entrar(g);
+</script>
+</body>
+</html>
